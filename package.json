@@ -1,0 +1,39 @@
+{
+  "name": "@bitquery/ide-charts",
+  "version": "1.0.0",
+  "description": "widgets library for ide",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack -w",
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bitquery",
+    "blockchain",
+    "vis"
+  ],
+  "author": "Ivanov Andrey <ivanov17andrey@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.0.1",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^10.1.1",
+    "webpack": "^5.18.0",
+    "webpack-cli": "^4.4.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  },
+  "dependencies": {
+    "d3": "^6.5.0",
+    "flat": "^5.0.2",
+    "lodash": "^4.17.20",
+    "moment": "^2.29.1"
+  }
+}
