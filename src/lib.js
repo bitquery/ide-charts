@@ -1,7 +1,5 @@
 import * as d3 from 'd3'
-import { ticks } from 'd3'
 import * as _ from 'lodash'
-import moment from 'moment'
 import { getPathToDate } from './util/getPathToDate'
 import './style.scss'
 
@@ -11,161 +9,19 @@ export function timeChart(selector, dataSource, displayedData, options) {
   // 	fields: ['count', 'count2']
   // }
 
-  var margin = { top: 10, right: 30, bottom: 90, left: 70 },
+  const margin = { top: 10, right: 30, bottom: 30, left: 70 },
     width = 450 - margin.left - margin.right,
-    height = 450 - margin.top - margin.bottom
-
-  // var svg = d3
-  //   .select(selector)
-  //   .append('svg')
-  //   .attr('width', width + margin.left + margin.right)
-  //   .attr('height', height + margin.top + margin.bottom)
-  //   .append('g')
-  //   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+    height = 390 - margin.top - margin.bottom
 
   const data = dataSource.values
 
   const pathToDate = getPathToDate(data[0], queryVariables.dateFormat)
 
   data.forEach((d) => {
-    d.date = d3.timeParse('%Y-%m')(_.get(d, pathToDate))
+    d.date = d3.timeParse(queryVariables.dateFormat)(_.get(d, pathToDate))
   })
 
-  // const x = d3
-  //   .scaleTime()
-  //   .range([0, width])
-  //   .domain([
-  //     d3.min(data, function (d) {
-  //       return d3.timeDay.offset(d.date, -20)
-  //     }),
-  //     d3.max(data, function (d) {
-  //       return d3.timeDay.offset(d.date, 20)
-  //     }),
-  //   ])
-
-  // const xAxis = (g) =>
-  //   g
-  //     // .append('g')
-  //     .attr('transform', 'translate(0,' + height + ')')
-  //     .call(
-  //       d3.axisBottom(x)
-  //       // .tickFormat(d3.timeFormat('%Y'))
-  //       // .ticks(d3.timeYear.every(1))
-  //     )
-  //     .selectAll('text')
-  //     .attr('transform', 'translate(-10,0)rotate(-45)')
-  //     .style('text-anchor', 'end')
-
-  // const y = d3
-  //   .scaleLinear()
-  //   .range([height, 0])
-  //   .domain([0, d3.max(data.map((d) => d.count))])
-
-  // const yAxis = (g) => g.call(d3.axisLeft(y))
-
-  // const xAxisGrid = d3
-  //   .axisBottom(x)
-  //   .tickSize(height)
-  //   .tickFormat('')
-  //   .ticks(d3.timeYear.every(1))
-  // const yAxisGrid = d3.axisLeft(y).tickSize(width).tickFormat('')
-
-  // var svg = d3
-  //   .select(selector)
-  //   .append('svg')
-  //   .attr('width', width + margin.left + margin.right)
-  //   .attr('height', height + margin.top + margin.bottom)
-  //   .call(zoom)
-  //   .append('g')
-  //   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-
-  // svg
-  //   .append('g')
-  //   .attr('class', 'x axis-grid')
-  //   .attr('opacity', 0.3)
-  //   .call(xAxisGrid)
-  // svg
-  //   .append('g')
-  //   .attr('class', 'y axis-grid')
-  //   .attr('opacity', 0.3)
-  //   .attr('transform', 'translate(' + width + ',0)')
-  //   .call(yAxisGrid)
-
-  // // Bars
-  // svg
-  //   .append('g')
-  //   .attr('class', 'bars')
-  //   .selectAll('mybar')
-  //   .data(data)
-  //   .enter()
-  //   .append('rect')
-  //   .attr('x', function (d) {
-  //     return x(d3.timeDay.offset(d.date, -5))
-  //   })
-  //   .attr('width', function (d) {
-  //     return x(d3.timeDay.offset(d.date, 10)) - x(d.date)
-  //   })
-  //   .attr('y', function (d) {
-  //     return y(d.count)
-  //   })
-  //   .attr('height', function (d) {
-  //     return height - y(d.count)
-  //   })
-  //   .attr('fill', '#28a745')
-
-  // svg.append('g').attr('class', 'x-axis').call(xAxis)
-
-  // svg.append('g').attr('class', 'y-axis').call(yAxis)
-
-  // function zoom(svg) {
-  //   const extent = [
-  //     [margin.left, margin.top],
-  //     [width - margin.right, height - margin.top],
-  //   ]
-
-  //   svg.call(
-  //     d3
-  //       .zoom()
-  //       .scaleExtent([1, 8])
-  //       .translateExtent(extent)
-  //       .extent(extent)
-  //       .on('zoom', zoomed)
-  //   )
-
-  //   function zoomed(event) {
-  //     x.range(
-  //       [margin.left, width - margin.right].map((d) =>
-  //         event.transform.applyX(d)
-  //       )
-  //     )
-  //     svg
-  //       .selectAll('.bars rect')
-  //       .attr('x', (d) => x(d.date))
-  //       .attr('width', (d) => x(d3.timeDay.offset(d.date, 10)) - x(d.date))
-  //     svg.selectAll('.x-axis').call(xAxis)
-  //   }
-  // }
-
-  // Line
-  // svg
-  //   .append('path')
-  //   .datum(data)
-  //   .attr('fill', 'none')
-  //   .attr('stroke', '#28a745')
-  //   .attr('stroke-width', 1.5)
-  //   .attr(
-  //     'd',
-  //     d3
-  //       .line()
-  //       .x(function (d) {
-  //         return x(d.date)
-  //       })
-  //       .y(function (d) {
-  //         return y(d.count)
-  //       })
-  //   )
-
-  var svg = d3
+  let svg = d3
     .select(selector)
     .append('svg')
     .attr('width', width + margin.left + margin.right)
@@ -181,35 +37,40 @@ export function timeChart(selector, dataSource, displayedData, options) {
       })
     )
     .range([0, width])
+    .nice(d3.timeMonth.every(2))
   const y = d3
     .scaleLinear()
     .domain([
       0,
       d3.max(data, function (d) {
-        return +d.count
+        return d.count
       }),
     ])
     .range([height, 0])
+    .nice()
 
-  const xAxis = d3.axisBottom(x).tickSize(-height)
+  const xAxis = d3
+    .axisBottom(x)
+    .tickSize(-height)
+    .ticks(5)
+    .tickFormat((date) => {
+      const n = x.ticks().length
+      return n <=
+        d3.timeFormat('%Y')(d3.max(x.ticks())) -
+          d3.timeFormat('%Y')(d3.min(x.ticks())) +
+          1
+        ? d3.timeFormat('%Y')(date)
+        : d3.timeFormat('%m/%y')(date)
+    })
   const yAxis = d3.axisLeft(y).tickSize(-width)
 
-  const xAxisGrid = svg.append('g').call(xAxis).attr("transform", "translate(0,"+height+")")
+  const xAxisGrid = svg
+    .append('g')
+    .call(xAxis)
+    .attr('transform', 'translate(0,' + height + ')')
   const yAxisGrid = svg.append('g').call(yAxis)
+  yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
 
-  // svg
-  //   .append('g')
-  //   .attr('class', 'x axis-grid')
-  //   .attr('opacity', 0.3)
-  //   .call(xAxisGrid)
-  // svg
-  //   .append('g')
-  //   .attr('class', 'y axis-grid')
-  //   .attr('opacity', 0.3)
-  //   .attr('transform', 'translate(' + width + ',0)')
-  //   .call(yAxisGrid)
-
-  // Add a clipPath: everything out of this area won't be drawn.
   var clip = svg
     .append('defs')
     .append('svg:clipPath')
@@ -220,102 +81,210 @@ export function timeChart(selector, dataSource, displayedData, options) {
     .attr('x', 0)
     .attr('y', 0)
 
-  // Add brushing
   var brush = d3
-    .brushX() // Add the brush feature using the d3.brush function
+    .brushX()
     .extent([
       [0, 0],
       [width, height],
-    ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
-    .on('end', updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
+    ])
+    .on('end', updateChart)
 
-  // Create the line variable: where both the line and the brush take place
-  var line = svg.append('g').attr('clip-path', 'url(#clip)')
+  // BARS //
+  let bars = svg
+    .append('g')
+    .attr('clip-path', 'url(#clip)')
+    .attr('class', 'bars')
+  bars
+    .selectAll('mybar')
+    .data(data)
+    .enter()
+    .append('rect')
+    .attr('x', function (d) {
+      return x(d.date) - 2
+    })
+    .attr('width', function (d) {
+      return 4
+    })
+    .attr('y', function (d) {
+      return y(d.count)
+    })
+    .attr('height', function (d) {
+      return height - y(d.count)
+    })
+    .attr('class', 'bar')
+    .attr('fill', '#28a745')
+  bars.append('g').attr('class', 'brush').call(brush)
 
-  // Add the line
-  line
-    .append('path')
-    .datum(data)
-    .attr('class', 'line') // I add the class line to be able to modify this line later on.
-    .attr('fill', 'none')
-    .attr('stroke', 'steelblue')
-    .attr('stroke-width', 1.5)
-    .attr(
-      'd',
-      d3
-        .line()
-        .x(function (d) {
-          return x(d.date)
-        })
-        .y(function (d) {
-          return y(d.count)
-        })
-    )
+  // LINE //
+  // let line = svg.append('g').attr('clip-path', 'url(#clip)')
+  // line
+  //   .append('path')
+  //   .datum(data)
+  //   .attr('class', 'line')
+  //   .attr('fill', 'none')
+  //   .attr('stroke', '#28a745')
+  //   .attr('stroke-width', 1.5)
+  //   .attr(
+  //     'd',
+  //     d3
+  //       .line()
+  //       .x(function (d) {
+  //         return x(d.date)
+  //       })
+  //       .y(function (d) {
+  //         return y(d.count)
+  //       })
+  //   )
+  // line.append('g').attr('class', 'brush').call(brush)
 
-  // Add the brushing
-  line.append('g').attr('class', 'brush').call(brush)
+  // SCATTER //
+  // let circles = svg
+  //   .append('g')
+  //   .attr('clip-path', 'url(#clip)')
+  //   .attr('class', 'circles')
+  // circles
+  //   .selectAll('circle')
+  //   .data(data)
+  //   .enter()
+  //   .append('circle')
+  //   .attr('cx', function (d) {
+  //     return x(d.date)
+  //   })
+  //   .attr('cy', function (d) {
+  //     return y(d.count)
+  //   })
+  //   .attr('r', function (d) {
+  //     return 4
+  //   })
+  //   .attr('class', 'circle')
+  //   .attr('fill', '#28a745')
+  // circles.append('g').attr('class', 'brush').call(brush)
 
-  // A function that set idleTimeOut to null
-  var idleTimeout
-  function idled() {
-    idleTimeout = null
-  }
-
-  // A function that update the chart for given boundaries
   function updateChart(event) {
-    // What are the selected boundaries?
     const extent = event.selection
 
-    // If no selection, back to initial coordinate. Otherwise, update X axis domain
-    if (!extent) {
-      if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350)) // This allows to wait a little bit
-      x.domain([4, 8])
-    } else {
-      x.domain([x.invert(extent[0]), x.invert(extent[1])])
-      xAxisGrid.transition().duration(1000).call(xAxis)
-      line.select('.brush').call(brush.move, null) // This remove the grey brush area as soon as the selection has been done
+    var idleTimeout
+    function idled() {
+      idleTimeout = null
     }
 
-    // Update axis and line position
-    // xAxis.transition().duration(1000).call(d3.axisBottom(x))
-    line
-      .select('.line')
+    if (!extent) {
+      if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
+      x.domain([4, 8])
+    } else {
+      // BARS //
+      bars.select('.brush').call(brush.move, null)
+      // LINE //
+      // line.select('.brush').call(brush.move, null)
+      // SCATTER //
+      // circles.select('.brush').call(brush.move, null)
+      if (
+        d3
+          .scaleTime()
+          .domain([x.invert(extent[0]), x.invert(extent[1])])
+          .ticks(d3.timeMonth.every(1)).length < 5
+      ) {
+        return
+      }
+      x.domain([x.invert(extent[0]), x.invert(extent[1])])
+    }
+    xAxisGrid.transition().duration(1000).call(xAxis)
+
+    // BARS //
+    bars
+      .selectAll('.bar')
       .transition()
       .duration(1000)
-      .attr(
-        'd',
-        d3
-          .line()
-          .x(function (d) {
-            return x(d.date)
-          })
-          .y(function (d) {
-            return y(d.count)
-          })
-      )
+      .attr('x', function (d) {
+        return x(d.date) - 2
+      })
+      .attr('width', function (d) {
+        return 4
+      })
+      .attr('y', function (d) {
+        return y(d.count)
+      })
+    // LINE //
+    // line
+    //   .select('.line')
+    //   .transition()
+    //   .duration(1000)
+    //   .attr(
+    //     'd',
+    //     d3
+    //       .line()
+    //       .x(function (d) {
+    //         return x(d.date)
+    //       })
+    //       .y(function (d) {
+    //         return y(d.count)
+    //       })
+    //   )
+    // SCATTER //
+    // circles
+    //   .selectAll('.circle')
+    //   .transition()
+    //   .duration(1000)
+    //   .attr('cx', function (d) {
+    //     return x(d.date)
+    //   })
+    //   .attr('cy', function (d) {
+    //     return y(d.count)
+    //   })
+    //   .attr('r', function (d) {
+    //     return 4
+    //   })
   }
 
-  // If user double click, reinitialize the chart
   svg.on('dblclick', function () {
     x.domain(
       d3.extent(data, function (d) {
         return d.date
       })
-    )
-    xAxis.transition().call(d3.axisBottom(x))
-    line
-      .select('.line')
+    ).nice(d3.timeMonth.every(2))
+
+    xAxisGrid.transition().call(xAxis)
+
+    // BARS //
+    bars
+      .selectAll('.bar')
       .transition()
-      .attr(
-        'd',
-        d3
-          .line()
-          .x(function (d) {
-            return x(d.date)
-          })
-          .y(function (d) {
-            return y(d.count)
-          })
-      )
+      .attr('x', function (d) {
+        return x(d.date) - 2
+      })
+      .attr('width', function (d) {
+        return 4
+      })
+      .attr('y', function (d) {
+        return y(d.count)
+      })
+    // Line //
+    // line
+    //   .select('.line')
+    //   .transition()
+    //   .attr(
+    //     'd',
+    //     d3
+    //       .line()
+    //       .x(function (d) {
+    //         return x(d.date)
+    //       })
+    //       .y(function (d) {
+    //         return y(d.count)
+    //       })
+    //   )
+    // SCATTER //
+    // circles
+    //   .selectAll('.circle')
+    //   .transition()
+    //   .attr('cx', function (d) {
+    //     return x(d.date)
+    //   })
+    //   .attr('cy', function (d) {
+    //     return y(d.count)
+    //   })
+    //   .attr('r', function (d) {
+    //     return 4
+    //   })
   })
 }

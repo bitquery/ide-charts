@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 // const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
@@ -60,9 +60,9 @@ module.exports = {
         test: /.(scss|css)$/,
 
         use: [
-          // {
-          //   loader: MiniCssExtractPlugin.loader,
-          // },
+          {
+            loader: 'style-loader',
+          },
           {
             loader: 'css-loader',
 

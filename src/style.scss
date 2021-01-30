@@ -1,0 +1,11 @@
+svg g.tick line{
+	opacity: 0.1;
+}
+
+svg g.tick:nth-of-type(1) .y-axis-grid{
+	opacity: 1;
+}
+
+svg path.domain {
+	display: none;
+}

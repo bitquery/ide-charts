@@ -11,7 +11,7 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 696:
+/***/ 872:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -90,6 +90,28 @@ function max(values, valueof) {
     }
   }
   return max;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
+function min(values, valueof) {
+  let min;
+  if (valueof === undefined) {
+    for (const value of values) {
+      if (value != null
+          && (min > value || (min === undefined && value >= value))) {
+        min = value;
+      }
+    }
+  } else {
+    let index = -1;
+    for (let value of values) {
+      if ((value = valueof(value, ++index, values)) != null
+          && (min > value || (min === undefined && value >= value))) {
+        min = value;
+      }
+    }
+  }
+  return min;
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/index.js
@@ -3508,7 +3530,7 @@ var MODE_DRAG = {name: "drag"},
     MODE_HANDLE = {name: "handle"},
     MODE_CENTER = {name: "center"};
 
-const {abs, max: brush_max, min} = Math;
+const {abs, max: brush_max, min: brush_min} = Math;
 
 function number1(e) {
   return [+e[0], +e[1]];
@@ -3861,8 +3883,8 @@ function brush_brush(dim) {
       if (selection) moving = true;
       const pts = [points[0], points[1] || points[0]];
       state.selection = selection = [[
-          w0 = dim === Y ? W : min(pts[0][0], pts[1][0]),
-          n0 = dim === X ? N : min(pts[0][1], pts[1][1])
+          w0 = dim === Y ? W : brush_min(pts[0][0], pts[1][0]),
+          n0 = dim === X ? N : brush_min(pts[0][1], pts[1][1])
         ], [
           e0 = dim === Y ? E : brush_max(pts[0][0], pts[1][0]),
           s0 = dim === X ? S : brush_max(pts[0][1], pts[1][1])
@@ -3935,25 +3957,25 @@ function brush_brush(dim) {
       switch (mode) {
         case MODE_SPACE:
         case MODE_DRAG: {
-          if (signX) dx = brush_max(W - w0, min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
-          if (signY) dy = brush_max(N - n0, min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
+          if (signX) dx = brush_max(W - w0, brush_min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
+          if (signY) dy = brush_max(N - n0, brush_min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
           break;
         }
         case MODE_HANDLE: {
           if (points[1]) {
-            if (signX) w1 = brush_max(W, min(E, points[0][0])), e1 = brush_max(W, min(E, points[1][0])), signX = 1;
-            if (signY) n1 = brush_max(N, min(S, points[0][1])), s1 = brush_max(N, min(S, points[1][1])), signY = 1;
+            if (signX) w1 = brush_max(W, brush_min(E, points[0][0])), e1 = brush_max(W, brush_min(E, points[1][0])), signX = 1;
+            if (signY) n1 = brush_max(N, brush_min(S, points[0][1])), s1 = brush_max(N, brush_min(S, points[1][1])), signY = 1;
           } else {
-            if (signX < 0) dx = brush_max(W - w0, min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
-            else if (signX > 0) dx = brush_max(W - e0, min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
-            if (signY < 0) dy = brush_max(N - n0, min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
-            else if (signY > 0) dy = brush_max(N - s0, min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
+            if (signX < 0) dx = brush_max(W - w0, brush_min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
+            else if (signX > 0) dx = brush_max(W - e0, brush_min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
+            if (signY < 0) dy = brush_max(N - n0, brush_min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
+            else if (signY > 0) dy = brush_max(N - s0, brush_min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
           }
           break;
         }
         case MODE_CENTER: {
-          if (signX) w1 = brush_max(W, min(E, w0 - dx * signX)), e1 = brush_max(W, min(E, e0 + dx * signX));
-          if (signY) n1 = brush_max(N, min(S, n0 - dy * signY)), s1 = brush_max(N, min(S, s0 + dy * signY));
+          if (signX) w1 = brush_max(W, brush_min(E, w0 - dx * signX)), e1 = brush_max(W, brush_min(E, e0 + dx * signX));
+          if (signY) n1 = brush_max(N, brush_min(S, n0 - dy * signY)), s1 = brush_max(N, brush_min(S, s0 + dy * signY));
           break;
         }
       }
@@ -6156,273 +6178,7 @@ function time() {
 
 
 
-;// CONCATENATED MODULE: ./node_modules/d3-path/src/path.js
-const pi = Math.PI,
-    tau = 2 * pi,
-    path_epsilon = 1e-6,
-    tauEpsilon = tau - path_epsilon;
-
-function Path() {
-  this._x0 = this._y0 = // start of current subpath
-  this._x1 = this._y1 = null; // end of current subpath
-  this._ = "";
-}
-
-function path() {
-  return new Path;
-}
-
-Path.prototype = path.prototype = {
-  constructor: Path,
-  moveTo: function(x, y) {
-    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y);
-  },
-  closePath: function() {
-    if (this._x1 !== null) {
-      this._x1 = this._x0, this._y1 = this._y0;
-      this._ += "Z";
-    }
-  },
-  lineTo: function(x, y) {
-    this._ += "L" + (this._x1 = +x) + "," + (this._y1 = +y);
-  },
-  quadraticCurveTo: function(x1, y1, x, y) {
-    this._ += "Q" + (+x1) + "," + (+y1) + "," + (this._x1 = +x) + "," + (this._y1 = +y);
-  },
-  bezierCurveTo: function(x1, y1, x2, y2, x, y) {
-    this._ += "C" + (+x1) + "," + (+y1) + "," + (+x2) + "," + (+y2) + "," + (this._x1 = +x) + "," + (this._y1 = +y);
-  },
-  arcTo: function(x1, y1, x2, y2, r) {
-    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
-    var x0 = this._x1,
-        y0 = this._y1,
-        x21 = x2 - x1,
-        y21 = y2 - y1,
-        x01 = x0 - x1,
-        y01 = y0 - y1,
-        l01_2 = x01 * x01 + y01 * y01;
-
-    // Is the radius negative? Error.
-    if (r < 0) throw new Error("negative radius: " + r);
-
-    // Is this path empty? Move to (x1,y1).
-    if (this._x1 === null) {
-      this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
-    }
-
-    // Or, is (x1,y1) coincident with (x0,y0)? Do nothing.
-    else if (!(l01_2 > path_epsilon));
-
-    // Or, are (x0,y0), (x1,y1) and (x2,y2) collinear?
-    // Equivalently, is (x1,y1) coincident with (x2,y2)?
-    // Or, is the radius zero? Line to (x1,y1).
-    else if (!(Math.abs(y01 * x21 - y21 * x01) > path_epsilon) || !r) {
-      this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
-    }
-
-    // Otherwise, draw an arc!
-    else {
-      var x20 = x2 - x0,
-          y20 = y2 - y0,
-          l21_2 = x21 * x21 + y21 * y21,
-          l20_2 = x20 * x20 + y20 * y20,
-          l21 = Math.sqrt(l21_2),
-          l01 = Math.sqrt(l01_2),
-          l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2),
-          t01 = l / l01,
-          t21 = l / l21;
-
-      // If the start tangent is not coincident with (x0,y0), line to.
-      if (Math.abs(t01 - 1) > path_epsilon) {
-        this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
-      }
-
-      this._ += "A" + r + "," + r + ",0,0," + (+(y01 * x20 > x01 * y20)) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
-    }
-  },
-  arc: function(x, y, r, a0, a1, ccw) {
-    x = +x, y = +y, r = +r, ccw = !!ccw;
-    var dx = r * Math.cos(a0),
-        dy = r * Math.sin(a0),
-        x0 = x + dx,
-        y0 = y + dy,
-        cw = 1 ^ ccw,
-        da = ccw ? a0 - a1 : a1 - a0;
-
-    // Is the radius negative? Error.
-    if (r < 0) throw new Error("negative radius: " + r);
-
-    // Is this path empty? Move to (x0,y0).
-    if (this._x1 === null) {
-      this._ += "M" + x0 + "," + y0;
-    }
-
-    // Or, is (x0,y0) not coincident with the previous point? Line to (x0,y0).
-    else if (Math.abs(this._x1 - x0) > path_epsilon || Math.abs(this._y1 - y0) > path_epsilon) {
-      this._ += "L" + x0 + "," + y0;
-    }
-
-    // Is this arc empty? We’re done.
-    if (!r) return;
-
-    // Does the angle go the wrong way? Flip the direction.
-    if (da < 0) da = da % tau + tau;
-
-    // Is this a complete circle? Draw two arcs to complete the circle.
-    if (da > tauEpsilon) {
-      this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x - dx) + "," + (y - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
-    }
-
-    // Is this arc non-empty? Draw an arc!
-    else if (da > path_epsilon) {
-      this._ += "A" + r + "," + r + ",0," + (+(da >= pi)) + "," + cw + "," + (this._x1 = x + r * Math.cos(a1)) + "," + (this._y1 = y + r * Math.sin(a1));
-    }
-  },
-  rect: function(x, y, w, h) {
-    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y) + "h" + (+w) + "v" + (+h) + "h" + (-w) + "Z";
-  },
-  toString: function() {
-    return this._;
-  }
-};
-
-/* harmony default export */ const src_path = (path);
-
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
-var array_slice = Array.prototype.slice;
-
-/* harmony default export */ function d3_shape_src_array(x) {
-  return typeof x === "object" && "length" in x
-    ? x // Array, TypedArray, NodeList, array-like
-    : Array.from(x); // Map, Set, iterable, string, or anything else
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/constant.js
-/* harmony default export */ function d3_shape_src_constant(x) {
-  return function constant() {
-    return x;
-  };
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/linear.js
-function Linear(context) {
-  this._context = context;
-}
-
-Linear.prototype = {
-  areaStart: function() {
-    this._line = 0;
-  },
-  areaEnd: function() {
-    this._line = NaN;
-  },
-  lineStart: function() {
-    this._point = 0;
-  },
-  lineEnd: function() {
-    if (this._line || (this._line !== 0 && this._point === 1)) this._context.closePath();
-    this._line = 1 - this._line;
-  },
-  point: function(x, y) {
-    x = +x, y = +y;
-    switch (this._point) {
-      case 0: this._point = 1; this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y); break;
-      case 1: this._point = 2; // proceed
-      default: this._context.lineTo(x, y); break;
-    }
-  }
-};
-
-/* harmony default export */ function curve_linear(context) {
-  return new Linear(context);
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/point.js
-function point_x(p) {
-  return p[0];
-}
-
-function point_y(p) {
-  return p[1];
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/line.js
-
-
-
-
-
-
-/* harmony default export */ function src_line(x, y) {
-  var defined = d3_shape_src_constant(true),
-      context = null,
-      curve = curve_linear,
-      output = null;
-
-  x = typeof x === "function" ? x : (x === undefined) ? point_x : d3_shape_src_constant(x);
-  y = typeof y === "function" ? y : (y === undefined) ? point_y : d3_shape_src_constant(y);
-
-  function line(data) {
-    var i,
-        n = (data = d3_shape_src_array(data)).length,
-        d,
-        defined0 = false,
-        buffer;
-
-    if (context == null) output = curve(buffer = src_path());
-
-    for (i = 0; i <= n; ++i) {
-      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
-        if (defined0 = !defined0) output.lineStart();
-        else output.lineEnd();
-      }
-      if (defined0) output.point(+x(d, i, data), +y(d, i, data));
-    }
-
-    if (buffer) return output = null, buffer + "" || null;
-  }
-
-  line.x = function(_) {
-    return arguments.length ? (x = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : x;
-  };
-
-  line.y = function(_) {
-    return arguments.length ? (y = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : y;
-  };
-
-  line.defined = function(_) {
-    return arguments.length ? (defined = typeof _ === "function" ? _ : d3_shape_src_constant(!!_), line) : defined;
-  };
-
-  line.curve = function(_) {
-    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
-  };
-
-  line.context = function(_) {
-    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
-  };
-
-  return line;
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-shape/src/index.js
-
-
-
-
- // Note: radialArea is deprecated!
- // Note: radialLine is deprecated!
-
-
-
-
-
-
-
-
-
-
-
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/index.js
 
 
 
@@ -7012,11 +6768,26 @@ function getPathToDate(obj, dateTimeFormat) {
     return moment_default()(paths[path], dateTimeFormat.replaceAll('%', '').toUpperCase(), true).isValid();
   });
 }
-// EXTERNAL MODULE: ./src/style.scss
-var src_style = __webpack_require__(7132);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
+var injectStylesIntoStyleTag = __webpack_require__(3379);
+var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[1].use[2]!./src/style.scss
+var cjs_ruleSet_1_rules_1_use_2_src_style = __webpack_require__(539);
+;// CONCATENATED MODULE: ./src/style.scss
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = injectStylesIntoStyleTag_default()(cjs_ruleSet_1_rules_1_use_2_src_style/* default */.Z, options);
+
+
+
+/* harmony default export */ const src_style = (cjs_ruleSet_1_rules_1_use_2_src_style/* default.locals */.Z.locals || {});
 ;// CONCATENATED MODULE: ./src/lib.js
-
-
 
 
 
@@ -7026,131 +6797,53 @@ function timeChart(selector, dataSource, displayedData, options) {
   // 	fields: ['count', 'count2']
   // }
 
-  var margin = {
+  const margin = {
     top: 10,
     right: 30,
-    bottom: 90,
+    bottom: 30,
     left: 70
   },
-      width = 450 - margin.left - margin.right,
-      height = 450 - margin.top - margin.bottom; // var svg = d3
-  //   .select(selector)
-  //   .append('svg')
-  //   .attr('width', width + margin.left + margin.right)
-  //   .attr('height', height + margin.top + margin.bottom)
-  //   .append('g')
-  //   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-
+        width = 450 - margin.left - margin.right,
+        height = 390 - margin.top - margin.bottom;
   const data = dataSource.values;
   const pathToDate = getPathToDate(data[0], queryVariables.dateFormat);
   data.forEach(d => {
-    d.date = timeParse('%Y-%m')(lodash.get(d, pathToDate));
-  }); // const x = d3
-  //   .scaleTime()
-  //   .range([0, width])
-  //   .domain([
-  //     d3.min(data, function (d) {
-  //       return d3.timeDay.offset(d.date, -20)
-  //     }),
-  //     d3.max(data, function (d) {
-  //       return d3.timeDay.offset(d.date, 20)
-  //     }),
-  //   ])
-  // const xAxis = (g) =>
-  //   g
-  //     // .append('g')
-  //     .attr('transform', 'translate(0,' + height + ')')
-  //     .call(
-  //       d3.axisBottom(x)
-  //       // .tickFormat(d3.timeFormat('%Y'))
-  //       // .ticks(d3.timeYear.every(1))
-  //     )
-  //     .selectAll('text')
-  //     .attr('transform', 'translate(-10,0)rotate(-45)')
-  //     .style('text-anchor', 'end')
-  // const y = d3
-  //   .scaleLinear()
-  //   .range([height, 0])
-  //   .domain([0, d3.max(data.map((d) => d.count))])
-  // const yAxis = (g) => g.call(d3.axisLeft(y))
-  // const xAxisGrid = d3
-  //   .axisBottom(x)
-  //   .tickSize(height)
-  //   .tickFormat('')
-  //   .ticks(d3.timeYear.every(1))
-  // const yAxisGrid = d3.axisLeft(y).tickSize(width).tickFormat('')
-  // var svg = d3
-  //   .select(selector)
-  //   .append('svg')
-  //   .attr('width', width + margin.left + margin.right)
-  //   .attr('height', height + margin.top + margin.bottom)
-  //   .call(zoom)
-  //   .append('g')
-  //   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-  // svg
-  //   .append('g')
-  //   .attr('class', 'x axis-grid')
-  //   .attr('opacity', 0.3)
-  //   .call(xAxisGrid)
-  // svg
-  //   .append('g')
-  //   .attr('class', 'y axis-grid')
-  //   .attr('opacity', 0.3)
-  //   .attr('transform', 'translate(' + width + ',0)')
-  //   .call(yAxisGrid)
-  // // Bars
-  // svg
-  //   .append('g')
-  //   .attr('class', 'bars')
-  //   .selectAll('mybar')
-  //   .data(data)
-  //   .enter()
-  //   .append('rect')
-  //   .attr('x', function (d) {
-  //     return x(d3.timeDay.offset(d.date, -5))
-  //   })
-  //   .attr('width', function (d) {
-  //     return x(d3.timeDay.offset(d.date, 10)) - x(d.date)
-  //   })
-  //   .attr('y', function (d) {
-  //     return y(d.count)
-  //   })
-  //   .attr('height', function (d) {
-  //     return height - y(d.count)
-  //   })
-  //   .attr('fill', '#28a745')
-  // svg.append('g').attr('class', 'x-axis').call(xAxis)
-  // svg.append('g').attr('class', 'y-axis').call(yAxis)
-  // function zoom(svg) {
-  //   const extent = [
-  //     [margin.left, margin.top],
-  //     [width - margin.right, height - margin.top],
-  //   ]
-  //   svg.call(
-  //     d3
-  //       .zoom()
-  //       .scaleExtent([1, 8])
-  //       .translateExtent(extent)
-  //       .extent(extent)
-  //       .on('zoom', zoomed)
-  //   )
-  //   function zoomed(event) {
-  //     x.range(
-  //       [margin.left, width - margin.right].map((d) =>
-  //         event.transform.applyX(d)
-  //       )
-  //     )
-  //     svg
-  //       .selectAll('.bars rect')
-  //       .attr('x', (d) => x(d.date))
-  //       .attr('width', (d) => x(d3.timeDay.offset(d.date, 10)) - x(d.date))
-  //     svg.selectAll('.x-axis').call(xAxis)
-  //   }
-  // }
-  // Line
-  // svg
+    d.date = timeParse(queryVariables.dateFormat)(lodash.get(d, pathToDate));
+  });
+  let svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+  const x = time().domain(extent(data, function (d) {
+    return d.date;
+  })).range([0, width]).nice(src_month.every(2));
+  const y = linear_linear().domain([0, max(data, function (d) {
+    return d.count;
+  })]).range([height, 0]).nice();
+  const xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(date => {
+    const n = x.ticks().length;
+    return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
+  });
+  const yAxis = axisLeft(y).tickSize(-width);
+  const xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
+  const yAxisGrid = svg.append('g').call(yAxis);
+  yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
+  var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
+  var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart); // BARS //
+
+  let bars = svg.append('g').attr('clip-path', 'url(#clip)').attr('class', 'bars');
+  bars.selectAll('mybar').data(data).enter().append('rect').attr('x', function (d) {
+    return x(d.date) - 2;
+  }).attr('width', function (d) {
+    return 4;
+  }).attr('y', function (d) {
+    return y(d.count);
+  }).attr('height', function (d) {
+    return height - y(d.count);
+  }).attr('class', 'bar').attr('fill', '#28a745');
+  bars.append('g').attr('class', 'brush').call(brush); // LINE //
+  // let line = svg.append('g').attr('clip-path', 'url(#clip)')
+  // line
   //   .append('path')
   //   .datum(data)
+  //   .attr('class', 'line')
   //   .attr('fill', 'none')
   //   .attr('stroke', '#28a745')
   //   .attr('stroke-width', 1.5)
@@ -7165,89 +6858,135 @@ function timeChart(selector, dataSource, displayedData, options) {
   //         return y(d.count)
   //       })
   //   )
-
-  var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-  const x = time().domain(extent(data, function (d) {
-    return d.date;
-  })).range([0, width]);
-  const y = linear_linear().domain([0, max(data, function (d) {
-    return +d.count;
-  })]).range([height, 0]);
-  const xAxis = axisBottom(x).tickSize(-height);
-  const yAxis = axisLeft(y).tickSize(-width);
-  const xAxisGrid = svg.append('g').call(xAxis).attr("transform", "translate(0," + height + ")");
-  const yAxisGrid = svg.append('g').call(yAxis); // svg
+  // line.append('g').attr('class', 'brush').call(brush)
+  // SCATTER //
+  // let circles = svg
   //   .append('g')
-  //   .attr('class', 'x axis-grid')
-  //   .attr('opacity', 0.3)
-  //   .call(xAxisGrid)
-  // svg
-  //   .append('g')
-  //   .attr('class', 'y axis-grid')
-  //   .attr('opacity', 0.3)
-  //   .attr('transform', 'translate(' + width + ',0)')
-  //   .call(yAxisGrid)
-  // Add a clipPath: everything out of this area won't be drawn.
-
-  var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0); // Add brushing
-
-  var brush = brushX() // Add the brush feature using the d3.brush function
-  .extent([[0, 0], [width, height]]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
-  .on('end', updateChart); // Each time the brush selection changes, trigger the 'updateChart' function
-  // Create the line variable: where both the line and the brush take place
-
-  var line = svg.append('g').attr('clip-path', 'url(#clip)'); // Add the line
-
-  line.append('path').datum(data).attr('class', 'line') // I add the class line to be able to modify this line later on.
-  .attr('fill', 'none').attr('stroke', 'steelblue').attr('stroke-width', 1.5).attr('d', src_line().x(function (d) {
-    return x(d.date);
-  }).y(function (d) {
-    return y(d.count);
-  })); // Add the brushing
-
-  line.append('g').attr('class', 'brush').call(brush); // A function that set idleTimeOut to null
-
-  var idleTimeout;
-
-  function idled() {
-    idleTimeout = null;
-  } // A function that update the chart for given boundaries
-
+  //   .attr('clip-path', 'url(#clip)')
+  //   .attr('class', 'circles')
+  // circles
+  //   .selectAll('circle')
+  //   .data(data)
+  //   .enter()
+  //   .append('circle')
+  //   .attr('cx', function (d) {
+  //     return x(d.date)
+  //   })
+  //   .attr('cy', function (d) {
+  //     return y(d.count)
+  //   })
+  //   .attr('r', function (d) {
+  //     return 4
+  //   })
+  //   .attr('class', 'circle')
+  //   .attr('fill', '#28a745')
+  // circles.append('g').attr('class', 'brush').call(brush)
 
   function updateChart(event) {
-    // What are the selected boundaries?
-    const extent = event.selection; // If no selection, back to initial coordinate. Otherwise, update X axis domain
+    const extent = event.selection;
+    var idleTimeout;
+
+    function idled() {
+      idleTimeout = null;
+    }
 
     if (!extent) {
-      if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
-
+      if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
       x.domain([4, 8]);
     } else {
+      // BARS //
+      bars.select('.brush').call(brush.move, null); // LINE //
+      // line.select('.brush').call(brush.move, null)
+      // SCATTER //
+      // circles.select('.brush').call(brush.move, null)
+
+      if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
+        return;
+      }
+
       x.domain([x.invert(extent[0]), x.invert(extent[1])]);
-      xAxisGrid.transition().duration(1000).call(xAxis);
-      line.select('.brush').call(brush.move, null); // This remove the grey brush area as soon as the selection has been done
-    } // Update axis and line position
-    // xAxis.transition().duration(1000).call(d3.axisBottom(x))
+    }
 
+    xAxisGrid.transition().duration(1000).call(xAxis); // BARS //
 
-    line.select('.line').transition().duration(1000).attr('d', src_line().x(function (d) {
-      return x(d.date);
-    }).y(function (d) {
+    bars.selectAll('.bar').transition().duration(1000).attr('x', function (d) {
+      return x(d.date) - 2;
+    }).attr('width', function (d) {
+      return 4;
+    }).attr('y', function (d) {
       return y(d.count);
-    }));
-  } // If user double click, reinitialize the chart
-
+    }); // LINE //
+    // line
+    //   .select('.line')
+    //   .transition()
+    //   .duration(1000)
+    //   .attr(
+    //     'd',
+    //     d3
+    //       .line()
+    //       .x(function (d) {
+    //         return x(d.date)
+    //       })
+    //       .y(function (d) {
+    //         return y(d.count)
+    //       })
+    //   )
+    // SCATTER //
+    // circles
+    //   .selectAll('.circle')
+    //   .transition()
+    //   .duration(1000)
+    //   .attr('cx', function (d) {
+    //     return x(d.date)
+    //   })
+    //   .attr('cy', function (d) {
+    //     return y(d.count)
+    //   })
+    //   .attr('r', function (d) {
+    //     return 4
+    //   })
+  }
 
   svg.on('dblclick', function () {
     x.domain(extent(data, function (d) {
       return d.date;
-    }));
-    xAxis.transition().call(axisBottom(x));
-    line.select('.line').transition().attr('d', src_line().x(function (d) {
-      return x(d.date);
-    }).y(function (d) {
+    })).nice(src_month.every(2));
+    xAxisGrid.transition().call(xAxis); // BARS //
+
+    bars.selectAll('.bar').transition().attr('x', function (d) {
+      return x(d.date) - 2;
+    }).attr('width', function (d) {
+      return 4;
+    }).attr('y', function (d) {
       return y(d.count);
-    }));
+    }); // Line //
+    // line
+    //   .select('.line')
+    //   .transition()
+    //   .attr(
+    //     'd',
+    //     d3
+    //       .line()
+    //       .x(function (d) {
+    //         return x(d.date)
+    //       })
+    //       .y(function (d) {
+    //         return y(d.count)
+    //       })
+    //   )
+    // SCATTER //
+    // circles
+    //   .selectAll('.circle')
+    //   .transition()
+    //   .attr('cx', function (d) {
+    //     return x(d.date)
+    //   })
+    //   .attr('cy', function (d) {
+    //     return y(d.count)
+    //   })
+    //   .attr('r', function (d) {
+    //     return 4
+    //   })
   });
 }
 ;// CONCATENATED MODULE: ./src/index.js
@@ -7567,10 +7306,13 @@ timeChart('#chart', dataSource); // console.log(moment)
 
 /***/ }),
 
-/***/ 7132:
-/***/ ((module, __unused_webpack___webpack_exports__, __webpack_require__) => {
+/***/ 539:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
 /* harmony import */ var _node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4015);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3645);
@@ -7580,9 +7322,9 @@ timeChart('#chart', dataSource); // console.log(moment)
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "", "",{"version":3,"sources":[],"names":[],"mappings":"","sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "svg g.tick line{opacity:0.1}svg g.tick:nth-of-type(1) .y-axis-grid{opacity:1}svg path.domain{display:none}\n", "",{"version":3,"sources":["webpack://./src/style.scss"],"names":[],"mappings":"AAAA,gBACC,WAAY,CACZ,uCAGA,SAAU,CACV,gBAGA,YAAa","sourcesContent":["svg g.tick line{\n\topacity: 0.1;\n}\n\nsvg g.tick:nth-of-type(1) .y-axis-grid{\n\topacity: 1;\n}\n\nsvg path.domain {\n\tdisplay: none;\n}"],"sourceRoot":""}]);
 // Exports
-/* unused harmony default export */ var __WEBPACK_DEFAULT_EXPORT__ = ((/* unused pure expression or super */ null && (___CSS_LOADER_EXPORT___)));
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
 
 /***/ }),
@@ -46046,6 +45788,282 @@ webpackContext.id = 6700;
 })));
 
 
+/***/ }),
+
+/***/ 3379:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+var isOldIE = function isOldIE() {
+  var memo;
+  return function memorize() {
+    if (typeof memo === 'undefined') {
+      // Test for IE <= 9 as proposed by Browserhacks
+      // @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+      // Tests for existence of standard globals is to allow style-loader
+      // to operate correctly into non-standard environments
+      // @see https://github.com/webpack-contrib/style-loader/issues/177
+      memo = Boolean(window && document && document.all && !window.atob);
+    }
+
+    return memo;
+  };
+}();
+
+var getTarget = function getTarget() {
+  var memo = {};
+  return function memorize(target) {
+    if (typeof memo[target] === 'undefined') {
+      var styleTarget = document.querySelector(target); // Special case to return head of iframe instead of iframe itself
+
+      if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+        try {
+          // This will throw an exception if access to iframe is blocked
+          // due to cross-origin restrictions
+          styleTarget = styleTarget.contentDocument.head;
+        } catch (e) {
+          // istanbul ignore next
+          styleTarget = null;
+        }
+      }
+
+      memo[target] = styleTarget;
+    }
+
+    return memo[target];
+  };
+}();
+
+var stylesInDom = [];
+
+function getIndexByIdentifier(identifier) {
+  var result = -1;
+
+  for (var i = 0; i < stylesInDom.length; i++) {
+    if (stylesInDom[i].identifier === identifier) {
+      result = i;
+      break;
+    }
+  }
+
+  return result;
+}
+
+function modulesToDom(list, options) {
+  var idCountMap = {};
+  var identifiers = [];
+
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var id = options.base ? item[0] + options.base : item[0];
+    var count = idCountMap[id] || 0;
+    var identifier = "".concat(id, " ").concat(count);
+    idCountMap[id] = count + 1;
+    var index = getIndexByIdentifier(identifier);
+    var obj = {
+      css: item[1],
+      media: item[2],
+      sourceMap: item[3]
+    };
+
+    if (index !== -1) {
+      stylesInDom[index].references++;
+      stylesInDom[index].updater(obj);
+    } else {
+      stylesInDom.push({
+        identifier: identifier,
+        updater: addStyle(obj, options),
+        references: 1
+      });
+    }
+
+    identifiers.push(identifier);
+  }
+
+  return identifiers;
+}
+
+function insertStyleElement(options) {
+  var style = document.createElement('style');
+  var attributes = options.attributes || {};
+
+  if (typeof attributes.nonce === 'undefined') {
+    var nonce =  true ? __webpack_require__.nc : 0;
+
+    if (nonce) {
+      attributes.nonce = nonce;
+    }
+  }
+
+  Object.keys(attributes).forEach(function (key) {
+    style.setAttribute(key, attributes[key]);
+  });
+
+  if (typeof options.insert === 'function') {
+    options.insert(style);
+  } else {
+    var target = getTarget(options.insert || 'head');
+
+    if (!target) {
+      throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");
+    }
+
+    target.appendChild(style);
+  }
+
+  return style;
+}
+
+function removeStyleElement(style) {
+  // istanbul ignore if
+  if (style.parentNode === null) {
+    return false;
+  }
+
+  style.parentNode.removeChild(style);
+}
+/* istanbul ignore next  */
+
+
+var replaceText = function replaceText() {
+  var textStore = [];
+  return function replace(index, replacement) {
+    textStore[index] = replacement;
+    return textStore.filter(Boolean).join('\n');
+  };
+}();
+
+function applyToSingletonTag(style, index, remove, obj) {
+  var css = remove ? '' : obj.media ? "@media ".concat(obj.media, " {").concat(obj.css, "}") : obj.css; // For old IE
+
+  /* istanbul ignore if  */
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = replaceText(index, css);
+  } else {
+    var cssNode = document.createTextNode(css);
+    var childNodes = style.childNodes;
+
+    if (childNodes[index]) {
+      style.removeChild(childNodes[index]);
+    }
+
+    if (childNodes.length) {
+      style.insertBefore(cssNode, childNodes[index]);
+    } else {
+      style.appendChild(cssNode);
+    }
+  }
+}
+
+function applyToTag(style, options, obj) {
+  var css = obj.css;
+  var media = obj.media;
+  var sourceMap = obj.sourceMap;
+
+  if (media) {
+    style.setAttribute('media', media);
+  } else {
+    style.removeAttribute('media');
+  }
+
+  if (sourceMap && typeof btoa !== 'undefined') {
+    css += "\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))), " */");
+  } // For old IE
+
+  /* istanbul ignore if  */
+
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    while (style.firstChild) {
+      style.removeChild(style.firstChild);
+    }
+
+    style.appendChild(document.createTextNode(css));
+  }
+}
+
+var singleton = null;
+var singletonCounter = 0;
+
+function addStyle(obj, options) {
+  var style;
+  var update;
+  var remove;
+
+  if (options.singleton) {
+    var styleIndex = singletonCounter++;
+    style = singleton || (singleton = insertStyleElement(options));
+    update = applyToSingletonTag.bind(null, style, styleIndex, false);
+    remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+  } else {
+    style = insertStyleElement(options);
+    update = applyToTag.bind(null, style, options);
+
+    remove = function remove() {
+      removeStyleElement(style);
+    };
+  }
+
+  update(obj);
+  return function updateStyle(newObj) {
+    if (newObj) {
+      if (newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap) {
+        return;
+      }
+
+      update(obj = newObj);
+    } else {
+      remove();
+    }
+  };
+}
+
+module.exports = function (list, options) {
+  options = options || {}; // Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+  // tags it will allow on a page
+
+  if (!options.singleton && typeof options.singleton !== 'boolean') {
+    options.singleton = isOldIE();
+  }
+
+  list = list || [];
+  var lastIdentifiers = modulesToDom(list, options);
+  return function update(newList) {
+    newList = newList || [];
+
+    if (Object.prototype.toString.call(newList) !== '[object Array]') {
+      return;
+    }
+
+    for (var i = 0; i < lastIdentifiers.length; i++) {
+      var identifier = lastIdentifiers[i];
+      var index = getIndexByIdentifier(identifier);
+      stylesInDom[index].references--;
+    }
+
+    var newLastIdentifiers = modulesToDom(newList, options);
+
+    for (var _i = 0; _i < lastIdentifiers.length; _i++) {
+      var _identifier = lastIdentifiers[_i];
+
+      var _index = getIndexByIdentifier(_identifier);
+
+      if (stylesInDom[_index].references === 0) {
+        stylesInDom[_index].updater();
+
+        stylesInDom.splice(_index, 1);
+      }
+    }
+
+    lastIdentifiers = newLastIdentifiers;
+  };
+};
+
 /***/ })
 
 /******/ 	});
@@ -46142,7 +46160,7 @@ webpackContext.id = 6700;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(696);
+/******/ 	return __webpack_require__(872);
 /******/ })()
 ;
 });
