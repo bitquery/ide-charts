@@ -1,26 +1,164 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("react"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["react"], factory);
 	else if(typeof exports === 'object')
-		exports["ide-charts"] = factory();
+		exports["ide-charts"] = factory(require("react"));
 	else
-		root["ide-charts"] = factory();
-})(self, function() {
+		root["ide-charts"] = factory(root["React"]);
+})(self, function(__WEBPACK_EXTERNAL_MODULE__8383__) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 872:
+/***/ 821:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
-// EXTERNAL MODULE: ./node_modules/moment/moment.js
-var moment = __webpack_require__(381);
-var moment_default = /*#__PURE__*/__webpack_require__.n(moment);
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "timeChartPlugins": () => /* binding */ timeChartPlugins
+});
+
+// EXTERNAL MODULE: external {"root":"React","commonjs2":"react","commonjs":"react","amd":"react","umd":"react"}
+var external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_ = __webpack_require__(8383);
+var external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default = /*#__PURE__*/__webpack_require__.n(external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_);
+;// CONCATENATED MODULE: ./src/util/useFirstUpdate.js
+
+var useFirstUpdate = function useFirstUpdate(func, deps) {
+  var didMount = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useRef)(false);
+  (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
+    if (didMount.current) func();else didMount.current = true;
+  }, deps);
+};
+;// CONCATENATED MODULE: ./src/reactComponents/WidgetOptions.js
+
+
+function WidgetOptions(_ref) {
+  var model = _ref.model,
+      condition = _ref.condition,
+      value = _ref.value,
+      setValue = _ref.setValue,
+      title = _ref.title;
+  (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
+    if (model) {
+      var list = Object.keys(model).filter(condition);
+      if (!value) setValue(list[0]);
+    }
+  }, [JSON.stringify(model)]);
+  return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
+    className: "widget-option"
+  }, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("label", null, title), /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("select", {
+    className: "custom-select",
+    value: value,
+    onChange: function onChange(e) {
+      return setValue(e.target.value);
+    }
+  }, Object.keys(model).length ? Object.keys(model).map(function (node, i) {
+    return condition(node) ? /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("option", {
+      key: i,
+      value: node
+    }, node) : null;
+  }) : value ? /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("option", {
+    value: value
+  }, value) : null));
+}
+
+/* harmony default export */ const reactComponents_WidgetOptions = (WidgetOptions);
+;// CONCATENATED MODULE: ./src/reactComponents/TimeChartEditor.js
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+function TimeChartEditor(_ref) {
+  var model = _ref.model,
+      config = _ref.config,
+      setConfig = _ref.setConfig,
+      displayedData = _ref.displayedData;
+  var chartTypeModel = {
+    bar: 'bar',
+    line: 'line',
+    scatter: 'scatter',
+    stackedBar: 'stackedBar'
+  };
+
+  var chartTypeFunc = function chartTypeFunc() {
+    return true;
+  };
+
+  var _useState = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
+      _useState2 = _slicedToArray(_useState, 2),
+      chartType = _useState2[0],
+      setChartType = _useState2[1];
+
+  var yFunc = function yFunc(key) {
+    if (model[key].typeInfo) {
+      return model[key].typeInfo.toString().includes('Int') || model[key].typeInfo.toString().includes('Float');
+    }
+  };
+
+  var _useState3 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
+      _useState4 = _slicedToArray(_useState3, 2),
+      yAxis = _useState4[0],
+      setYAxis = _useState4[1];
+
+  (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
+    if (!yAxis && config) {
+      if (Object.keys(config).length) {
+        if ('y' in config) {
+          setYAxis("".concat(displayedData, ".").concat(config.y.field));
+          setChartType('bar');
+        }
+      }
+    }
+  }, []);
+  useFirstUpdate(function () {
+    if (model && yAxis) {
+      var fieldY = yAxis.replace("".concat(displayedData, "."), '');
+      var cfg = {
+        chartType: chartType,
+        y: {
+          field: fieldY
+        }
+      };
+      setConfig(cfg);
+    }
+  }, [chartType, yAxis, displayedData]);
+  return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
+    className: "widget"
+  }, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
+    className: "widget-editor"
+  }, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
+    value: chartType,
+    setValue: setChartType,
+    condition: chartTypeFunc,
+    title: 'Chart Type',
+    model: chartTypeModel
+  }), /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
+    value: yAxis,
+    setValue: setYAxis,
+    condition: yFunc,
+    title: 'Y Axis',
+    model: model
+  })));
+}
+
+/* harmony default export */ const reactComponents_TimeChartEditor = (TimeChartEditor);
 ;// CONCATENATED MODULE: ./node_modules/d3/dist/package.js
 var package_name = "d3";
 var version = "6.5.0";
@@ -38,6 +176,59 @@ var files = (/* unused pure expression or super */ null && (["dist/**/*.js","ind
 var scripts = {"pretest":"rimraf dist && mkdir dist && json2module package.json > dist/package.js && rollup -c","test":"tape 'test/**/*-test.js'","prepublishOnly":"yarn test","postpublish":"git push && git push --tags && cd ../d3.github.com && git pull && cp ../d3/dist/d3.js d3.v${npm_package_version%%.*}.js && cp ../d3/dist/d3.min.js d3.v${npm_package_version%%.*}.min.js && git add d3.v${npm_package_version%%.*}.js d3.v${npm_package_version%%.*}.min.js && git commit -m \"d3 ${npm_package_version}\" && git push && cd - && zip -j dist/d3.zip -- LICENSE README.md API.md CHANGES.md dist/d3.js dist/d3.min.js"};
 var devDependencies = {"json2module":"0.0","rimraf":"3","rollup":"2","rollup-plugin-ascii":"0.0","rollup-plugin-node-resolve":"5","rollup-plugin-terser":"7","tape":"4","tape-await":"0.1"};
 var dependencies = {"d3-array":"2","d3-axis":"2","d3-brush":"2","d3-chord":"2","d3-color":"2","d3-contour":"2","d3-delaunay":"5","d3-dispatch":"2","d3-drag":"2","d3-dsv":"2","d3-ease":"2","d3-fetch":"2","d3-force":"2","d3-format":"2","d3-geo":"2","d3-hierarchy":"2","d3-interpolate":"2","d3-path":"2","d3-polygon":"2","d3-quadtree":"2","d3-random":"2","d3-scale":"3","d3-scale-chromatic":"2","d3-selection":"2","d3-shape":"2","d3-time":"2","d3-time-format":"3","d3-timer":"2","d3-transition":"2","d3-zoom":"2"};
+
+;// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
+/* harmony default export */ function ascending(a, b) {
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
+
+
+/* harmony default export */ function bisector(f) {
+  let delta = f;
+  let compare = f;
+
+  if (f.length === 1) {
+    delta = (d, x) => f(d) - x;
+    compare = ascendingComparator(f);
+  }
+
+  function left(a, x, lo, hi) {
+    if (lo == null) lo = 0;
+    if (hi == null) hi = a.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (compare(a[mid], x) < 0) lo = mid + 1;
+      else hi = mid;
+    }
+    return lo;
+  }
+
+  function right(a, x, lo, hi) {
+    if (lo == null) lo = 0;
+    if (hi == null) hi = a.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (compare(a[mid], x) > 0) hi = mid;
+      else lo = mid + 1;
+    }
+    return lo;
+  }
+
+  function center(a, x, lo, hi) {
+    if (lo == null) lo = 0;
+    if (hi == null) hi = a.length;
+    const i = left(a, x, lo, hi - 1);
+    return i > lo && delta(a[i - 1], x) > -delta(a[i], x) ? i - 1 : i;
+  }
+
+  return {left, center, right};
+}
+
+function ascendingComparator(f) {
+  return (d, x) => ascending(f(d), x);
+}
 
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/extent.js
 /* harmony default export */ function extent(values, valueof) {
@@ -68,6 +259,126 @@ var dependencies = {"d3-array":"2","d3-axis":"2","d3-brush":"2","d3-chord":"2","
     }
   }
   return [min, max];
+}
+
+;// CONCATENATED MODULE: ./node_modules/internmap/src/index.js
+class InternMap extends Map {
+  constructor(entries = [], key = keyof) {
+    super();
+    Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
+    for (const [key, value] of entries) this.set(key, value);
+  }
+  get(key) {
+    return super.get(intern_get(this, key));
+  }
+  has(key) {
+    return super.has(intern_get(this, key));
+  }
+  set(key, value) {
+    return super.set(intern_set(this, key), value);
+  }
+  delete(key) {
+    return super.delete(intern_delete(this, key));
+  }
+}
+
+class InternSet extends Set {
+  constructor(values = [], key = keyof) {
+    super();
+    Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
+    for (const value of values) this.add(value);
+  }
+  has(value) {
+    return super.has(intern_get(this, value));
+  }
+  add(value) {
+    return super.add(intern_set(this, value));
+  }
+  delete(value) {
+    return super.delete(intern_delete(this, value));
+  }
+}
+
+function intern_get({_intern, _key}, value) {
+  const key = _key(value);
+  return _intern.has(key) ? _intern.get(key) : value;
+}
+
+function intern_set({_intern, _key}, value) {
+  const key = _key(value);
+  if (_intern.has(key)) return _intern.get(key);
+  _intern.set(key, value);
+  return value;
+}
+
+function intern_delete({_intern, _key}, value) {
+  const key = _key(value);
+  if (_intern.has(key)) {
+    value = _intern.get(value);
+    _intern.delete(key);
+  }
+  return value;
+}
+
+function keyof(value) {
+  return value !== null && typeof value === "object" ? value.valueOf() : value;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-array/src/identity.js
+/* harmony default export */ function src_identity(x) {
+  return x;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-array/src/group.js
+
+
+
+function group(values, ...keys) {
+  return nest(values, src_identity, src_identity, keys);
+}
+
+function groups(values, ...keys) {
+  return nest(values, Array.from, identity, keys);
+}
+
+function rollup(values, reduce, ...keys) {
+  return nest(values, identity, reduce, keys);
+}
+
+function rollups(values, reduce, ...keys) {
+  return nest(values, Array.from, reduce, keys);
+}
+
+function index(values, ...keys) {
+  return nest(values, identity, unique, keys);
+}
+
+function indexes(values, ...keys) {
+  return nest(values, Array.from, unique, keys);
+}
+
+function unique(values) {
+  if (values.length !== 1) throw new Error("duplicate key");
+  return values[0];
+}
+
+function nest(values, map, reduce, keys) {
+  return (function regroup(values, i) {
+    if (i >= keys.length) return reduce(values);
+    const groups = new InternMap();
+    const keyof = keys[i++];
+    let index = -1;
+    for (const value of values) {
+      const key = keyof(value, ++index, values);
+      const group = groups.get(key);
+      if (group) group.push(value);
+      else groups.set(key, [value]);
+    }
+    for (const [key, values] of groups) {
+      groups.set(key, regroup(values, i));
+    }
+    return map(groups);
+  })(values, 0);
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/max.js
@@ -174,7 +485,7 @@ function min(values, valueof) {
 var slice = Array.prototype.slice;
 
 ;// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
-/* harmony default export */ function src_identity(x) {
+/* harmony default export */ function d3_axis_src_identity(x) {
   return x;
 }
 
@@ -225,7 +536,7 @@ function axis(orient, scale) {
 
   function axis(context) {
     var values = tickValues == null ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain()) : tickValues,
-        format = tickFormat == null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : src_identity) : tickFormat,
+        format = tickFormat == null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : d3_axis_src_identity) : tickFormat,
         spacing = Math.max(tickSizeInner, 0) + tickPadding,
         range = scale.range(),
         range0 = +range[0] + 0.5,
@@ -799,7 +1110,7 @@ function datum(node) {
 
 
 /* harmony default export */ function sort(compare) {
-  if (!compare) compare = ascending;
+  if (!compare) compare = sort_ascending;
 
   function compareNode(a, b) {
     return a && b ? compare(a.__data__, b.__data__) : !a - !b;
@@ -817,7 +1128,7 @@ function datum(node) {
   return new Selection(sortgroups, this._parents).order();
 }
 
-function ascending(a, b) {
+function sort_ascending(a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
@@ -4195,59 +4506,6 @@ function tickStep(start, stop, count) {
   return stop < start ? -step1 : step1;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
-/* harmony default export */ function src_ascending(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
-
-
-/* harmony default export */ function bisector(f) {
-  let delta = f;
-  let compare = f;
-
-  if (f.length === 1) {
-    delta = (d, x) => f(d) - x;
-    compare = ascendingComparator(f);
-  }
-
-  function left(a, x, lo, hi) {
-    if (lo == null) lo = 0;
-    if (hi == null) hi = a.length;
-    while (lo < hi) {
-      const mid = (lo + hi) >>> 1;
-      if (compare(a[mid], x) < 0) lo = mid + 1;
-      else hi = mid;
-    }
-    return lo;
-  }
-
-  function right(a, x, lo, hi) {
-    if (lo == null) lo = 0;
-    if (hi == null) hi = a.length;
-    while (lo < hi) {
-      const mid = (lo + hi) >>> 1;
-      if (compare(a[mid], x) > 0) hi = mid;
-      else lo = mid + 1;
-    }
-    return lo;
-  }
-
-  function center(a, x, lo, hi) {
-    if (lo == null) lo = 0;
-    if (hi == null) hi = a.length;
-    const i = left(a, x, lo, hi - 1);
-    return i > lo && delta(a[i - 1], x) > -delta(a[i], x) ? i - 1 : i;
-  }
-
-  return {left, center, right};
-}
-
-function ascendingComparator(f) {
-  return (d, x) => src_ascending(f(d), x);
-}
-
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
 /* harmony default export */ function d3_array_src_number(x) {
   return x === null ? NaN : +x;
@@ -4275,7 +4533,7 @@ function* numbers(values, valueof) {
 
 
 
-const ascendingBisect = bisector(src_ascending);
+const ascendingBisect = bisector(ascending);
 const bisectRight = ascendingBisect.right;
 const bisectLeft = ascendingBisect.left;
 const bisectCenter = bisector(d3_array_src_number).center;
@@ -4925,6 +5183,54 @@ function linear_linear() {
   initRange.apply(scale, arguments);
 
   return linearish(scale);
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
+
+
+const implicit = Symbol("implicit");
+
+function ordinal() {
+  var index = new Map(),
+      domain = [],
+      range = [],
+      unknown = implicit;
+
+  function scale(d) {
+    var key = d + "", i = index.get(key);
+    if (!i) {
+      if (unknown !== implicit) return unknown;
+      index.set(key, i = domain.push(d));
+    }
+    return range[(i - 1) % range.length];
+  }
+
+  scale.domain = function(_) {
+    if (!arguments.length) return domain.slice();
+    domain = [], index = new Map();
+    for (const value of _) {
+      const key = value + "";
+      if (index.has(key)) continue;
+      index.set(key, domain.push(value));
+    }
+    return scale;
+  };
+
+  scale.range = function(_) {
+    return arguments.length ? (range = Array.from(_), scale) : range.slice();
+  };
+
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  };
+
+  scale.copy = function() {
+    return ordinal(domain, range).unknown(unknown);
+  };
+
+  initRange.apply(scale, arguments);
+
+  return scale;
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/interval.js
@@ -6161,7 +6467,439 @@ function time() {
 
 
 
+;// CONCATENATED MODULE: ./node_modules/d3-scale-chromatic/src/colors.js
+/* harmony default export */ function colors(specifier) {
+  var n = specifier.length / 6 | 0, colors = new Array(n), i = 0;
+  while (i < n) colors[i] = "#" + specifier.slice(i * 6, ++i * 6);
+  return colors;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-scale-chromatic/src/categorical/category10.js
+
+
+/* harmony default export */ const category10 = (colors("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf"));
+
+;// CONCATENATED MODULE: ./node_modules/d3-scale-chromatic/src/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;// CONCATENATED MODULE: ./node_modules/d3-path/src/path.js
+const pi = Math.PI,
+    tau = 2 * pi,
+    path_epsilon = 1e-6,
+    tauEpsilon = tau - path_epsilon;
+
+function Path() {
+  this._x0 = this._y0 = // start of current subpath
+  this._x1 = this._y1 = null; // end of current subpath
+  this._ = "";
+}
+
+function path() {
+  return new Path;
+}
+
+Path.prototype = path.prototype = {
+  constructor: Path,
+  moveTo: function(x, y) {
+    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y);
+  },
+  closePath: function() {
+    if (this._x1 !== null) {
+      this._x1 = this._x0, this._y1 = this._y0;
+      this._ += "Z";
+    }
+  },
+  lineTo: function(x, y) {
+    this._ += "L" + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  quadraticCurveTo: function(x1, y1, x, y) {
+    this._ += "Q" + (+x1) + "," + (+y1) + "," + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  bezierCurveTo: function(x1, y1, x2, y2, x, y) {
+    this._ += "C" + (+x1) + "," + (+y1) + "," + (+x2) + "," + (+y2) + "," + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  arcTo: function(x1, y1, x2, y2, r) {
+    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
+    var x0 = this._x1,
+        y0 = this._y1,
+        x21 = x2 - x1,
+        y21 = y2 - y1,
+        x01 = x0 - x1,
+        y01 = y0 - y1,
+        l01_2 = x01 * x01 + y01 * y01;
+
+    // Is the radius negative? Error.
+    if (r < 0) throw new Error("negative radius: " + r);
+
+    // Is this path empty? Move to (x1,y1).
+    if (this._x1 === null) {
+      this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
+    }
+
+    // Or, is (x1,y1) coincident with (x0,y0)? Do nothing.
+    else if (!(l01_2 > path_epsilon));
+
+    // Or, are (x0,y0), (x1,y1) and (x2,y2) collinear?
+    // Equivalently, is (x1,y1) coincident with (x2,y2)?
+    // Or, is the radius zero? Line to (x1,y1).
+    else if (!(Math.abs(y01 * x21 - y21 * x01) > path_epsilon) || !r) {
+      this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
+    }
+
+    // Otherwise, draw an arc!
+    else {
+      var x20 = x2 - x0,
+          y20 = y2 - y0,
+          l21_2 = x21 * x21 + y21 * y21,
+          l20_2 = x20 * x20 + y20 * y20,
+          l21 = Math.sqrt(l21_2),
+          l01 = Math.sqrt(l01_2),
+          l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2),
+          t01 = l / l01,
+          t21 = l / l21;
+
+      // If the start tangent is not coincident with (x0,y0), line to.
+      if (Math.abs(t01 - 1) > path_epsilon) {
+        this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
+      }
+
+      this._ += "A" + r + "," + r + ",0,0," + (+(y01 * x20 > x01 * y20)) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
+    }
+  },
+  arc: function(x, y, r, a0, a1, ccw) {
+    x = +x, y = +y, r = +r, ccw = !!ccw;
+    var dx = r * Math.cos(a0),
+        dy = r * Math.sin(a0),
+        x0 = x + dx,
+        y0 = y + dy,
+        cw = 1 ^ ccw,
+        da = ccw ? a0 - a1 : a1 - a0;
+
+    // Is the radius negative? Error.
+    if (r < 0) throw new Error("negative radius: " + r);
+
+    // Is this path empty? Move to (x0,y0).
+    if (this._x1 === null) {
+      this._ += "M" + x0 + "," + y0;
+    }
+
+    // Or, is (x0,y0) not coincident with the previous point? Line to (x0,y0).
+    else if (Math.abs(this._x1 - x0) > path_epsilon || Math.abs(this._y1 - y0) > path_epsilon) {
+      this._ += "L" + x0 + "," + y0;
+    }
+
+    // Is this arc empty? We’re done.
+    if (!r) return;
+
+    // Does the angle go the wrong way? Flip the direction.
+    if (da < 0) da = da % tau + tau;
+
+    // Is this a complete circle? Draw two arcs to complete the circle.
+    if (da > tauEpsilon) {
+      this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x - dx) + "," + (y - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
+    }
+
+    // Is this arc non-empty? Draw an arc!
+    else if (da > path_epsilon) {
+      this._ += "A" + r + "," + r + ",0," + (+(da >= pi)) + "," + cw + "," + (this._x1 = x + r * Math.cos(a1)) + "," + (this._y1 = y + r * Math.sin(a1));
+    }
+  },
+  rect: function(x, y, w, h) {
+    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y) + "h" + (+w) + "v" + (+h) + "h" + (-w) + "Z";
+  },
+  toString: function() {
+    return this._;
+  }
+};
+
+/* harmony default export */ const src_path = (path);
+
+;// CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
+var array_slice = Array.prototype.slice;
+
+/* harmony default export */ function d3_shape_src_array(x) {
+  return typeof x === "object" && "length" in x
+    ? x // Array, TypedArray, NodeList, array-like
+    : Array.from(x); // Map, Set, iterable, string, or anything else
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-shape/src/constant.js
+/* harmony default export */ function d3_shape_src_constant(x) {
+  return function constant() {
+    return x;
+  };
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/linear.js
+function Linear(context) {
+  this._context = context;
+}
+
+Linear.prototype = {
+  areaStart: function() {
+    this._line = 0;
+  },
+  areaEnd: function() {
+    this._line = NaN;
+  },
+  lineStart: function() {
+    this._point = 0;
+  },
+  lineEnd: function() {
+    if (this._line || (this._line !== 0 && this._point === 1)) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function(x, y) {
+    x = +x, y = +y;
+    switch (this._point) {
+      case 0: this._point = 1; this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y); break;
+      case 1: this._point = 2; // proceed
+      default: this._context.lineTo(x, y); break;
+    }
+  }
+};
+
+/* harmony default export */ function curve_linear(context) {
+  return new Linear(context);
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-shape/src/point.js
+function point_x(p) {
+  return p[0];
+}
+
+function point_y(p) {
+  return p[1];
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-shape/src/line.js
+
+
+
+
+
+
+/* harmony default export */ function src_line(x, y) {
+  var defined = d3_shape_src_constant(true),
+      context = null,
+      curve = curve_linear,
+      output = null;
+
+  x = typeof x === "function" ? x : (x === undefined) ? point_x : d3_shape_src_constant(x);
+  y = typeof y === "function" ? y : (y === undefined) ? point_y : d3_shape_src_constant(y);
+
+  function line(data) {
+    var i,
+        n = (data = d3_shape_src_array(data)).length,
+        d,
+        defined0 = false,
+        buffer;
+
+    if (context == null) output = curve(buffer = src_path());
+
+    for (i = 0; i <= n; ++i) {
+      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+        if (defined0 = !defined0) output.lineStart();
+        else output.lineEnd();
+      }
+      if (defined0) output.point(+x(d, i, data), +y(d, i, data));
+    }
+
+    if (buffer) return output = null, buffer + "" || null;
+  }
+
+  line.x = function(_) {
+    return arguments.length ? (x = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : x;
+  };
+
+  line.y = function(_) {
+    return arguments.length ? (y = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : y;
+  };
+
+  line.defined = function(_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : d3_shape_src_constant(!!_), line) : defined;
+  };
+
+  line.curve = function(_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
+  };
+
+  line.context = function(_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
+  };
+
+  return line;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/none.js
+/* harmony default export */ function offset_none(series, order) {
+  if (!((n = series.length) > 1)) return;
+  for (var i = 1, j, s0, s1 = series[order[0]], n, m = s1.length; i < n; ++i) {
+    s0 = s1, s1 = series[order[i]];
+    for (j = 0; j < m; ++j) {
+      s1[j][1] += s1[j][0] = isNaN(s0[j][1]) ? s0[j][0] : s0[j][1];
+    }
+  }
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/none.js
+/* harmony default export */ function order_none(series) {
+  var n = series.length, o = new Array(n);
+  while (--n >= 0) o[n] = n;
+  return o;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-shape/src/stack.js
+
+
+
+
+
+function stackValue(d, key) {
+  return d[key];
+}
+
+function stackSeries(key) {
+  const series = [];
+  series.key = key;
+  return series;
+}
+
+/* harmony default export */ function stack() {
+  var keys = d3_shape_src_constant([]),
+      order = order_none,
+      offset = offset_none,
+      value = stackValue;
+
+  function stack(data) {
+    var sz = Array.from(keys.apply(this, arguments), stackSeries),
+        i, n = sz.length, j = -1,
+        oz;
+
+    for (const d of data) {
+      for (i = 0, ++j; i < n; ++i) {
+        (sz[i][j] = [0, +value(d, sz[i].key, j, data)]).data = d;
+      }
+    }
+
+    for (i = 0, oz = d3_shape_src_array(order(sz)); i < n; ++i) {
+      sz[oz[i]].index = i;
+    }
+
+    offset(sz, oz);
+    return sz;
+  }
+
+  stack.keys = function(_) {
+    return arguments.length ? (keys = typeof _ === "function" ? _ : d3_shape_src_constant(Array.from(_)), stack) : keys;
+  };
+
+  stack.value = function(_) {
+    return arguments.length ? (value = typeof _ === "function" ? _ : d3_shape_src_constant(+_), stack) : value;
+  };
+
+  stack.order = function(_) {
+    return arguments.length ? (order = _ == null ? order_none : typeof _ === "function" ? _ : d3_shape_src_constant(Array.from(_)), stack) : order;
+  };
+
+  stack.offset = function(_) {
+    return arguments.length ? (offset = _ == null ? offset_none : _, stack) : offset;
+  };
+
+  return stack;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-shape/src/index.js
+
+
+
+
+ // Note: radialArea is deprecated!
+ // Note: radialLine is deprecated!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6759,14 +7497,36 @@ var lodash = __webpack_require__(6486);
 // EXTERNAL MODULE: ./node_modules/flat/index.js
 var flat = __webpack_require__(4444);
 var flat_default = /*#__PURE__*/__webpack_require__.n(flat);
+// EXTERNAL MODULE: ./node_modules/moment/moment.js
+var moment = __webpack_require__(381);
+var moment_default = /*#__PURE__*/__webpack_require__.n(moment);
 ;// CONCATENATED MODULE: ./src/util/getPathToDate.js
 
 
 function getPathToDate(obj, dateTimeFormat) {
-  const paths = flat_default()(obj);
-  return Object.keys(paths).find(path => {
+  var paths = flat_default()(obj);
+  return Object.keys(paths).find(function (path) {
     return moment_default()(paths[path], dateTimeFormat.replaceAll('%', '').toUpperCase(), true).isValid();
   });
+}
+;// CONCATENATED MODULE: ./src/util/formatLabel.js
+function formatLabel(str) {
+  var letters = str.split('.').slice(-1)[0].split(/(?=[A-Z])/);
+  var formattedLetters = letters.map(function (letter, i) {
+    if (i == 0) {
+      return letter.split('').map(function (c, i) {
+        return i == 0 ? c.toUpperCase() : c;
+      }).join('');
+    } else {
+      return letter.toLowerCase();
+    }
+  });
+  return formattedLetters.join(' ');
+}
+;// CONCATENATED MODULE: ./src/util/formatNumber.js
+function formatNumber(num) {
+  num = num.toFixed(2);
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
 var injectStylesIntoStyleTag = __webpack_require__(3379);
@@ -6788,521 +7548,2341 @@ var update = injectStylesIntoStyleTag_default()(cjs_ruleSet_1_rules_1_use_2_src_
 
 /* harmony default export */ const src_style = (cjs_ruleSet_1_rules_1_use_2_src_style/* default.locals */.Z.locals || {});
 ;// CONCATENATED MODULE: ./src/lib.js
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
 
 
 
 
 function timeChart(selector, dataSource, displayedData, options) {
-  const queryVariables = JSON.parse(dataSource.variables); // options = {
-  // 	fields: ['count', 'count2']
+  dataSource = lodash.cloneDeep(dataSource);
+  var queryVariables = JSON.parse(dataSource.variables); // options = {
+  // 	field: 'count',
   // }
 
-  const margin = {
+  var margin = {
     top: 10,
     right: 30,
     bottom: 30,
     left: 70
   },
-        width = 450 - margin.left - margin.right,
-        height = 390 - margin.top - margin.bottom;
-  const data = dataSource.values;
-  const pathToDate = getPathToDate(data[0], queryVariables.dateFormat);
-  data.forEach(d => {
+      width = src_select(selector).node().getBoundingClientRect().width - margin.left - margin.right,
+      height = src_select(selector).node().getBoundingClientRect().height - margin.top - margin.bottom;
+  var data = dataSource.values;
+  var pathToDate = getPathToDate(data[0], queryVariables.dateFormat);
+  var pathToYField = options.yField;
+  var yFieldName = formatLabel(pathToYField);
+  console.log(pathToYField);
+  data.forEach(function (d) {
     d.date = timeParse(queryVariables.dateFormat)(lodash.get(d, pathToDate));
   });
-  let svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-  const x = time().domain(extent(data, function (d) {
-    return d.date;
-  })).range([0, width]).nice(src_month.every(2));
-  const y = linear_linear().domain([0, max(data, function (d) {
-    return d.count;
-  })]).range([height, 0]).nice();
-  const xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(date => {
-    const n = x.ticks().length;
-    return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
-  });
-  const yAxis = axisLeft(y).tickSize(-width);
-  const xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
-  const yAxisGrid = svg.append('g').call(yAxis);
-  yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
-  var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
-  var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart); // BARS //
+  src_select(selector).html('');
 
-  let bars = svg.append('g').attr('clip-path', 'url(#clip)').attr('class', 'bars');
-  bars.selectAll('mybar').data(data).enter().append('rect').attr('x', function (d) {
-    return x(d.date) - 2;
-  }).attr('width', function (d) {
-    return 4;
-  }).attr('y', function (d) {
-    return y(d.count);
-  }).attr('height', function (d) {
-    return height - y(d.count);
-  }).attr('class', 'bar').attr('fill', '#28a745');
-  bars.append('g').attr('class', 'brush').call(brush); // LINE //
-  // let line = svg.append('g').attr('clip-path', 'url(#clip)')
-  // line
-  //   .append('path')
-  //   .datum(data)
-  //   .attr('class', 'line')
-  //   .attr('fill', 'none')
-  //   .attr('stroke', '#28a745')
-  //   .attr('stroke-width', 1.5)
-  //   .attr(
-  //     'd',
-  //     d3
-  //       .line()
-  //       .x(function (d) {
-  //         return x(d.date)
-  //       })
-  //       .y(function (d) {
-  //         return y(d.count)
-  //       })
-  //   )
-  // line.append('g').attr('class', 'brush').call(brush)
-  // SCATTER //
-  // let circles = svg
-  //   .append('g')
-  //   .attr('clip-path', 'url(#clip)')
-  //   .attr('class', 'circles')
-  // circles
-  //   .selectAll('circle')
-  //   .data(data)
-  //   .enter()
-  //   .append('circle')
-  //   .attr('cx', function (d) {
-  //     return x(d.date)
-  //   })
-  //   .attr('cy', function (d) {
-  //     return y(d.count)
-  //   })
-  //   .attr('r', function (d) {
-  //     return 4
-  //   })
-  //   .attr('class', 'circle')
-  //   .attr('fill', '#28a745')
-  // circles.append('g').attr('class', 'brush').call(brush)
+  switch (options.chart) {
+    case 'bar':
+      bar();
+      break;
 
-  function updateChart(event) {
-    const extent = event.selection;
-    var idleTimeout;
+    case 'line':
+      line();
+      break;
 
-    function idled() {
-      idleTimeout = null;
-    }
+    case 'scatter':
+      scatter();
+      break;
 
-    if (!extent) {
-      if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
-      x.domain([4, 8]);
-    } else {
-      // BARS //
-      bars.select('.brush').call(brush.move, null); // LINE //
-      // line.select('.brush').call(brush.move, null)
-      // SCATTER //
-      // circles.select('.brush').call(brush.move, null)
+    case 'stackedBar':
+      stackedBar();
+      break;
 
-      if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
-        return;
-      }
-
-      x.domain([x.invert(extent[0]), x.invert(extent[1])]);
-    }
-
-    xAxisGrid.transition().duration(1000).call(xAxis); // BARS //
-
-    bars.selectAll('.bar').transition().duration(1000).attr('x', function (d) {
-      return x(d.date) - 2;
-    }).attr('width', function (d) {
-      return 4;
-    }).attr('y', function (d) {
-      return y(d.count);
-    }); // LINE //
-    // line
-    //   .select('.line')
-    //   .transition()
-    //   .duration(1000)
-    //   .attr(
-    //     'd',
-    //     d3
-    //       .line()
-    //       .x(function (d) {
-    //         return x(d.date)
-    //       })
-    //       .y(function (d) {
-    //         return y(d.count)
-    //       })
-    //   )
-    // SCATTER //
-    // circles
-    //   .selectAll('.circle')
-    //   .transition()
-    //   .duration(1000)
-    //   .attr('cx', function (d) {
-    //     return x(d.date)
-    //   })
-    //   .attr('cy', function (d) {
-    //     return y(d.count)
-    //   })
-    //   .attr('r', function (d) {
-    //     return 4
-    //   })
+    default:
+      break;
   }
 
-  svg.on('dblclick', function () {
-    x.domain(extent(data, function (d) {
+  function bar() {
+    var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    var x = time().domain(extent(data, function (d) {
       return d.date;
-    })).nice(src_month.every(2));
-    xAxisGrid.transition().call(xAxis); // BARS //
-
-    bars.selectAll('.bar').transition().attr('x', function (d) {
+    })).range([0, width]).nice(src_month.every(2));
+    var y = linear_linear().domain([0, max(data, function (d) {
+      return lodash.get(d, pathToYField);
+    })]).range([height, 0]).nice();
+    var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
+      var n = x.ticks().length;
+      return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
+    });
+    var yAxis = axisLeft(y).tickSize(-width);
+    var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
+    var yAxisGrid = svg.append('g').call(yAxis);
+    yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
+    var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
+    var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart);
+    svg.append('g').attr('class', 'brush').call(brush);
+    var bars = svg.append('g').attr('clip-path', 'url(#clip)').attr('class', 'bars');
+    bars.selectAll('mybar').data(data).enter().append('rect').attr('x', function (d) {
       return x(d.date) - 2;
-    }).attr('width', function (d) {
+    }).attr('width', 4).attr('y', function (d) {
+      return y(lodash.get(d, pathToYField));
+    }).attr('height', function (d) {
+      return height - y(lodash.get(d, pathToYField));
+    }).attr('class', 'bar').attr('fill', '#28a745').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').style('font-size', '12').attr('font-family', 'Nunito, Arial, sans-serif').text('Time');
+    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(yFieldName);
+    var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
+
+    function mouseover() {
+      src_select(this).attr('stroke', 'black').attr('stroke-width', 0.6);
+      tooltip.style('display', null).style('visibility', 'visible');
+    }
+
+    function mousemove(e, d) {
+      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat(queryVariables.dateFormat)(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(yFieldName, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
+      var bodyWidth = src_select('body').style('width').slice(0, -2);
+      var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
+      var tooltipWidth = tooltip.style('width').slice(0, -2);
+      var tooltipX = e.pageX < tooltipWidth / 2 ? 0 : e.pageX + tooltipWidth / 2 > bodyWidth ? bodyWidth - tooltipWidth : e.pageX - tooltipWidth / 2;
+      tooltip.style('top', tooltipheight + 'px').style('left', tooltipX + 'px');
+    }
+
+    function mouseout() {
+      tooltip.style('display', 'none').style('visibility', null);
+      src_select(this).attr('stroke', 'none');
+    }
+
+    function updateChart(event) {
+      var extent = event.selection;
+      var idleTimeout;
+
+      function idled() {
+        idleTimeout = null;
+      }
+
+      if (!extent) {
+        if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
+        x.domain([4, 8]);
+      } else {
+        svg.select('.brush').call(brush.move, null);
+
+        if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
+          return;
+        }
+
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+      }
+
+      xAxisGrid.transition().duration(1000).call(xAxis);
+      bars.selectAll('.bar').transition().duration(1000).attr('x', function (d) {
+        return x(d.date) - 2;
+      }).attr('width', function (d) {
+        return 4;
+      }).attr('y', function (d) {
+        return y(lodash.get(d, pathToYField));
+      });
+    }
+
+    svg.on('dblclick', function () {
+      x.domain(extent(data, function (d) {
+        return d.date;
+      })).nice(src_month.every(2));
+      xAxisGrid.transition().call(xAxis);
+      bars.selectAll('.bar').transition().attr('x', function (d) {
+        return x(d.date) - 2;
+      }).attr('width', function (d) {
+        return 4;
+      }).attr('y', function (d) {
+        return y(lodash.get(d, pathToYField));
+      });
+    });
+  }
+
+  function line() {
+    var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    var x = time().domain(extent(data, function (d) {
+      return d.date;
+    })).range([0, width]).nice(src_month.every(2));
+    var y = linear_linear().domain([0, max(data, function (d) {
+      return lodash.get(d, pathToYField);
+    })]).range([height, 0]).nice();
+    var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
+      var n = x.ticks().length;
+      return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
+    });
+    var yAxis = axisLeft(y).tickSize(-width);
+    var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
+    var yAxisGrid = svg.append('g').call(yAxis);
+    yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
+    var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
+    var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart);
+    svg.append('g').attr('class', 'brush').call(brush);
+    var line = svg.append('g').attr('clip-path', 'url(#clip)');
+    line.append('path').datum(data).attr('class', 'line').attr('fill', 'none').attr('stroke', '#28a745').attr('stroke-width', 1.5).attr('d', src_line().x(function (d) {
+      return x(d.date);
+    }).y(function (d) {
+      return y(lodash.get(d, pathToYField));
+    }));
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
+    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(yFieldName);
+    var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
+    var bisectDate = bisector(function (d) {
+      return d.date;
+    }).left;
+    var focus = svg.append('g').attr('class', 'focus').style('display', 'none');
+    focus.append('circle').attr('r', 3);
+    svg.on('mouseover', mouseover).on('mouseout', mouseout).on('mousemove', mousemove);
+
+    function mouseover() {
+      focus.style('display', null);
+      tooltip.style('display', null).style('visibility', 'visible');
+    }
+
+    function mouseout() {
+      focus.style('display', 'none');
+      tooltip.style('display', 'none').style('visibility', null);
+    }
+
+    function mousemove(e) {
+      var x0 = x.invert(src_pointer(e)[0]),
+          i = bisectDate(data, x0, 1),
+          d0 = data[i - 1],
+          d1 = data[i] || d0,
+          d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+      focus.attr('transform', 'translate(' + x(d.date) + ',' + y(lodash.get(d, pathToYField)) + ')');
+      var tooltipheight = tooltip.style('height').slice(0, -2);
+      var tooltipWidth = tooltip.style('width').slice(0, -2);
+      tooltip.style('left', src_select(selector).node().getBoundingClientRect().x + x(d.date) + 10 + 'px').style('top', src_select(selector).node().getBoundingClientRect().y + y(lodash.get(d, pathToYField)) - tooltipheight - 5 + 'px');
+      tooltip.html("<ul>\n\t\t\t\t\t<li>Date: ".concat(timeFormat(queryVariables.dateFormat)(d.date), "</li>\n\t\t\t\t\t<li>").concat(yFieldName, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t</ul>"));
+    }
+
+    function updateChart(event) {
+      // mouseout()
+      var extent = event.selection;
+      var idleTimeout;
+
+      function idled() {
+        idleTimeout = null;
+      }
+
+      if (!extent) {
+        if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
+        x.domain([4, 8]);
+      } else {
+        svg.select('.brush').call(brush.move, null);
+
+        if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
+          return;
+        }
+
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+      }
+
+      xAxisGrid.transition().duration(1000).call(xAxis);
+      line.select('.line').transition().duration(1000).attr('d', src_line().x(function (d) {
+        return x(d.date);
+      }).y(function (d) {
+        return y(lodash.get(d, pathToYField));
+      })); // setTimeout(() => {
+      //   mouseover()
+      //   mousemove(event)
+      // }, 1000)
+    }
+
+    svg.on('dblclick', function () {
+      // mouseout()
+      x.domain(extent(data, function (d) {
+        return d.date;
+      })).nice(src_month.every(2));
+      xAxisGrid.transition().call(xAxis);
+      line.select('.line').transition().attr('d', src_line().x(function (d) {
+        return x(d.date);
+      }).y(function (d) {
+        return y(lodash.get(d, pathToYField));
+      })); // setTimeout(() => {
+      // 	mouseover()
+      // 	mousemove(event)
+      // }, 1000)
+    });
+  }
+
+  function scatter() {
+    var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    var x = time().domain(extent(data, function (d) {
+      return d.date;
+    })).range([0, width]).nice(src_month.every(2));
+    var y = linear_linear().domain([0, max(data, function (d) {
+      return lodash.get(d, pathToYField);
+    })]).range([height, 0]).nice();
+    var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
+      var n = x.ticks().length;
+      return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
+    });
+    var yAxis = axisLeft(y).tickSize(-width);
+    var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
+    var yAxisGrid = svg.append('g').call(yAxis);
+    yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
+    var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
+    var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart);
+    svg.append('g').attr('class', 'brush').call(brush);
+    var circles = svg.append('g').attr('clip-path', 'url(#clip)').attr('class', 'circles');
+    circles.selectAll('circle').data(data).enter().append('circle').attr('cx', function (d) {
+      return x(d.date);
+    }).attr('cy', function (d) {
+      return y(lodash.get(d, pathToYField));
+    }).attr('r', function (d) {
       return 4;
-    }).attr('y', function (d) {
-      return y(d.count);
-    }); // Line //
-    // line
-    //   .select('.line')
-    //   .transition()
-    //   .attr(
-    //     'd',
-    //     d3
-    //       .line()
-    //       .x(function (d) {
-    //         return x(d.date)
-    //       })
-    //       .y(function (d) {
-    //         return y(d.count)
-    //       })
-    //   )
-    // SCATTER //
-    // circles
-    //   .selectAll('.circle')
-    //   .transition()
-    //   .attr('cx', function (d) {
-    //     return x(d.date)
-    //   })
-    //   .attr('cy', function (d) {
-    //     return y(d.count)
-    //   })
-    //   .attr('r', function (d) {
-    //     return 4
-    //   })
-  });
+    }).attr('class', 'circle').attr('fill', '#28a745').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
+    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(yFieldName);
+    var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
+
+    function mouseover() {
+      src_select(this).attr('stroke', 'black').attr('stroke-width', 0.6);
+      tooltip.style('display', null).style('visibility', 'visible');
+    }
+
+    function mousemove(e, d) {
+      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat(queryVariables.dateFormat)(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(yFieldName, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
+      var bodyWidth = src_select('body').style('width').slice(0, -2);
+      var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
+      var tooltipWidth = tooltip.style('width').slice(0, -2);
+      var tooltipX = e.pageX < tooltipWidth / 2 ? 0 : e.pageX + tooltipWidth / 2 > bodyWidth ? bodyWidth - tooltipWidth : e.pageX - tooltipWidth / 2;
+      tooltip.style('top', tooltipheight + 'px').style('left', tooltipX + 'px');
+    }
+
+    function mouseout() {
+      tooltip.style('display', 'none').style('visibility', null);
+      src_select(this).attr('stroke', 'none');
+    }
+
+    function updateChart(event) {
+      var extent = event.selection;
+      var idleTimeout;
+
+      function idled() {
+        idleTimeout = null;
+      }
+
+      if (!extent) {
+        if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
+        x.domain([4, 8]);
+      } else {
+        svg.select('.brush').call(brush.move, null);
+
+        if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
+          return;
+        }
+
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+      }
+
+      xAxisGrid.transition().duration(1000).call(xAxis);
+      circles.selectAll('.circle').transition().duration(1000).attr('cx', function (d) {
+        return x(d.date);
+      }).attr('cy', function (d) {
+        return y(lodash.get(d, pathToYField));
+      }).attr('r', function (d) {
+        return 4;
+      });
+    }
+
+    svg.on('dblclick', function () {
+      x.domain(extent(data, function (d) {
+        return d.date;
+      })).nice(src_month.every(2));
+      xAxisGrid.transition().call(xAxis);
+      circles.selectAll('.circle').transition().attr('cx', function (d) {
+        return x(d.date);
+      }).attr('cy', function (d) {
+        return y(lodash.get(d, pathToYField));
+      }).attr('r', function (d) {
+        return 4;
+      });
+    });
+  }
+
+  function stackedBar() {
+    var subgroups = lodash.uniq(data.map(function (d) {
+      return d.exchange.fullName;
+    }));
+
+    console.log(subgroups);
+    var wide = Array.from(group(data, function (d) {
+      return d.date;
+    })).map(function (d) {
+      var newVal = {
+        date: d[0],
+        queryFields: d[1][0]
+      };
+      d[1].forEach(function (d) {
+        Object.assign(newVal, _defineProperty({}, d.exchange.fullName, d.count));
+      });
+      subgroups.forEach(function (name) {
+        if (!(name in newVal)) {
+          Object.assign(newVal, _defineProperty({}, name, 0));
+        }
+      });
+      return newVal;
+    });
+    console.log(wide);
+    var groups = wide.map(function (d) {
+      return d.date;
+    });
+    console.log(groups);
+    var color = ordinal(category10);
+    var stackedData = stack().keys(subgroups)(wide);
+    console.log(stackedData);
+    var yMax = max(wide.map(function (d) {
+      var acc = 0;
+
+      for (var k in d) {
+        if (_typeof(d[k]) !== 'object') {
+          acc += d[k];
+        }
+      }
+
+      return acc;
+    }));
+    var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    var x = time().domain(extent(groups)).range([0, width]).nice(src_month.every(2));
+    var y = linear_linear().domain([0, yMax]).range([height, 0]).nice();
+    var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
+      var n = x.ticks().length;
+      return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
+    });
+    var yAxis = axisLeft(y).tickSize(-width);
+    var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
+    var yAxisGrid = svg.append('g').call(yAxis);
+    yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
+    var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
+    var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart);
+    svg.append('g').attr('class', 'brush').call(brush);
+    var barsLayers = svg.append('g').attr('clip-path', 'url(#clip)').attr('class', 'bars');
+    var bars = barsLayers.selectAll('g').data(stackedData).join('g').attr('fill', function (d) {
+      return color(d.key);
+    });
+    bars.selectAll('mybar').data(function (d) {
+      return d;
+    }).enter().append('rect').attr('x', function (d) {
+      return x(d.data.date);
+    }).attr('width', 4).attr('y', function (d) {
+      return y(d[1]);
+    }).attr('height', function (d) {
+      return y(d[0]) - y(d[1]);
+    }).attr('class', 'bar').attr('pointer-events', 'all').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
+    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Count');
+    var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
+
+    function mouseover() {
+      src_select(this).attr('stroke', 'black').attr('stroke-width', 0.6);
+      tooltip.style('display', null).style('visibility', 'visible');
+    }
+
+    function mousemove(e, d) {
+      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat(queryVariables.dateFormat)(d.data.queryFields.date), "</li>\n\t\t\t\t\t\t<li>Name: ").concat(d.data.queryFields.exchange.fullName, "</li>\n\t\t\t\t\t\t<li>Count: ").concat(d[1] - d[0], "</li>\n\t\t\t\t\t\t<li>Amount: ").concat(d.data.queryFields.tradeAmount, "</li>\n\t\t\t\t\t</ul>"));
+      var bodyWidth = src_select('body').style('width').slice(0, -2);
+      var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
+      var tooltipWidth = tooltip.style('width').slice(0, -2);
+      var tooltipX = e.pageX < tooltipWidth / 2 ? 0 : e.pageX + tooltipWidth / 2 > bodyWidth ? bodyWidth - tooltipWidth : e.pageX - tooltipWidth / 2;
+      tooltip.style('top', tooltipheight + 'px').style('left', tooltipX + 'px');
+    }
+
+    function mouseout() {
+      tooltip.style('display', 'none').style('visibility', null);
+      src_select(this).attr('stroke', 'none');
+    }
+
+    function updateChart(event) {
+      var extent = event.selection;
+      var idleTimeout;
+
+      function idled() {
+        idleTimeout = null;
+      }
+
+      if (!extent) {
+        if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
+        x.domain([4, 8]);
+      } else {
+        svg.select('.brush').call(brush.move, null);
+
+        if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
+          return;
+        }
+
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+      }
+
+      xAxisGrid.transition().duration(1000).call(xAxis);
+      bars.selectAll('.bar').transition().duration(1000).attr('x', function (d) {
+        return x(d.data.date);
+      }).attr('y', function (d) {
+        return y(d[1]);
+      }).attr('height', function (d) {
+        return y(d[0]) - y(d[1]);
+      });
+    }
+
+    svg.on('dblclick', function () {
+      x.domain(extent(data, function (d) {
+        return d.date;
+      })).nice(src_month.every(2));
+      xAxisGrid.transition().call(xAxis);
+      bars.selectAll('.bar').transition().attr('x', function (d) {
+        return x(d.data.date);
+      }).attr('y', function (d) {
+        return y(d[1]);
+      }).attr('height', function (d) {
+        return y(d[0]) - y(d[1]);
+      });
+    });
+  } // bar()
+  // line()
+  // scatter()
+  // stackedBar()
+
+}
+;// CONCATENATED MODULE: ./src/reactComponents/TimeChartRenderer.js
+
+
+
+function TimeChartRenderer(_ref) {
+  var el = _ref.el,
+      config = _ref.config,
+      dataSource = _ref.dataSource,
+      displayedData = _ref.displayedData;
+  (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
+    if (dataSource && config && displayedData && dataSource.data) {
+      try {
+        el && timeChart("#".concat(el), dataSource, displayedData, {
+          chart: config.chartType,
+          yField: config.y.field
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [JSON.stringify(config), JSON.stringify(dataSource), displayedData]);
+  if (!dataSource) return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", null);
+  return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
+    className: "widget-display"
+  }, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
+    style: {
+      width: '100%',
+      overflowY: 'hidden'
+    },
+    id: el
+  }));
+}
+
+/* harmony default export */ const reactComponents_TimeChartRenderer = (TimeChartRenderer);
+;// CONCATENATED MODULE: ./src/util/hasQuantative.js
+function hasQuantative(model) {
+  var flag = false;
+
+  function has(item) {
+    if (item.selectionSet) {
+      item.selectionSet.selections.forEach(function (i) {
+        console.log(i.typeInfo.toString());
+
+        if (i.typeInfo.toString().includes('Int') || i.typeInfo.toString().includes('Float')) {
+          flag = true;
+        } else {
+          has(i);
+        }
+      });
+    }
+  }
+
+  if (model.selectionSet) {
+    has(model); // model.selectionSet.selections.forEach((item) => {
+    //   has(item)
+    //   console.log('flag = ', flag)
+    // })
+  }
+
+  return flag;
 }
 ;// CONCATENATED MODULE: ./src/index.js
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 
-const dataSource = {
-  values: [{
-    date: {
-      date: '2015-08'
-    },
-    count: 85609
-  }, {
-    date: {
-      date: '2015-09'
-    },
-    count: 173805
-  }, {
-    date: {
-      date: '2015-10'
-    },
-    count: 205045
-  }, {
-    date: {
-      date: '2015-11'
-    },
-    count: 234733
-  }, {
-    date: {
-      date: '2015-12'
-    },
-    count: 347092
-  }, {
-    date: {
-      date: '2016-01'
-    },
-    count: 404816
-  }, {
-    date: {
-      date: '2016-02'
-    },
-    count: 520040
-  }, {
-    date: {
-      date: '2016-03'
-    },
-    count: 917170
-  }, {
-    date: {
-      date: '2016-04'
-    },
-    count: 1023096
-  }, {
-    date: {
-      date: '2016-05'
-    },
-    count: 1346796
-  }, {
-    date: {
-      date: '2016-06'
-    },
-    count: 1351536
-  }, {
-    date: {
-      date: '2016-07'
-    },
-    count: 1043970
-  }, {
-    date: {
-      date: '2016-08'
-    },
-    count: 491067
-  }, {
-    date: {
-      date: '2016-09'
-    },
-    count: 426772
-  }, {
-    date: {
-      date: '2016-10'
-    },
-    count: 515381
-  }, {
-    date: {
-      date: '2016-11'
-    },
-    count: 324952
-  }, {
-    date: {
-      date: '2016-12'
-    },
-    count: 508180
-  }, {
-    date: {
-      date: '2017-01'
-    },
-    count: 566374
-  }, {
-    date: {
-      date: '2017-02'
-    },
-    count: 563292
-  }, {
-    date: {
-      date: '2017-03'
-    },
-    count: 660392
-  }, {
-    date: {
-      date: '2017-04'
-    },
-    count: 701086
-  }, {
-    date: {
-      date: '2017-05'
-    },
-    count: 932771
-  }, {
-    date: {
-      date: '2017-06'
-    },
-    count: 870862
-  }, {
-    date: {
-      date: '2017-07'
-    },
-    count: 960310
-  }, {
-    date: {
-      date: '2017-08'
-    },
-    count: 1084782
-  }, {
-    date: {
-      date: '2017-09'
-    },
-    count: 1139438
-  }, {
-    date: {
-      date: '2017-10'
-    },
-    count: 1172986
-  }, {
-    date: {
-      date: '2017-11'
-    },
-    count: 1260095
-  }, {
-    date: {
-      date: '2017-12'
-    },
-    count: 1485878
-  }, {
-    date: {
-      date: '2018-01'
-    },
-    count: 1597171
-  }, {
-    date: {
-      date: '2018-02'
-    },
-    count: 1327157
-  }, {
-    date: {
-      date: '2018-03'
-    },
-    count: 1460186
-  }, {
-    date: {
-      date: '2018-04'
-    },
-    count: 1089815
-  }, {
-    date: {
-      date: '2018-05'
-    },
-    count: 955168
-  }, {
-    date: {
-      date: '2018-06'
-    },
-    count: 1276822
-  }, {
-    date: {
-      date: '2018-07'
-    },
-    count: 1480564
-  }, {
-    date: {
-      date: '2018-08'
-    },
-    count: 1506989
-  }, {
-    date: {
-      date: '2018-09'
-    },
-    count: 1374135
-  }, {
-    date: {
-      date: '2018-10'
-    },
-    count: 1419737
-  }, {
-    date: {
-      date: '2018-11'
-    },
-    count: 1421095
-  }, {
-    date: {
-      date: '2018-12'
-    },
-    count: 1662598
-  }, {
-    date: {
-      date: '2019-01'
-    },
-    count: 1613137
-  }, {
-    date: {
-      date: '2019-02'
-    },
-    count: 1164598
-  }, {
-    date: {
-      date: '2019-03'
-    },
-    count: 1260400
-  }, {
-    date: {
-      date: '2019-04'
-    },
-    count: 1134398
-  }, {
-    date: {
-      date: '2019-05'
-    },
-    count: 1256839
-  }, {
-    date: {
-      date: '2019-06'
-    },
-    count: 1275689
-  }, {
-    date: {
-      date: '2019-07'
-    },
-    count: 1379967
-  }, {
-    date: {
-      date: '2019-08'
-    },
-    count: 1157152
-  }, {
-    date: {
-      date: '2019-09'
-    },
-    count: 1024410
-  }, {
-    date: {
-      date: '2019-10'
-    },
-    count: 1129522
-  }, {
-    date: {
-      date: '2019-11'
-    },
-    count: 1539733
-  }, {
-    date: {
-      date: '2019-12'
-    },
-    count: 1488030
-  }, {
-    date: {
-      date: '2020-01'
-    },
-    count: 1189115
-  }, {
-    date: {
-      date: '2020-02'
-    },
-    count: 1381871
-  }, {
-    date: {
-      date: '2020-03'
-    },
-    count: 1143143
-  }, {
-    date: {
-      date: '2020-04'
-    },
-    count: 1055629
-  }, {
-    date: {
-      date: '2020-05'
-    },
-    count: 1164868
-  }, {
-    date: {
-      date: '2020-06'
-    },
-    count: 991380
-  }, {
-    date: {
-      date: '2020-07'
-    },
-    count: 1131651
-  }, {
-    date: {
-      date: '2020-08'
-    },
-    count: 36847
-  }],
-  variables: "{\"dateFormat\":\"%Y-%m\"}"
-};
-timeChart('#chart', dataSource); // console.log(moment)
-// console.log(dataSource.values)
+
+
+
+var TimeChartPlugin = /*#__PURE__*/function () {
+  function TimeChartPlugin() {
+    _classCallCheck(this, TimeChartPlugin);
+
+    this.id = 'time.chart';
+    this.name = 'Time Chart';
+    this.editor = reactComponents_TimeChartEditor;
+    this.renderer = reactComponents_TimeChartRenderer;
+  }
+
+  _createClass(TimeChartPlugin, [{
+    key: "supportsModel",
+    value: function supportsModel(model) {
+      console.log(model);
+
+      for (var key in model) {
+        if (model[key].typeInfo.toString()[0] === '[' && model[key].typeInfo.toString().slice(-2, -1) !== '0') {
+          return hasQuantative(model[key]);
+        }
+
+        return false;
+      }
+    }
+  }]);
+
+  return TimeChartPlugin;
+}();
+
+var timeChartPlugins = [new TimeChartPlugin()]; // import moment from 'moment'
+// import { timeChart } from './lib'
+// const dataSource = {
+//   values: [
+//     {
+//       date: {
+//         date: '2015-08',
+//       },
+//       count: 85609,
+//     },
+//     {
+//       date: {
+//         date: '2015-09',
+//       },
+//       count: 173805,
+//     },
+//     {
+//       date: {
+//         date: '2015-10',
+//       },
+//       count: 205045,
+//     },
+//     {
+//       date: {
+//         date: '2015-11',
+//       },
+//       count: 234733,
+//     },
+//     {
+//       date: {
+//         date: '2015-12',
+//       },
+//       count: 347092,
+//     },
+//     {
+//       date: {
+//         date: '2016-01',
+//       },
+//       count: 404816,
+//     },
+//     {
+//       date: {
+//         date: '2016-02',
+//       },
+//       count: 520040,
+//     },
+//     {
+//       date: {
+//         date: '2016-03',
+//       },
+//       count: 917170,
+//     },
+//     {
+//       date: {
+//         date: '2016-04',
+//       },
+//       count: 1023096,
+//     },
+//     {
+//       date: {
+//         date: '2016-05',
+//       },
+//       count: 1346796,
+//     },
+//     {
+//       date: {
+//         date: '2016-06',
+//       },
+//       count: 1351536,
+//     },
+//     {
+//       date: {
+//         date: '2016-07',
+//       },
+//       count: 1043970,
+//     },
+//     {
+//       date: {
+//         date: '2016-08',
+//       },
+//       count: 491067,
+//     },
+//     {
+//       date: {
+//         date: '2016-09',
+//       },
+//       count: 426772,
+//     },
+//     {
+//       date: {
+//         date: '2016-10',
+//       },
+//       count: 515381,
+//     },
+//     {
+//       date: {
+//         date: '2016-11',
+//       },
+//       count: 324952,
+//     },
+//     {
+//       date: {
+//         date: '2016-12',
+//       },
+//       count: 508180,
+//     },
+//     {
+//       date: {
+//         date: '2017-01',
+//       },
+//       count: 566374,
+//     },
+//     {
+//       date: {
+//         date: '2017-02',
+//       },
+//       count: 563292,
+//     },
+//     {
+//       date: {
+//         date: '2017-03',
+//       },
+//       count: 660392,
+//     },
+//     {
+//       date: {
+//         date: '2017-04',
+//       },
+//       count: 701086,
+//     },
+//     {
+//       date: {
+//         date: '2017-05',
+//       },
+//       count: 932771,
+//     },
+//     {
+//       date: {
+//         date: '2017-06',
+//       },
+//       count: 870862,
+//     },
+//     {
+//       date: {
+//         date: '2017-07',
+//       },
+//       count: 960310,
+//     },
+//     {
+//       date: {
+//         date: '2017-08',
+//       },
+//       count: 1084782,
+//     },
+//     {
+//       date: {
+//         date: '2017-09',
+//       },
+//       count: 1139438,
+//     },
+//     {
+//       date: {
+//         date: '2017-10',
+//       },
+//       count: 1172986,
+//     },
+//     {
+//       date: {
+//         date: '2017-11',
+//       },
+//       count: 1260095,
+//     },
+//     {
+//       date: {
+//         date: '2017-12',
+//       },
+//       count: 1485878,
+//     },
+//     {
+//       date: {
+//         date: '2018-01',
+//       },
+//       count: 1597171,
+//     },
+//     {
+//       date: {
+//         date: '2018-02',
+//       },
+//       count: 1327157,
+//     },
+//     {
+//       date: {
+//         date: '2018-03',
+//       },
+//       count: 1460186,
+//     },
+//     {
+//       date: {
+//         date: '2018-04',
+//       },
+//       count: 1089815,
+//     },
+//     {
+//       date: {
+//         date: '2018-05',
+//       },
+//       count: 955168,
+//     },
+//     {
+//       date: {
+//         date: '2018-06',
+//       },
+//       count: 1276822,
+//     },
+//     {
+//       date: {
+//         date: '2018-07',
+//       },
+//       count: 1480564,
+//     },
+//     {
+//       date: {
+//         date: '2018-08',
+//       },
+//       count: 1506989,
+//     },
+//     {
+//       date: {
+//         date: '2018-09',
+//       },
+//       count: 1374135,
+//     },
+//     {
+//       date: {
+//         date: '2018-10',
+//       },
+//       count: 1419737,
+//     },
+//     {
+//       date: {
+//         date: '2018-11',
+//       },
+//       count: 1421095,
+//     },
+//     {
+//       date: {
+//         date: '2018-12',
+//       },
+//       count: 1662598,
+//     },
+//     {
+//       date: {
+//         date: '2019-01',
+//       },
+//       count: 1613137,
+//     },
+//     {
+//       date: {
+//         date: '2019-02',
+//       },
+//       count: 1164598,
+//     },
+//     {
+//       date: {
+//         date: '2019-03',
+//       },
+//       count: 1260400,
+//     },
+//     {
+//       date: {
+//         date: '2019-04',
+//       },
+//       count: 1134398,
+//     },
+//     {
+//       date: {
+//         date: '2019-05',
+//       },
+//       count: 1256839,
+//     },
+//     {
+//       date: {
+//         date: '2019-06',
+//       },
+//       count: 1275689,
+//     },
+//     {
+//       date: {
+//         date: '2019-07',
+//       },
+//       count: 1379967,
+//     },
+//     {
+//       date: {
+//         date: '2019-08',
+//       },
+//       count: 1157152,
+//     },
+//     {
+//       date: {
+//         date: '2019-09',
+//       },
+//       count: 1024410,
+//     },
+//     {
+//       date: {
+//         date: '2019-10',
+//       },
+//       count: 1129522,
+//     },
+//     {
+//       date: {
+//         date: '2019-11',
+//       },
+//       count: 1539733,
+//     },
+//     {
+//       date: {
+//         date: '2019-12',
+//       },
+//       count: 1488030,
+//     },
+//     {
+//       date: {
+//         date: '2020-01',
+//       },
+//       count: 1189115,
+//     },
+//     {
+//       date: {
+//         date: '2020-02',
+//       },
+//       count: 1381871,
+//     },
+//     {
+//       date: {
+//         date: '2020-03',
+//       },
+//       count: 1143143,
+//     },
+//     {
+//       date: {
+//         date: '2020-04',
+//       },
+//       count: 1055629,
+//     },
+//     {
+//       date: {
+//         date: '2020-05',
+//       },
+//       count: 1164868,
+//     },
+//     {
+//       date: {
+//         date: '2020-06',
+//       },
+//       count: 991380,
+//     },
+//     {
+//       date: {
+//         date: '2020-07',
+//       },
+//       count: 1131651,
+//     },
+//     {
+//       date: {
+//         date: '2020-08',
+//       },
+//       count: 36847,
+//     },
+//   ],
+//   variables: "{\"dateFormat\":\"%Y-%m\"}"
+// }
+// const dataSource = {
+//   values: [
+// 		{
+// 			"date": {
+// 				"date": "2016-07"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 30,
+// 			"tradeAmount": 307.284080088563
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2016-08"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 3,
+// 			"tradeAmount": 20.611912403774262
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2016-08"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 74,
+// 			"tradeAmount": 1974.5760809461967
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2016-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 308,
+// 			"tradeAmount": 79896.57939090469
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2016-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 737,
+// 			"tradeAmount": 91048.71208298755
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2016-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 455,
+// 			"tradeAmount": 48700.60989114314
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2016-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 373,
+// 			"tradeAmount": 19906.04864635569
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 670,
+// 			"tradeAmount": 65678.27738303461
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 735,
+// 			"tradeAmount": 57046.753019930446
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 1357,
+// 			"tradeAmount": 162095.514236298
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 4001,
+// 			"tradeAmount": 877354.5929028331
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-05"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 4851,
+// 			"tradeAmount": 1984897.596753992
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-05"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DecentrEx"
+// 			},
+// 			"count": 28,
+// 			"tradeAmount": 3741.3638027109905
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-05"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 13,
+// 			"tradeAmount": 25.667431121160526
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-06"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 39,
+// 			"tradeAmount": 64.8632046590484
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-06"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DecentrEx"
+// 			},
+// 			"count": 747,
+// 			"tradeAmount": 1222610.4759279059
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-06"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 25552,
+// 			"tradeAmount": 16739772.958581122
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-07"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 133346,
+// 			"tradeAmount": 89065588.60367215
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-07"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 6,
+// 			"tradeAmount": 19.10832222290039
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-07"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DecentrEx"
+// 			},
+// 			"count": 688,
+// 			"tradeAmount": 8820.611676319593
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-08"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DecentrEx"
+// 			},
+// 			"count": 349,
+// 			"tradeAmount": 206586.20076090528
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-08"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 227229,
+// 			"tradeAmount": 146620262.17566127
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-08"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Zerox Exchange"
+// 			},
+// 			"count": 16244,
+// 			"tradeAmount": 10644896.700010879
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Zerox Exchange"
+// 			},
+// 			"count": 23,
+// 			"tradeAmount": 5900.005549799632
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "IDEX"
+// 			},
+// 			"count": 106,
+// 			"tradeAmount": 143.08165883208687
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 66,
+// 			"tradeAmount": 9470424.14613071
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Zerox Exchange>"
+// 			},
+// 			"count": 19,
+// 			"tradeAmount": 534.0174081549724
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "TokenStore"
+// 			},
+// 			"count": 388,
+// 			"tradeAmount": 19959.707092537865
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DecentrEx"
+// 			},
+// 			"count": 465,
+// 			"tradeAmount": 166070.05603669418
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Radar Relay"
+// 			},
+// 			"count": 3,
+// 			"tradeAmount": 395.3969096134733
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Oasis"
+// 			},
+// 			"count": 188,
+// 			"tradeAmount": 0
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-09"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 220031,
+// 			"tradeAmount": 126025457.18469445
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bancor Network"
+// 			},
+// 			"count": 558,
+// 			"tradeAmount": 1874614.0299382773
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "IDEX"
+// 			},
+// 			"count": 1624,
+// 			"tradeAmount": 750229.9992693465
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "TokenStore"
+// 			},
+// 			"count": 540,
+// 			"tradeAmount": 26891.530323183662
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 403238,
+// 			"tradeAmount": 157220256.73374483
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Oasis"
+// 			},
+// 			"count": 301,
+// 			"tradeAmount": 28963.68887278724
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Air Swap"
+// 			},
+// 			"count": 10252,
+// 			"tradeAmount": 13116471.929474456
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Zerox Exchange"
+// 			},
+// 			"count": 50,
+// 			"tradeAmount": 351.7272005200386
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 25,
+// 			"tradeAmount": 1679338.777271138
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DecentrEx"
+// 			},
+// 			"count": 2049,
+// 			"tradeAmount": 1131474.5737546023
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Radar Relay"
+// 			},
+// 			"count": 741,
+// 			"tradeAmount": 75465.7737292788
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-10"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Zerox Exchange>"
+// 			},
+// 			"count": 19,
+// 			"tradeAmount": 1253.3484905403732
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Zerox Exchange>"
+// 			},
+// 			"count": 13,
+// 			"tradeAmount": 491.3931185972085
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "IDEX"
+// 			},
+// 			"count": 7563,
+// 			"tradeAmount": 2688535.690183154
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 15,
+// 			"tradeAmount": 2015822.161890727
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 589227,
+// 			"tradeAmount": 206288729.48779154
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DecentrEx"
+// 			},
+// 			"count": 2194,
+// 			"tradeAmount": 1766126.8454869129
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Oasis"
+// 			},
+// 			"count": 782,
+// 			"tradeAmount": 11505.410504415631
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Zerox Exchange"
+// 			},
+// 			"count": 8,
+// 			"tradeAmount": 209.95082762598992
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bancor Network"
+// 			},
+// 			"count": 3799,
+// 			"tradeAmount": 19151500.00374058
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "TokenStore"
+// 			},
+// 			"count": 864,
+// 			"tradeAmount": 68539.1662533912
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Radar Relay"
+// 			},
+// 			"count": 1091,
+// 			"tradeAmount": 147820.0298455673
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-11"
+// 			},
+// 			"exchange": {
+// 				"fullName": "SingularX"
+// 			},
+// 			"count": 515,
+// 			"tradeAmount": 94722.4339992522
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "TokenStore"
+// 			},
+// 			"count": 3797,
+// 			"tradeAmount": 3082196.2595776552
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Radar Relay"
+// 			},
+// 			"count": 1953,
+// 			"tradeAmount": 1120199.3322171266
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Oasis"
+// 			},
+// 			"count": 2693,
+// 			"tradeAmount": 8001488.8137915945
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "IDEX"
+// 			},
+// 			"count": 5459,
+// 			"tradeAmount": 3778600.609691428
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DecentrEx"
+// 			},
+// 			"count": 1060,
+// 			"tradeAmount": 1818339.9260447246
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "SingularX"
+// 			},
+// 			"count": 442,
+// 			"tradeAmount": 328339.5133101141
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Zerox Exchange"
+// 			},
+// 			"count": 18,
+// 			"tradeAmount": 11.028114569454193
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 24,
+// 			"tradeAmount": 9364757.04082221
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bancor Network"
+// 			},
+// 			"count": 5458,
+// 			"tradeAmount": 56685375.12911614
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 481982,
+// 			"tradeAmount": 359532622.106716
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2017-12"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Zerox Exchange>"
+// 			},
+// 			"count": 64,
+// 			"tradeAmount": 1352.703817294963
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Zerox Exchange"
+// 			},
+// 			"count": 1539,
+// 			"tradeAmount": 488355.95800305536
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bancor Network"
+// 			},
+// 			"count": 18003,
+// 			"tradeAmount": 114913856.8967118
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "SingularX"
+// 			},
+// 			"count": 515,
+// 			"tradeAmount": 409760.6562573888
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 661,
+// 			"tradeAmount": 90616504.95287937
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "ERC dEX"
+// 			},
+// 			"count": 91,
+// 			"tradeAmount": 9186.243746960581
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Zerox Exchange>"
+// 			},
+// 			"count": 45,
+// 			"tradeAmount": 1525.1344949312006
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "TokenStore"
+// 			},
+// 			"count": 4772,
+// 			"tradeAmount": 6129249.072355403
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Kyber Network>"
+// 			},
+// 			"count": 275,
+// 			"tradeAmount": 65141.69342370212
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DDEX"
+// 			},
+// 			"count": 283,
+// 			"tradeAmount": 245346.29812407028
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Oasis"
+// 			},
+// 			"count": 2727,
+// 			"tradeAmount": 24315889.581588253
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Air Swap"
+// 			},
+// 			"count": 90,
+// 			"tradeAmount": 6714.968765170688
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "IDEX"
+// 			},
+// 			"count": 84836,
+// 			"tradeAmount": 82138103.24548343
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Radar Relay"
+// 			},
+// 			"count": 5958,
+// 			"tradeAmount": 22045160.233722925
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-01"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 472299,
+// 			"tradeAmount": 516311448.14065015
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Kyber Network"
+// 			},
+// 			"count": 1369,
+// 			"tradeAmount": 572388.9313485615
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DUBIex"
+// 			},
+// 			"count": 106,
+// 			"tradeAmount": 43897.29292325802
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "IDEX"
+// 			},
+// 			"count": 176743,
+// 			"tradeAmount": 150861909.01320946
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DDEX"
+// 			},
+// 			"count": 1417,
+// 			"tradeAmount": 1220797.825898715
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Air Swap"
+// 			},
+// 			"count": 270,
+// 			"tradeAmount": 106891.18852283392
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "ERC dEX"
+// 			},
+// 			"count": 31,
+// 			"tradeAmount": 21530.92294936148
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 1184,
+// 			"tradeAmount": 20203840.9363887
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Zerox Exchange"
+// 			},
+// 			"count": 2275,
+// 			"tradeAmount": 1801271.3434099266
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "TokenStore"
+// 			},
+// 			"count": 12332,
+// 			"tradeAmount": 7723641.547279626
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Kyber Network>"
+// 			},
+// 			"count": 190,
+// 			"tradeAmount": 24132.17299477192
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Radar Relay"
+// 			},
+// 			"count": 6322,
+// 			"tradeAmount": 3673833.3562741354
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Zerox Exchange>"
+// 			},
+// 			"count": 26,
+// 			"tradeAmount": 91.43115624604187
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bancor Network"
+// 			},
+// 			"count": 17644,
+// 			"tradeAmount": 77846213.25443028
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 189824,
+// 			"tradeAmount": 125580288.60874878
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Oasis"
+// 			},
+// 			"count": 2187,
+// 			"tradeAmount": 16273339.057288524
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-02"
+// 			},
+// 			"exchange": {
+// 				"fullName": "SingularX"
+// 			},
+// 			"count": 2973,
+// 			"tradeAmount": 5665562.891690084
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Zerox Exchange>"
+// 			},
+// 			"count": 1,
+// 			"tradeAmount": 2.646614909172058
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "TokenStore"
+// 			},
+// 			"count": 20228,
+// 			"tradeAmount": 12817090.610867193
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DUBIex"
+// 			},
+// 			"count": 623,
+// 			"tradeAmount": 875904.914643348
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 120890,
+// 			"tradeAmount": 65005416.82002217
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 3572,
+// 			"tradeAmount": 91672030.40865082
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "ERC dEX"
+// 			},
+// 			"count": 11,
+// 			"tradeAmount": 22177.215168060247
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "SingularX"
+// 			},
+// 			"count": 8094,
+// 			"tradeAmount": 14892968.09573066
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Radar Relay"
+// 			},
+// 			"count": 6260,
+// 			"tradeAmount": 6819205.609101887
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Air Swap"
+// 			},
+// 			"count": 543,
+// 			"tradeAmount": 228349.4312059262
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bamboo Relay"
+// 			},
+// 			"count": 17,
+// 			"tradeAmount": 89.19347884351279
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "StarBitEx"
+// 			},
+// 			"count": 88,
+// 			"tradeAmount": 42.9218610526942
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Kyber Network"
+// 			},
+// 			"count": 4312,
+// 			"tradeAmount": 1948467.8634791898
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bancor Network"
+// 			},
+// 			"count": 32767,
+// 			"tradeAmount": 69528372.09498914
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "IDEX"
+// 			},
+// 			"count": 278614,
+// 			"tradeAmount": 186871357.62378016
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DDEX"
+// 			},
+// 			"count": 2614,
+// 			"tradeAmount": 1544806.5462016359
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Zerox Exchange"
+// 			},
+// 			"count": 8166,
+// 			"tradeAmount": 9339027.10775485
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DecentrEx"
+// 			},
+// 			"count": 2,
+// 			"tradeAmount": 0.31689359130859374
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-03"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Oasis"
+// 			},
+// 			"count": 4341,
+// 			"tradeAmount": 21008197.110412307
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Shark Relay"
+// 			},
+// 			"count": 78,
+// 			"tradeAmount": 608.3459336870998
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "ETHERCExchange"
+// 			},
+// 			"count": 9,
+// 			"tradeAmount": 23.983064353615045
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "EtherDelta"
+// 			},
+// 			"count": 106255,
+// 			"tradeAmount": 56141270.95488043
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bamboo Relay"
+// 			},
+// 			"count": 19,
+// 			"tradeAmount": 320.93893749870676
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "IDEX"
+// 			},
+// 			"count": 301541,
+// 			"tradeAmount": 196977551.081327
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bancor Network"
+// 			},
+// 			"count": 71154,
+// 			"tradeAmount": 135331881.61994696
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Radar Relay"
+// 			},
+// 			"count": 6860,
+// 			"tradeAmount": 71814937.14501207
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Bitox"
+// 			},
+// 			"count": 3,
+// 			"tradeAmount": 0.6146420571084027
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DUBIex"
+// 			},
+// 			"count": 185,
+// 			"tradeAmount": 85594.61866389945
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Kyber Network"
+// 			},
+// 			"count": 9808,
+// 			"tradeAmount": 8598764.716739967
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "DDEX"
+// 			},
+// 			"count": 14953,
+// 			"tradeAmount": 7126925.4746378865
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<EtherDelta>"
+// 			},
+// 			"count": 277,
+// 			"tradeAmount": 1605951.0213510827
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Bancor Network>"
+// 			},
+// 			"count": 13,
+// 			"tradeAmount": 7694.383107563034
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "TokenStore"
+// 			},
+// 			"count": 15794,
+// 			"tradeAmount": 6029370.303517108
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Zerox Exchange"
+// 			},
+// 			"count": 7711,
+// 			"tradeAmount": 3966677.7617575726
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "SingularX"
+// 			},
+// 			"count": 4150,
+// 			"tradeAmount": 7444856.258941826
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Oasis"
+// 			},
+// 			"count": 6882,
+// 			"tradeAmount": 26269369.145264503
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Tokenlon"
+// 			},
+// 			"count": 98,
+// 			"tradeAmount": 2710.493808635719
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "<Zerox Exchange>"
+// 			},
+// 			"count": 17,
+// 			"tradeAmount": 31.13226093614304
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "StarBitEx"
+// 			},
+// 			"count": 192,
+// 			"tradeAmount": 213.88528846705023
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "Air Swap"
+// 			},
+// 			"count": 1337,
+// 			"tradeAmount": 1319432.6195928564
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "TokenJar"
+// 			},
+// 			"count": 50,
+// 			"tradeAmount": 5371.967960840352
+// 		},
+// 		{
+// 			"date": {
+// 				"date": "2018-04"
+// 			},
+// 			"exchange": {
+// 				"fullName": "ERC dEX"
+// 			},
+// 			"count": 20,
+// 			"tradeAmount": 48837.738679933485
+// 		}],
+//   variables: "{\"dateFormat\":\"%Y-%m\"}"
+// }
+// timeChart('#chart', dataSource)
 
 /***/ }),
 
@@ -7322,7 +9902,7 @@ timeChart('#chart', dataSource); // console.log(moment)
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "svg g.tick line{opacity:0.1}svg g.tick:nth-of-type(1) .y-axis-grid{opacity:1}svg path.domain{display:none}\n", "",{"version":3,"sources":["webpack://./src/style.scss"],"names":[],"mappings":"AAAA,gBACC,WAAY,CACZ,uCAGA,SAAU,CACV,gBAGA,YAAa","sourcesContent":["svg g.tick line{\n\topacity: 0.1;\n}\n\nsvg g.tick:nth-of-type(1) .y-axis-grid{\n\topacity: 1;\n}\n\nsvg path.domain {\n\tdisplay: none;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "svg g.tick line{opacity:0.1}svg g.tick:nth-of-type(1) .y-axis-grid{opacity:1}svg path.domain{display:none}.tooltip{position:absolute;border:1px solid rgba(0,0,0,0.125);border-radius:5px;padding:10px;background:white;pointer-events:none}.tooltip ul{font-size:12px;margin:0;padding:0;list-style:none;color:black}.overlay{fill:none;pointer-events:all}.focus circle{fill:#ff7b00}\n", "",{"version":3,"sources":["webpack://./src/style.scss"],"names":[],"mappings":"AAAA,gBACE,WAAY,CACb,uCAGC,SAAU,CACX,gBAGC,YAAa,CACd,SAGC,iBAAkB,CAClB,kCAAsC,CACtC,iBAAkB,CAClB,YAAa,CACb,gBAAiB,CAClB,mBAAoB,CANrB,YASI,cAAe,CACf,QAAS,CACT,SAAU,CACV,eAAgB,CAChB,WAAY,CACb,SAIF,SAAU,CACV,kBAAmB,CACnB,cAGA,YAAsB","sourcesContent":["svg g.tick line {\n  opacity: 0.1;\n}\n\nsvg g.tick:nth-of-type(1) .y-axis-grid {\n  opacity: 1;\n}\n\nsvg path.domain {\n  display: none;\n}\n\n.tooltip {\n  position: absolute;\n  border: 1px solid rgba(0, 0, 0, 0.125);\n  border-radius: 5px;\n  padding: 10px;\n  background: white;\n\tpointer-events: none;\n\t// transition: all 0.2s ease-out;\n  ul {\n    font-size: 12px;\n    margin: 0;\n    padding: 0;\n    list-style: none;\n    color: black;\n  }\n}\n\n.overlay {\n\tfill: none;\n\tpointer-events: all;\n}\n\n.focus circle {\n\tfill: rgb(255, 123, 0);\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -46064,6 +48644,14 @@ module.exports = function (list, options) {
   };
 };
 
+/***/ }),
+
+/***/ 8383:
+/***/ ((module) => {
+
+"use strict";
+module.exports = __WEBPACK_EXTERNAL_MODULE__8383__;
+
 /***/ })
 
 /******/ 	});
@@ -46160,7 +48748,7 @@ module.exports = function (list, options) {
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(872);
+/******/ 	return __webpack_require__(821);
 /******/ })()
 ;
 });

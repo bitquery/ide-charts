@@ -1,11 +1,37 @@
-svg g.tick line{
-	opacity: 0.1;
+svg g.tick line {
+  opacity: 0.1;
 }
 
-svg g.tick:nth-of-type(1) .y-axis-grid{
-	opacity: 1;
+svg g.tick:nth-of-type(1) .y-axis-grid {
+  opacity: 1;
 }
 
 svg path.domain {
-	display: none;
+  display: none;
+}
+
+.tooltip {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 5px;
+  padding: 10px;
+  background: white;
+	pointer-events: none;
+	// transition: all 0.2s ease-out;
+  ul {
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: black;
+  }
+}
+
+.overlay {
+	fill: none;
+	pointer-events: all;
+}
+
+.focus circle {
+	fill: rgb(255, 123, 0);
 }
