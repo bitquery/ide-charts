@@ -3,7 +3,6 @@ export default function hasQuantative(model) {
   function has(item) {
     if (item.selectionSet) {
       item.selectionSet.selections.forEach((i) => {
-        console.log(i.typeInfo.toString())
         if (
           i.typeInfo.toString().includes('Int') ||
           i.typeInfo.toString().includes('Float')
@@ -17,10 +16,6 @@ export default function hasQuantative(model) {
   }
   if (model.selectionSet) {
 		has(model)
-    // model.selectionSet.selections.forEach((item) => {
-    //   has(item)
-    //   console.log('flag = ', flag)
-    // })
   }
   return flag
 }

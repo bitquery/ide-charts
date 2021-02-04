@@ -16,22 +16,25 @@ svg path.domain {
   border-radius: 5px;
   padding: 10px;
   background: white;
-	pointer-events: none;
-	// transition: all 0.2s ease-out;
+  pointer-events: none;
+  // transition: all 0.2s ease-out;
   ul {
     font-size: 12px;
     margin: 0;
     padding: 0;
     list-style: none;
     color: black;
+    li {
+      white-space: nowrap;
+    }
   }
 }
 
 .overlay {
-	fill: none;
-	pointer-events: all;
+  fill: none;
+  pointer-events: all;
 }
 
 .focus circle {
-	fill: rgb(255, 123, 0);
+  fill: rgb(255, 123, 0);
 }

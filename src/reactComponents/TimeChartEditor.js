@@ -3,14 +3,14 @@ import { useFirstUpdate } from '../util/useFirstUpdate'
 import WidgetOptions from './WidgetOptions'
 
 function TimeChartEditor({ model, config, setConfig, displayedData }) {
-	const chartTypeModel = {
-		bar: 'bar',
-		line: 'line',
-		scatter: 'scatter',
-		stackedBar: 'stackedBar'
-	}
-	const chartTypeFunc = () => true
-	const [chartType, setChartType] = useState('')
+  const chartTypeModel = {
+    Bar: 'bar',
+    Line: 'line',
+    Scatter: 'scatter',
+    'Stacked Bar': 'stackedBar',
+  }
+  const chartTypeFunc = () => true
+  const [chartType, setChartType] = useState('')
 
   const yFunc = (key) => {
     if (model[key].typeInfo) {
@@ -22,13 +22,27 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
   }
   const [yAxis, setYAxis] = useState('')
 
+  const subgroupFunc = (key) => {
+    if (model[key].typeInfo) {
+      return (
+        model[key].typeInfo.toString().includes('String') &&
+        !model[key].name.value.includes('date') &&
+        !model[key].name.value.includes('time')
+      )
+    }
+  }
+  const [subgroup, setSubgroup] = useState('')
+
   useEffect(() => {
     if (!yAxis && config) {
       if (Object.keys(config).length) {
         if ('y' in config) {
-					setYAxis(`${displayedData}.${config.y.field}`)
-					setChartType('bar')
+          setYAxis(`${displayedData}.${config.y.field}`)
         }
+        if ('subgroupField' in config) {
+          setSubgroup(`${displayedData}.${config.subgroupField}`)
+        }
+        setChartType('bar')
       }
     }
   }, [])
@@ -36,13 +50,20 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
   useFirstUpdate(() => {
     if (model && yAxis) {
       let fieldY = yAxis.replace(`${displayedData}.`, '')
+      let subgroupField
+      if (subgroup) {
+        subgroupField = subgroup.replace(`${displayedData}.`, '')
+      } else {
+        subgroupField = ''
+      }
       let cfg = {
-				chartType: chartType,
+        chartType: chartType,
         y: { field: fieldY },
+        subgroupField,
       }
       setConfig(cfg)
     }
-  }, [chartType, yAxis, displayedData])
+  }, [chartType, yAxis, subgroup, displayedData])
 
   return (
     <div className="widget">
@@ -59,6 +80,13 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
           setValue={setYAxis}
           condition={yFunc}
           title={'Y Axis'}
+          model={model}
+        />
+        <WidgetOptions
+          value={subgroup}
+          setValue={setSubgroup}
+          condition={subgroupFunc}
+          title={'Subgroup'}
           model={model}
         />
       </div>

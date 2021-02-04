@@ -4,13 +4,11 @@ import getPathToDate from './util/getPathToDate'
 import formatLabel from './util/formatLabel'
 import formatNumber from './util/formatNumber'
 import './style.scss'
+import { timeMonth } from 'd3'
 
 export function timeChart(selector, dataSource, displayedData, options) {
   dataSource = _.cloneDeep(dataSource)
   const queryVariables = JSON.parse(dataSource.variables)
-  // options = {
-  // 	field: 'count',
-  // }
 
   const margin = { top: 10, right: 30, bottom: 30, left: 70 },
     width =
@@ -28,7 +26,6 @@ export function timeChart(selector, dataSource, displayedData, options) {
   const pathToYField = options.yField
   const yFieldName = formatLabel(pathToYField)
 
-  console.log(pathToYField)
   data.forEach((d) => {
     d.date = d3.timeParse(queryVariables.dateFormat)(_.get(d, pathToDate))
   })
@@ -36,19 +33,19 @@ export function timeChart(selector, dataSource, displayedData, options) {
   d3.select(selector).html('')
 
   switch (options.chart) {
-    case 'bar':
+    case 'Bar':
       bar()
       break
 
-    case 'line':
+    case 'Line':
       line()
       break
 
-    case 'scatter':
+    case 'Scatter':
       scatter()
       break
 
-    case 'stackedBar':
+    case 'Stacked Bar':
       stackedBar()
       break
 
@@ -126,6 +123,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .on('end', updateChart)
     svg.append('g').attr('class', 'brush').call(brush)
 
+    let barWidth = (width / x.ticks(d3.timeMonth).length) * 0.8
+
     let bars = svg
       .append('g')
       .attr('clip-path', 'url(#clip)')
@@ -135,8 +134,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .data(data)
       .enter()
       .append('rect')
-      .attr('x', (d) => x(d.date) - 2)
-      .attr('width', 4)
+      .attr('x', (d) => x(d.date) - barWidth / 2)
+      .attr('width', barWidth)
       .attr('y', (d) => y(_.get(d, pathToYField)))
       .attr('height', (d) => height - y(_.get(d, pathToYField)))
       .attr('class', 'bar')
@@ -181,12 +180,9 @@ export function timeChart(selector, dataSource, displayedData, options) {
 						<li>Date: ${d3.timeFormat(queryVariables.dateFormat)(d.date)}</li>
 						<li>${yFieldName}: ${formatNumber(_.get(d, pathToYField))}</li>
 					</ul>`
-			)
-			
-			const bodyWidth = d3
-        .select('body')
-        .style('width')
-        .slice(0, -2)
+      )
+
+      const bodyWidth = d3.select('body').style('width').slice(0, -2)
       const tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10
       const tooltipWidth = tooltip.style('width').slice(0, -2)
       const tooltipX =
@@ -224,23 +220,41 @@ export function timeChart(selector, dataSource, displayedData, options) {
         ) {
           return
         }
-        x.domain([x.invert(extent[0]), x.invert(extent[1])])
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(d3.timeMonth)
       }
+
+      y.domain([
+        0,
+        d3.max(
+          data.map((d) => {
+            const domain = x.domain()
+            if (d.date >= domain[0] && d.date <= domain[1]) {
+              return _.get(d, pathToYField)
+            } else {
+              return 0
+            }
+          })
+        ),
+      ]).nice()
       xAxisGrid.transition().duration(1000).call(xAxis)
+      yAxisGrid.transition().duration(1000).call(yAxis)
+
+      barWidth = (width / x.ticks(d3.timeMonth).length) * 0.8
 
       bars
         .selectAll('.bar')
         .transition()
         .duration(1000)
         .attr('x', function (d) {
-          return x(d.date) - 2
+          return x(d.date) - barWidth / 2
         })
         .attr('width', function (d) {
-          return 4
+          return barWidth
         })
         .attr('y', function (d) {
           return y(_.get(d, pathToYField))
         })
+        .attr('height', (d) => height - y(_.get(d, pathToYField)))
     }
 
     svg.on('dblclick', function () {
@@ -250,20 +264,37 @@ export function timeChart(selector, dataSource, displayedData, options) {
         })
       ).nice(d3.timeMonth.every(2))
 
+      y.domain([
+        0,
+        d3.max(
+          data.map((d) => {
+            const domain = x.domain()
+            if (d.date >= domain[0] && d.date <= domain[1]) {
+              return _.get(d, pathToYField)
+            } else {
+              return 0
+            }
+          })
+        ),
+      ]).nice()
       xAxisGrid.transition().call(xAxis)
+      yAxisGrid.transition().call(yAxis)
+
+      barWidth = (width / x.ticks(d3.timeMonth).length) * 0.8
 
       bars
         .selectAll('.bar')
         .transition()
         .attr('x', function (d) {
-          return x(d.date) - 2
+          return x(d.date) - barWidth / 2
         })
         .attr('width', function (d) {
-          return 4
+          return barWidth
         })
         .attr('y', function (d) {
           return y(_.get(d, pathToYField))
         })
+        .attr('height', (d) => height - y(_.get(d, pathToYField)))
     })
   }
 
@@ -417,8 +448,21 @@ export function timeChart(selector, dataSource, displayedData, options) {
       const tooltipheight = tooltip.style('height').slice(0, -2)
       const tooltipWidth = tooltip.style('width').slice(0, -2)
       tooltip
-        .style('left', d3.select(selector).node().getBoundingClientRect().x + x(d.date) + 10 + 'px')
-        .style('top', d3.select(selector).node().getBoundingClientRect().y + y(_.get(d, pathToYField)) - tooltipheight - 5 + 'px')
+        .style(
+          'left',
+          d3.select(selector).node().getBoundingClientRect().x +
+            x(d.date) +
+            10 +
+            'px'
+        )
+        .style(
+          'top',
+          d3.select(selector).node().getBoundingClientRect().y +
+            y(_.get(d, pathToYField)) -
+            tooltipheight -
+            5 +
+            'px'
+        )
       tooltip.html(
         `<ul>
 					<li>Date: ${d3.timeFormat(queryVariables.dateFormat)(d.date)}</li>
@@ -450,9 +494,23 @@ export function timeChart(selector, dataSource, displayedData, options) {
         ) {
           return
         }
-        x.domain([x.invert(extent[0]), x.invert(extent[1])])
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(timeMonth)
       }
+      y.domain([
+        0,
+        d3.max(
+          data.map((d) => {
+            const domain = x.domain()
+            if (d.date >= domain[0] && d.date <= domain[1]) {
+              return _.get(d, pathToYField)
+            } else {
+              return 0
+            }
+          })
+        ),
+      ]).nice()
       xAxisGrid.transition().duration(1000).call(xAxis)
+      yAxisGrid.transition().duration(1000).call(yAxis)
 
       line
         .select('.line')
@@ -483,7 +541,21 @@ export function timeChart(selector, dataSource, displayedData, options) {
         })
       ).nice(d3.timeMonth.every(2))
 
+      y.domain([
+        0,
+        d3.max(
+          data.map((d) => {
+            const domain = x.domain()
+            if (d.date >= domain[0] && d.date <= domain[1]) {
+              return _.get(d, pathToYField)
+            } else {
+              return 0
+            }
+          })
+        ),
+      ]).nice()
       xAxisGrid.transition().call(xAxis)
+      yAxisGrid.transition().call(yAxis)
 
       line
         .select('.line')
@@ -639,10 +711,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
 					</ul>`
       )
 
-      const bodyWidth = d3
-        .select('body')
-        .style('width')
-        .slice(0, -2)
+      const bodyWidth = d3.select('body').style('width').slice(0, -2)
       const tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10
       const tooltipWidth = tooltip.style('width').slice(0, -2)
       const tooltipX =
@@ -680,9 +749,23 @@ export function timeChart(selector, dataSource, displayedData, options) {
         ) {
           return
         }
-        x.domain([x.invert(extent[0]), x.invert(extent[1])])
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(d3.timeMonth)
       }
+      y.domain([
+        0,
+        d3.max(
+          data.map((d) => {
+            const domain = x.domain()
+            if (d.date >= domain[0] && d.date <= domain[1]) {
+              return _.get(d, pathToYField)
+            } else {
+              return 0
+            }
+          })
+        ),
+      ]).nice()
       xAxisGrid.transition().duration(1000).call(xAxis)
+      yAxisGrid.transition().duration(1000).call(yAxis)
 
       circles
         .selectAll('.circle')
@@ -706,7 +789,21 @@ export function timeChart(selector, dataSource, displayedData, options) {
         })
       ).nice(d3.timeMonth.every(2))
 
+      y.domain([
+        0,
+        d3.max(
+          data.map((d) => {
+            const domain = x.domain()
+            if (d.date >= domain[0] && d.date <= domain[1]) {
+              return _.get(d, pathToYField)
+            } else {
+              return 0
+            }
+          })
+        ),
+      ]).nice()
       xAxisGrid.transition().call(xAxis)
+      yAxisGrid.transition().call(yAxis)
 
       circles
         .selectAll('.circle')
@@ -724,17 +821,17 @@ export function timeChart(selector, dataSource, displayedData, options) {
   }
 
   function stackedBar() {
-    const subgroups = _.uniq(data.map((d) => d.exchange.fullName))
-    console.log(subgroups)
+    const pathToSubgroupField = options.subgroupField
+    const subgroups = _.uniq(data.map((d) => _.get(d, pathToSubgroupField)))
 
     const wide = Array.from(d3.group(data, (d) => d.date)).map((d) => {
       const newVal = {
         date: d[0],
-        queryFields: d[1][0],
+        // queryFields: d[1][0],
       }
       d[1].forEach((d) => {
         Object.assign(newVal, {
-          [d.exchange.fullName]: d.count,
+          [_.get(d, pathToSubgroupField)]: _.get(d, pathToYField),
         })
       })
       subgroups.forEach((name) => {
@@ -745,15 +842,18 @@ export function timeChart(selector, dataSource, displayedData, options) {
 
       return newVal
     })
-    console.log(wide)
 
     const groups = wide.map((d) => d.date)
-    console.log(groups)
 
     const color = d3.scaleOrdinal(d3.schemeCategory10)
 
     const stackedData = d3.stack().keys(subgroups)(wide)
-    console.log(stackedData)
+
+    stackedData.forEach((layer) => {
+      layer.forEach((a) => {
+        a.key = layer.key
+      })
+    })
 
     const yMax = d3.max(
       wide.map((d) => {
@@ -821,7 +921,9 @@ export function timeChart(selector, dataSource, displayedData, options) {
         [width, height],
       ])
       .on('end', updateChart)
-    svg.append('g').attr('class', 'brush').call(brush)
+		svg.append('g').attr('class', 'brush').call(brush)
+		
+		let barWidth = width / x.ticks(d3.timeMonth).length * 0.8
 
     let barsLayers = svg
       .append('g')
@@ -838,8 +940,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .data((d) => d)
       .enter()
       .append('rect')
-      .attr('x', (d) => x(d.data.date))
-      .attr('width', 4)
+      .attr('x', (d) => x(d.data.date) - barWidth / 2)
+      .attr('width', barWidth)
       .attr('y', (d) => y(d[1]))
       .attr('height', (d) => y(d[0]) - y(d[1]))
       .attr('class', 'bar')
@@ -867,7 +969,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text('Count')
+      .text(yFieldName)
 
     const tooltip = d3
       .select('body')
@@ -881,19 +983,13 @@ export function timeChart(selector, dataSource, displayedData, options) {
     function mousemove(e, d) {
       tooltip.html(
         `<ul>
-						<li>Date: ${d3.timeFormat(queryVariables.dateFormat)(
-              d.data.queryFields.date
-            )}</li>
-						<li>Name: ${d.data.queryFields.exchange.fullName}</li>
-						<li>Count: ${d[1] - d[0]}</li>
-						<li>Amount: ${d.data.queryFields.tradeAmount}</li>
+						<li>Date: ${d3.timeFormat(queryVariables.dateFormat)(d.data.date)}</li>
+						<li>Subgroup: ${d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</li>
+						<li>Value: ${formatNumber(d[1] - d[0])}</li>
 					</ul>`
       )
 
-      const bodyWidth = d3
-        .select('body')
-        .style('width')
-        .slice(0, -2)
+      const bodyWidth = d3.select('body').style('width').slice(0, -2)
       const tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10
       const tooltipWidth = tooltip.style('width').slice(0, -2)
       const tooltipX =
@@ -931,17 +1027,40 @@ export function timeChart(selector, dataSource, displayedData, options) {
         ) {
           return
         }
-        x.domain([x.invert(extent[0]), x.invert(extent[1])])
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(d3.timeMonth)
       }
+      y.domain([
+        0,
+        d3.max(
+          wide.map((d) => {
+            const domain = x.domain()
+            if (d.date >= domain[0] && d.date <= domain[1]) {
+              let acc = 0
+              for (let k in d) {
+                if (typeof d[k] !== 'object') {
+                  acc += d[k]
+                }
+              }
+              return acc
+            } else {
+              return 0
+            }
+          })
+        ),
+      ]).nice()
       xAxisGrid.transition().duration(1000).call(xAxis)
+			yAxisGrid.transition().duration(1000).call(yAxis)
+			
+			barWidth = width / x.ticks(d3.timeMonth).length * 0.8
 
       bars
         .selectAll('.bar')
         .transition()
         .duration(1000)
-        .attr('x', (d) => x(d.data.date))
-        .attr('y', (d) => y(d[1]))
-        .attr('height', (d) => y(d[0]) - y(d[1]))
+				.attr('x', (d) => x(d.data.date) - barWidth / 2)
+				.attr('width', barWidth)
+				.attr('y', (d) => y(d[1]))
+				.attr('height', (d) => y(d[0]) - y(d[1]))
     }
 
     svg.on('dblclick', function () {
@@ -951,14 +1070,37 @@ export function timeChart(selector, dataSource, displayedData, options) {
         })
       ).nice(d3.timeMonth.every(2))
 
+      y.domain([
+        0,
+        d3.max(
+          wide.map((d) => {
+            const domain = x.domain()
+            if (d.date >= domain[0] && d.date <= domain[1]) {
+              let acc = 0
+              for (let k in d) {
+                if (typeof d[k] !== 'object') {
+                  acc += d[k]
+                }
+              }
+              return acc
+            } else {
+              return 0
+            }
+          })
+        ),
+      ]).nice()
       xAxisGrid.transition().call(xAxis)
+			yAxisGrid.transition().call(yAxis)
+			
+			barWidth = width / x.ticks(d3.timeMonth).length * 0.8
 
       bars
         .selectAll('.bar')
         .transition()
-        .attr('x', (d) => x(d.data.date))
-        .attr('y', (d) => y(d[1]))
-        .attr('height', (d) => y(d[0]) - y(d[1]))
+				.attr('x', (d) => x(d.data.date) - barWidth / 2)
+				.attr('width', barWidth)
+				.attr('y', (d) => y(d[1]))
+				.attr('height', (d) => y(d[0]) - y(d[1]))
     })
   }
 

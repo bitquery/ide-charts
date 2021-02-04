@@ -8,7 +8,8 @@ function TimeChartRenderer({ el, config, dataSource, displayedData }) {
         el &&
           timeChart(`#${el}`, dataSource, displayedData, {
 						chart: config.chartType,
-            yField: config.y.field,
+						yField: config.y.field,
+						subgroupField: config.subgroupField
           })
       } catch (error) {
         console.log(error)
