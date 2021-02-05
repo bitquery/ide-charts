@@ -1,14 +1,12 @@
 import * as d3 from 'd3'
 import * as _ from 'lodash'
-import getPathToDate from './util/getPathToDate'
+import moment from 'moment'
 import formatLabel from './util/formatLabel'
 import formatNumber from './util/formatNumber'
 import './style.scss'
-import { timeMonth } from 'd3'
 
 export function timeChart(selector, dataSource, displayedData, options) {
   dataSource = _.cloneDeep(dataSource)
-  const queryVariables = JSON.parse(dataSource.variables)
 
   const margin = { top: 10, right: 30, bottom: 30, left: 70 },
     width =
@@ -22,17 +20,17 @@ export function timeChart(selector, dataSource, displayedData, options) {
 
   const data = dataSource.values
 
-  const pathToDate = getPathToDate(data[0], queryVariables.dateFormat)
+  const pathToDate = options.xField
   const pathToYField = options.yField
-  const yFieldName = formatLabel(pathToYField)
+  // const yFieldName = formatLabel(pathToYField)
 
   data.forEach((d) => {
-    d.date = d3.timeParse(queryVariables.dateFormat)(_.get(d, pathToDate))
+    d.date = new Date(moment(_.get(d, pathToDate)))
   })
 
   d3.select(selector).html('')
 
-  switch (options.chart) {
+  switch (options.chartType) {
     case 'Bar':
       bar()
       break
@@ -153,7 +151,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .style('font-size', '12')
       .attr('font-family', 'Nunito, Arial, sans-serif')
-      .text('Time')
+      .text(pathToDate)
     svg
       .append('text')
       .attr('transform', 'rotate(-90)')
@@ -163,7 +161,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text(yFieldName)
+      .text(pathToYField)
 
     const tooltip = d3
       .select('body')
@@ -177,8 +175,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
     function mousemove(e, d) {
       tooltip.html(
         `<ul>
-						<li>Date: ${d3.timeFormat(queryVariables.dateFormat)(d.date)}</li>
-						<li>${yFieldName}: ${formatNumber(_.get(d, pathToYField))}</li>
+						<li>Date: ${d3.timeFormat('%Y-%m')(d.date)}</li>
+						<li>${pathToYField}: ${formatNumber(_.get(d, pathToYField))}</li>
 					</ul>`
       )
 
@@ -397,7 +395,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text('Time')
+      .text(pathToDate)
     svg
       .append('text')
       .attr('transform', 'rotate(-90)')
@@ -407,7 +405,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text(yFieldName)
+      .text(pathToYField)
 
     const tooltip = d3
       .select('body')
@@ -465,8 +463,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
         )
       tooltip.html(
         `<ul>
-					<li>Date: ${d3.timeFormat(queryVariables.dateFormat)(d.date)}</li>
-					<li>${yFieldName}: ${formatNumber(_.get(d, pathToYField))}</li>
+					<li>Date: ${d3.timeFormat('%Y-%m')(d.date)}</li>
+					<li>${pathToYField}: ${formatNumber(_.get(d, pathToYField))}</li>
 				</ul>`
       )
     }
@@ -494,7 +492,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
         ) {
           return
         }
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(timeMonth)
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(d3.timeMonth)
       }
       y.domain([
         0,
@@ -682,7 +680,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text('Time')
+      .text(pathToDate)
     svg
       .append('text')
       .attr('transform', 'rotate(-90)')
@@ -692,7 +690,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text(yFieldName)
+      .text(pathToYField)
 
     const tooltip = d3
       .select('body')
@@ -706,8 +704,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
     function mousemove(e, d) {
       tooltip.html(
         `<ul>
-						<li>Date: ${d3.timeFormat(queryVariables.dateFormat)(d.date)}</li>
-						<li>${yFieldName}: ${formatNumber(_.get(d, pathToYField))}</li>
+						<li>Date: ${d3.timeFormat('%Y-%m')(d.date)}</li>
+						<li>${pathToYField}: ${formatNumber(_.get(d, pathToYField))}</li>
 					</ul>`
       )
 
@@ -921,9 +919,9 @@ export function timeChart(selector, dataSource, displayedData, options) {
         [width, height],
       ])
       .on('end', updateChart)
-		svg.append('g').attr('class', 'brush').call(brush)
-		
-		let barWidth = width / x.ticks(d3.timeMonth).length * 0.8
+    svg.append('g').attr('class', 'brush').call(brush)
+
+    let barWidth = (width / x.ticks(d3.timeMonth).length) * 0.8
 
     let barsLayers = svg
       .append('g')
@@ -959,7 +957,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text('Time')
+      .text(pathToDate)
     svg
       .append('text')
       .attr('transform', 'rotate(-90)')
@@ -969,7 +967,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text(yFieldName)
+      .text(pathToYField)
 
     const tooltip = d3
       .select('body')
@@ -983,7 +981,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
     function mousemove(e, d) {
       tooltip.html(
         `<ul>
-						<li>Date: ${d3.timeFormat(queryVariables.dateFormat)(d.data.date)}</li>
+						<li>Date: ${d3.timeFormat('%Y-%m')(d.data.date)}</li>
 						<li>Subgroup: ${d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</li>
 						<li>Value: ${formatNumber(d[1] - d[0])}</li>
 					</ul>`
@@ -1049,18 +1047,18 @@ export function timeChart(selector, dataSource, displayedData, options) {
         ),
       ]).nice()
       xAxisGrid.transition().duration(1000).call(xAxis)
-			yAxisGrid.transition().duration(1000).call(yAxis)
-			
-			barWidth = width / x.ticks(d3.timeMonth).length * 0.8
+      yAxisGrid.transition().duration(1000).call(yAxis)
+
+      barWidth = (width / x.ticks(d3.timeMonth).length) * 0.8
 
       bars
         .selectAll('.bar')
         .transition()
         .duration(1000)
-				.attr('x', (d) => x(d.data.date) - barWidth / 2)
-				.attr('width', barWidth)
-				.attr('y', (d) => y(d[1]))
-				.attr('height', (d) => y(d[0]) - y(d[1]))
+        .attr('x', (d) => x(d.data.date) - barWidth / 2)
+        .attr('width', barWidth)
+        .attr('y', (d) => y(d[1]))
+        .attr('height', (d) => y(d[0]) - y(d[1]))
     }
 
     svg.on('dblclick', function () {
@@ -1090,17 +1088,17 @@ export function timeChart(selector, dataSource, displayedData, options) {
         ),
       ]).nice()
       xAxisGrid.transition().call(xAxis)
-			yAxisGrid.transition().call(yAxis)
-			
-			barWidth = width / x.ticks(d3.timeMonth).length * 0.8
+      yAxisGrid.transition().call(yAxis)
+
+      barWidth = (width / x.ticks(d3.timeMonth).length) * 0.8
 
       bars
         .selectAll('.bar')
         .transition()
-				.attr('x', (d) => x(d.data.date) - barWidth / 2)
-				.attr('width', barWidth)
-				.attr('y', (d) => y(d[1]))
-				.attr('height', (d) => y(d[0]) - y(d[1]))
+        .attr('x', (d) => x(d.data.date) - barWidth / 2)
+        .attr('width', barWidth)
+        .attr('y', (d) => y(d[1]))
+        .attr('height', (d) => y(d[0]) - y(d[1]))
     })
   }
 

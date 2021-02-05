@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { timeChart } from '../lib'
 
 function TimeChartRenderer({ el, config, dataSource, displayedData }) {
@@ -7,9 +7,10 @@ function TimeChartRenderer({ el, config, dataSource, displayedData }) {
       try {
         el &&
           timeChart(`#${el}`, dataSource, displayedData, {
-						chart: config.chartType,
-						yField: config.y.field,
-						subgroupField: config.subgroupField
+            chartType: config.chartType,
+            xField: config.x.field,
+            yField: config.y.field,
+            subgroupField: config.subgroupField,
           })
       } catch (error) {
         console.log(error)

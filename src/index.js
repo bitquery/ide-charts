@@ -1,6 +1,6 @@
 import TimeChartEditor from './reactComponents/TimeChartEditor'
 import TimeChartRenderer from './reactComponents/TimeChartRenderer'
-import hasQuantative from './util/hasQuantative'
+import hasQuantativeAndDate from './util/hasQuantativeAndDate'
 
 class TimeChartPlugin {
   constructor() {
@@ -15,7 +15,7 @@ class TimeChartPlugin {
         model[key].typeInfo.toString()[0] === '[' &&
         model[key].typeInfo.toString().slice(-2, -1) !== '0'
       ) {
-				return hasQuantative(model[key])
+				return hasQuantativeAndDate(model[key])
       }
       return false
     }

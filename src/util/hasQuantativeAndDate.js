@@ -1,5 +1,6 @@
-export default function hasQuantative(model) {
-  let flag = false
+export default function hasQuantativeAndDate(model) {
+  let hasQuantative = false
+  let hasDate = false
   function has(item) {
     if (item.selectionSet) {
       item.selectionSet.selections.forEach((i) => {
@@ -7,7 +8,12 @@ export default function hasQuantative(model) {
           i.typeInfo.toString().includes('Int') ||
           i.typeInfo.toString().includes('Float')
         ) {
-          flag = true
+          hasQuantative = true
+        } else if (
+          i.typeInfo.name === 'Date' ||
+          i.typeInfo.name === 'DateTime'
+        ) {
+          hasDate = true
         } else {
           has(i)
         }
@@ -15,7 +21,7 @@ export default function hasQuantative(model) {
     }
   }
   if (model.selectionSet) {
-		has(model)
+    has(model)
   }
-  return flag
+  return hasDate && hasQuantative
 }

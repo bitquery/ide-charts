@@ -11,7 +11,7 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 4821:
+/***/ 474:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -46,7 +46,7 @@ function WidgetOptions(_ref) {
   (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
     if (model) {
       var list = Object.keys(model).filter(condition);
-      if (!value) setValue(list[0]);
+      setValue(list[0]); // if (!value) setValue(list[0])
     }
   }, [JSON.stringify(model)]);
   return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
@@ -91,14 +91,10 @@ function TimeChartEditor(_ref) {
       setConfig = _ref.setConfig,
       displayedData = _ref.displayedData;
   var chartTypeModel = {
-    Bar: 'bar',
-    Line: 'line',
-    Scatter: 'scatter',
-    'Stacked Bar': 'stackedBar'
-  };
-
-  var chartTypeFunc = function chartTypeFunc() {
-    return true;
+    Bar: 'Bar',
+    Line: 'Line',
+    Scatter: 'Scatter',
+    'Stacked Bar': 'Stacked Bar'
   };
 
   var _useState = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
@@ -106,16 +102,67 @@ function TimeChartEditor(_ref) {
       chartType = _useState2[0],
       setChartType = _useState2[1];
 
+  var getDateModel = function getDateModel(model) {
+    var keys = Object.keys(model);
+    var dateModel = {};
+    var dateFields = [];
+    keys.forEach(function (key) {
+      if (model[key].typeInfo.name === 'Date' || model[key].typeInfo.name === 'DateTime') {
+        keys.forEach(function (k) {
+          if (k.includes(key) && k !== key) {
+            dateFields.push(k);
+          }
+        });
+      }
+    });
+    dateFields.forEach(function (keyVal) {
+      return dateModel[keyVal] = keyVal;
+    });
+    return dateModel;
+  };
+
+  var dateModel = getDateModel(model);
+
+  var _useState3 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
+      _useState4 = _slicedToArray(_useState3, 2),
+      xAxis = _useState4[0],
+      setXAxis = _useState4[1];
+
   var yFunc = function yFunc(key) {
     if (model[key].typeInfo) {
       return model[key].typeInfo.toString().includes('Int') || model[key].typeInfo.toString().includes('Float');
     }
   };
 
-  var _useState3 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
-      _useState4 = _slicedToArray(_useState3, 2),
-      yAxis = _useState4[0],
-      setYAxis = _useState4[1];
+  var _useState5 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
+      _useState6 = _slicedToArray(_useState5, 2),
+      yAxis = _useState6[0],
+      setYAxis = _useState6[1];
+
+  var hasSubgroups = function hasSubgroups(model) {
+    var has = false;
+    var keys = Object.keys(model);
+    var dateKey = keys.find(function (key) {
+      if (model[key].typeInfo) {
+        return model[key].typeInfo.name === 'Date';
+      }
+    });
+    keys.forEach(function (key) {
+      if (!key.includes(dateKey)) {
+        if (model[key].typeInfo) {
+          if (model[key].typeInfo.toString().includes('String')) {
+            has = true;
+          }
+        }
+      }
+    });
+    return has;
+  };
+
+  var _useState7 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(hasSubgroups(model)),
+      _useState8 = _slicedToArray(_useState7, 2),
+      showSubgroup = _useState8[0],
+      setShowSubgroup = _useState8[1];
 
   var subgroupFunc = function subgroupFunc(key) {
     if (model[key].typeInfo) {
@@ -123,47 +170,50 @@ function TimeChartEditor(_ref) {
     }
   };
 
-  var _useState5 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
-      _useState6 = _slicedToArray(_useState5, 2),
-      subgroup = _useState6[0],
-      setSubgroup = _useState6[1];
+  var _useState9 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
+      _useState10 = _slicedToArray(_useState9, 2),
+      subgroup = _useState10[0],
+      setSubgroup = _useState10[1];
 
   (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
-    if (!yAxis && config) {
+    if (!xAxis && !yAxis && config) {
       if (Object.keys(config).length) {
-        if ('y' in config) {
+        if ('y' in config && 'x' in config) {
+          setXAxis("".concat(displayedData, ".").concat(config.x.field));
           setYAxis("".concat(displayedData, ".").concat(config.y.field));
+          showSubgroup && setSubgroup("".concat(displayedData, ".").concat(config.subgroupField));
+          setChartType('Bar');
         }
-
-        if ('subgroupField' in config) {
-          setSubgroup("".concat(displayedData, ".").concat(config.subgroupField));
-        }
-
-        setChartType('bar');
       }
     }
   }, []);
+  (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
+    setShowSubgroup(hasSubgroups(model));
+  }, [model]);
   useFirstUpdate(function () {
-    if (model && yAxis) {
+    if (model && xAxis && yAxis) {
+      var fieldX = xAxis.replace("".concat(displayedData, "."), '');
       var fieldY = yAxis.replace("".concat(displayedData, "."), '');
-      var subgroupField;
-
-      if (subgroup) {
-        subgroupField = subgroup.replace("".concat(displayedData, "."), '');
-      } else {
-        subgroupField = '';
-      }
-
       var cfg = {
         chartType: chartType,
+        x: {
+          field: fieldX
+        },
         y: {
           field: fieldY
-        },
-        subgroupField: subgroupField
+        }
       };
+
+      if (showSubgroup) {
+        var subgroupField = subgroup.replace("".concat(displayedData, "."), '');
+        Object.assign(cfg, {
+          subgroupField: subgroupField
+        });
+      }
+
       setConfig(cfg);
     }
-  }, [chartType, yAxis, subgroup, displayedData]);
+  }, [chartType, xAxis, yAxis, subgroup, displayedData]);
   return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
     className: "widget"
   }, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
@@ -171,16 +221,26 @@ function TimeChartEditor(_ref) {
   }, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
     value: chartType,
     setValue: setChartType,
-    condition: chartTypeFunc,
+    condition: function condition() {
+      return true;
+    },
     title: 'Chart Type',
     model: chartTypeModel
+  }), /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
+    value: xAxis,
+    setValue: setXAxis,
+    condition: function condition() {
+      return true;
+    },
+    title: 'X Axis',
+    model: dateModel
   }), /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
     value: yAxis,
     setValue: setYAxis,
     condition: yFunc,
     title: 'Y Axis',
     model: model
-  }), /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
+  }), showSubgroup && /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
     value: subgroup,
     setValue: setSubgroup,
     condition: subgroupFunc,
@@ -7525,35 +7585,9 @@ function defaultConstrain(transform, extent, translateExtent) {
 
 // EXTERNAL MODULE: ./node_modules/lodash/lodash.js
 var lodash = __webpack_require__(6486);
-// EXTERNAL MODULE: ./node_modules/flat/index.js
-var flat = __webpack_require__(4444);
-var flat_default = /*#__PURE__*/__webpack_require__.n(flat);
 // EXTERNAL MODULE: ./node_modules/moment/moment.js
 var moment = __webpack_require__(381);
 var moment_default = /*#__PURE__*/__webpack_require__.n(moment);
-;// CONCATENATED MODULE: ./src/util/getPathToDate.js
-
-
-function getPathToDate(obj, dateTimeFormat) {
-  var paths = flat_default()(obj);
-  return Object.keys(paths).find(function (path) {
-    return moment_default()(paths[path], dateTimeFormat.replaceAll('%', '').toUpperCase(), true).isValid();
-  });
-}
-;// CONCATENATED MODULE: ./src/util/formatLabel.js
-function formatLabel(str) {
-  var letters = str.split('.').slice(-1)[0].split(/(?=[A-Z])/);
-  var formattedLetters = letters.map(function (letter, i) {
-    if (i == 0) {
-      return letter.split('').map(function (c, i) {
-        return i == 0 ? c.toUpperCase() : c;
-      }).join('');
-    } else {
-      return letter.toLowerCase();
-    }
-  });
-  return formattedLetters.join(' ');
-}
 ;// CONCATENATED MODULE: ./src/util/formatNumber.js
 function formatNumber(num) {
   // num = num.toFixed(2)
@@ -7590,10 +7624,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-
 function timeChart(selector, dataSource, displayedData, options) {
   dataSource = lodash.cloneDeep(dataSource);
-  var queryVariables = JSON.parse(dataSource.variables);
   var margin = {
     top: 10,
     right: 30,
@@ -7603,15 +7635,15 @@ function timeChart(selector, dataSource, displayedData, options) {
       width = src_select(selector).node().getBoundingClientRect().width - margin.left - margin.right,
       height = src_select(selector).node().getBoundingClientRect().height - margin.top - margin.bottom;
   var data = dataSource.values;
-  var pathToDate = getPathToDate(data[0], queryVariables.dateFormat);
-  var pathToYField = options.yField;
-  var yFieldName = formatLabel(pathToYField);
+  var pathToDate = options.xField;
+  var pathToYField = options.yField; // const yFieldName = formatLabel(pathToYField)
+
   data.forEach(function (d) {
-    d.date = timeParse(queryVariables.dateFormat)(lodash.get(d, pathToDate));
+    d.date = new Date(moment_default()(lodash.get(d, pathToDate)));
   });
   src_select(selector).html('');
 
-  switch (options.chart) {
+  switch (options.chartType) {
     case 'Bar':
       bar();
       break;
@@ -7660,8 +7692,8 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).attr('height', function (d) {
       return height - y(lodash.get(d, pathToYField));
     }).attr('class', 'bar').attr('fill', '#28a745').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').style('font-size', '12').attr('font-family', 'Nunito, Arial, sans-serif').text('Time');
-    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(yFieldName);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').style('font-size', '12').attr('font-family', 'Nunito, Arial, sans-serif').text(pathToDate);
+    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 
     function mouseover() {
@@ -7670,7 +7702,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }
 
     function mousemove(e, d) {
-      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat(queryVariables.dateFormat)(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(yFieldName, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
+      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
       var bodyWidth = src_select('body').style('width').slice(0, -2);
       var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
       var tooltipWidth = tooltip.style('width').slice(0, -2);
@@ -7780,8 +7812,8 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).y(function (d) {
       return y(lodash.get(d, pathToYField));
     }));
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
-    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(yFieldName);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToDate);
+    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
     var bisectDate = bisector(function (d) {
       return d.date;
@@ -7810,7 +7842,7 @@ function timeChart(selector, dataSource, displayedData, options) {
       var tooltipheight = tooltip.style('height').slice(0, -2);
       var tooltipWidth = tooltip.style('width').slice(0, -2);
       tooltip.style('left', src_select(selector).node().getBoundingClientRect().x + x(d.date) + 10 + 'px').style('top', src_select(selector).node().getBoundingClientRect().y + y(lodash.get(d, pathToYField)) - tooltipheight - 5 + 'px');
-      tooltip.html("<ul>\n\t\t\t\t\t<li>Date: ".concat(timeFormat(queryVariables.dateFormat)(d.date), "</li>\n\t\t\t\t\t<li>").concat(yFieldName, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t</ul>"));
+      tooltip.html("<ul>\n\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.date), "</li>\n\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t</ul>"));
     }
 
     function updateChart(event) {
@@ -7910,8 +7942,8 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).attr('r', function (d) {
       return 4;
     }).attr('class', 'circle').attr('fill', '#28a745').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
-    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(yFieldName);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToDate);
+    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 
     function mouseover() {
@@ -7920,7 +7952,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }
 
     function mousemove(e, d) {
-      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat(queryVariables.dateFormat)(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(yFieldName, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
+      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
       var bodyWidth = src_select('body').style('width').slice(0, -2);
       var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
       var tooltipWidth = tooltip.style('width').slice(0, -2);
@@ -8072,8 +8104,8 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).attr('height', function (d) {
       return y(d[0]) - y(d[1]);
     }).attr('class', 'bar').attr('pointer-events', 'all').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
-    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(yFieldName);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToDate);
+    svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 
     function mouseover() {
@@ -8082,7 +8114,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }
 
     function mousemove(e, d) {
-      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat(queryVariables.dateFormat)(d.data.date), "</li>\n\t\t\t\t\t\t<li>Subgroup: ").concat(d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;'), "</li>\n\t\t\t\t\t\t<li>Value: ").concat(formatNumber(d[1] - d[0]), "</li>\n\t\t\t\t\t</ul>"));
+      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.data.date), "</li>\n\t\t\t\t\t\t<li>Subgroup: ").concat(d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;'), "</li>\n\t\t\t\t\t\t<li>Value: ").concat(formatNumber(d[1] - d[0]), "</li>\n\t\t\t\t\t</ul>"));
       var bodyWidth = src_select('body').style('width').slice(0, -2);
       var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
       var tooltipWidth = tooltip.style('width').slice(0, -2);
@@ -8196,7 +8228,8 @@ function TimeChartRenderer(_ref) {
     if (dataSource && config && displayedData && dataSource.data) {
       try {
         el && timeChart("#".concat(el), dataSource, displayedData, {
-          chart: config.chartType,
+          chartType: config.chartType,
+          xField: config.x.field,
           yField: config.y.field,
           subgroupField: config.subgroupField
         });
@@ -8218,15 +8251,18 @@ function TimeChartRenderer(_ref) {
 }
 
 /* harmony default export */ const reactComponents_TimeChartRenderer = (TimeChartRenderer);
-;// CONCATENATED MODULE: ./src/util/hasQuantative.js
-function hasQuantative(model) {
-  var flag = false;
+;// CONCATENATED MODULE: ./src/util/hasQuantativeAndDate.js
+function hasQuantativeAndDate(model) {
+  var hasQuantative = false;
+  var hasDate = false;
 
   function has(item) {
     if (item.selectionSet) {
       item.selectionSet.selections.forEach(function (i) {
         if (i.typeInfo.toString().includes('Int') || i.typeInfo.toString().includes('Float')) {
-          flag = true;
+          hasQuantative = true;
+        } else if (i.typeInfo.name === 'Date' || i.typeInfo.name === 'DateTime') {
+          hasDate = true;
         } else {
           has(i);
         }
@@ -8238,7 +8274,7 @@ function hasQuantative(model) {
     has(model);
   }
 
-  return flag;
+  return hasDate && hasQuantative;
 }
 ;// CONCATENATED MODULE: ./src/index.js
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8266,7 +8302,7 @@ var TimeChartPlugin = /*#__PURE__*/function () {
     value: function supportsModel(model) {
       for (var key in model) {
         if (model[key].typeInfo.toString()[0] === '[' && model[key].typeInfo.toString().slice(-2, -1) !== '0') {
-          return hasQuantative(model[key]);
+          return hasQuantativeAndDate(model[key]);
         }
 
         return false;
@@ -8413,171 +8449,6 @@ module.exports = function cssWithMappingToString(item) {
 
   return [content].join('\n');
 };
-
-/***/ }),
-
-/***/ 4444:
-/***/ ((module) => {
-
-module.exports = flatten
-flatten.flatten = flatten
-flatten.unflatten = unflatten
-
-function isBuffer (obj) {
-  return obj &&
-    obj.constructor &&
-    (typeof obj.constructor.isBuffer === 'function') &&
-    obj.constructor.isBuffer(obj)
-}
-
-function keyIdentity (key) {
-  return key
-}
-
-function flatten (target, opts) {
-  opts = opts || {}
-
-  const delimiter = opts.delimiter || '.'
-  const maxDepth = opts.maxDepth
-  const transformKey = opts.transformKey || keyIdentity
-  const output = {}
-
-  function step (object, prev, currentDepth) {
-    currentDepth = currentDepth || 1
-    Object.keys(object).forEach(function (key) {
-      const value = object[key]
-      const isarray = opts.safe && Array.isArray(value)
-      const type = Object.prototype.toString.call(value)
-      const isbuffer = isBuffer(value)
-      const isobject = (
-        type === '[object Object]' ||
-        type === '[object Array]'
-      )
-
-      const newKey = prev
-        ? prev + delimiter + transformKey(key)
-        : transformKey(key)
-
-      if (!isarray && !isbuffer && isobject && Object.keys(value).length &&
-        (!opts.maxDepth || currentDepth < maxDepth)) {
-        return step(value, newKey, currentDepth + 1)
-      }
-
-      output[newKey] = value
-    })
-  }
-
-  step(target)
-
-  return output
-}
-
-function unflatten (target, opts) {
-  opts = opts || {}
-
-  const delimiter = opts.delimiter || '.'
-  const overwrite = opts.overwrite || false
-  const transformKey = opts.transformKey || keyIdentity
-  const result = {}
-
-  const isbuffer = isBuffer(target)
-  if (isbuffer || Object.prototype.toString.call(target) !== '[object Object]') {
-    return target
-  }
-
-  // safely ensure that the key is
-  // an integer.
-  function getkey (key) {
-    const parsedKey = Number(key)
-
-    return (
-      isNaN(parsedKey) ||
-      key.indexOf('.') !== -1 ||
-      opts.object
-    ) ? key
-      : parsedKey
-  }
-
-  function addKeys (keyPrefix, recipient, target) {
-    return Object.keys(target).reduce(function (result, key) {
-      result[keyPrefix + delimiter + key] = target[key]
-
-      return result
-    }, recipient)
-  }
-
-  function isEmpty (val) {
-    const type = Object.prototype.toString.call(val)
-    const isArray = type === '[object Array]'
-    const isObject = type === '[object Object]'
-
-    if (!val) {
-      return true
-    } else if (isArray) {
-      return !val.length
-    } else if (isObject) {
-      return !Object.keys(val).length
-    }
-  }
-
-  target = Object.keys(target).reduce(function (result, key) {
-    const type = Object.prototype.toString.call(target[key])
-    const isObject = (type === '[object Object]' || type === '[object Array]')
-    if (!isObject || isEmpty(target[key])) {
-      result[key] = target[key]
-      return result
-    } else {
-      return addKeys(
-        key,
-        result,
-        flatten(target[key], opts)
-      )
-    }
-  }, {})
-
-  Object.keys(target).forEach(function (key) {
-    const split = key.split(delimiter).map(transformKey)
-    let key1 = getkey(split.shift())
-    let key2 = getkey(split[0])
-    let recipient = result
-
-    while (key2 !== undefined) {
-      if (key1 === '__proto__') {
-        return
-      }
-
-      const type = Object.prototype.toString.call(recipient[key1])
-      const isobject = (
-        type === '[object Object]' ||
-        type === '[object Array]'
-      )
-
-      // do not write over falsey, non-undefined values if overwrite is false
-      if (!overwrite && !isobject && typeof recipient[key1] !== 'undefined') {
-        return
-      }
-
-      if ((overwrite && !isobject) || (!overwrite && recipient[key1] == null)) {
-        recipient[key1] = (
-          typeof key2 === 'number' &&
-          !opts.object ? [] : {}
-        )
-      }
-
-      recipient = recipient[key1]
-      if (split.length > 0) {
-        key1 = getkey(split.shift())
-        key2 = getkey(split[0])
-      }
-    }
-
-    // unflatten again for 'messy objects'
-    recipient[key1] = unflatten(target[key], opts)
-  })
-
-  return result
-}
-
 
 /***/ }),
 
@@ -47143,7 +47014,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8383__;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(4821);
+/******/ 	return __webpack_require__(474);
 /******/ })()
 ;
 });
