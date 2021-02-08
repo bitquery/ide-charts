@@ -11,7 +11,7 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 474:
+/***/ 9744:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -492,28 +492,6 @@ function max(values, valueof) {
     }
   }
   return max;
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
-function min(values, valueof) {
-  let min;
-  if (valueof === undefined) {
-    for (const value of values) {
-      if (value != null
-          && (min > value || (min === undefined && value >= value))) {
-        min = value;
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null
-          && (min > value || (min === undefined && value >= value))) {
-        min = value;
-      }
-    }
-  }
-  return min;
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/index.js
@@ -3932,7 +3910,7 @@ var MODE_DRAG = {name: "drag"},
     MODE_HANDLE = {name: "handle"},
     MODE_CENTER = {name: "center"};
 
-const {abs, max: brush_max, min: brush_min} = Math;
+const {abs, max: brush_max, min} = Math;
 
 function number1(e) {
   return [+e[0], +e[1]];
@@ -4285,8 +4263,8 @@ function brush_brush(dim) {
       if (selection) moving = true;
       const pts = [points[0], points[1] || points[0]];
       state.selection = selection = [[
-          w0 = dim === Y ? W : brush_min(pts[0][0], pts[1][0]),
-          n0 = dim === X ? N : brush_min(pts[0][1], pts[1][1])
+          w0 = dim === Y ? W : min(pts[0][0], pts[1][0]),
+          n0 = dim === X ? N : min(pts[0][1], pts[1][1])
         ], [
           e0 = dim === Y ? E : brush_max(pts[0][0], pts[1][0]),
           s0 = dim === X ? S : brush_max(pts[0][1], pts[1][1])
@@ -4359,25 +4337,25 @@ function brush_brush(dim) {
       switch (mode) {
         case MODE_SPACE:
         case MODE_DRAG: {
-          if (signX) dx = brush_max(W - w0, brush_min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
-          if (signY) dy = brush_max(N - n0, brush_min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
+          if (signX) dx = brush_max(W - w0, min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
+          if (signY) dy = brush_max(N - n0, min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
           break;
         }
         case MODE_HANDLE: {
           if (points[1]) {
-            if (signX) w1 = brush_max(W, brush_min(E, points[0][0])), e1 = brush_max(W, brush_min(E, points[1][0])), signX = 1;
-            if (signY) n1 = brush_max(N, brush_min(S, points[0][1])), s1 = brush_max(N, brush_min(S, points[1][1])), signY = 1;
+            if (signX) w1 = brush_max(W, min(E, points[0][0])), e1 = brush_max(W, min(E, points[1][0])), signX = 1;
+            if (signY) n1 = brush_max(N, min(S, points[0][1])), s1 = brush_max(N, min(S, points[1][1])), signY = 1;
           } else {
-            if (signX < 0) dx = brush_max(W - w0, brush_min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
-            else if (signX > 0) dx = brush_max(W - e0, brush_min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
-            if (signY < 0) dy = brush_max(N - n0, brush_min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
-            else if (signY > 0) dy = brush_max(N - s0, brush_min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
+            if (signX < 0) dx = brush_max(W - w0, min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
+            else if (signX > 0) dx = brush_max(W - e0, min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
+            if (signY < 0) dy = brush_max(N - n0, min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
+            else if (signY > 0) dy = brush_max(N - s0, min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
           }
           break;
         }
         case MODE_CENTER: {
-          if (signX) w1 = brush_max(W, brush_min(E, w0 - dx * signX)), e1 = brush_max(W, brush_min(E, e0 + dx * signX));
-          if (signY) n1 = brush_max(N, brush_min(S, n0 - dy * signY)), s1 = brush_max(N, brush_min(S, s0 + dy * signY));
+          if (signX) w1 = brush_max(W, min(E, w0 - dx * signX)), e1 = brush_max(W, min(E, e0 + dx * signX));
+          if (signY) n1 = brush_max(N, min(S, n0 - dy * signY)), s1 = brush_max(N, min(S, s0 + dy * signY));
           break;
         }
       }
@@ -7624,6 +7602,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
+
 function timeChart(selector, dataSource, displayedData, options) {
   dataSource = lodash.cloneDeep(dataSource);
   var margin = {
@@ -7637,10 +7617,26 @@ function timeChart(selector, dataSource, displayedData, options) {
   var data = dataSource.values;
   var pathToDate = options.xField;
   var pathToYField = options.yField; // const yFieldName = formatLabel(pathToYField)
+  // console.log(_.get(data[0], pathToDate))
+  // console.log(moment)
+  // console.log(d3)
 
   data.forEach(function (d) {
+    console.log(lodash.get(d, pathToDate), new Date(moment_default()(lodash.get(d, pathToDate))));
     d.date = new Date(moment_default()(lodash.get(d, pathToDate)));
   });
+  var dt = {
+    ms: (data[data.length - 1].date - data[0].date) / data.length,
+    s: (data[data.length - 1].date - data[0].date) / data.length / 1000,
+    min: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60),
+    h: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60 * 60),
+    d: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60 * 60 * 24),
+    m: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60 * 60 * 24 * 30),
+    y: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60 * 60 * 24 * 365)
+  };
+  var tickBy = [src_millisecond, src_second, src_minute, src_hour, src_day, src_month, src_year];
+  var tickByNumber = dt.s < 1 ? 0 : dt.min < 1 ? 1 : dt.hour < 1 ? 2 : dt.d < 1 ? 3 : dt.m < 1 ? 4 : dt.y < 1 ? 5 : 6;
+  console.log(dt, tickByNumber, tickBy[tickByNumber]);
   src_select(selector).html('');
 
   switch (options.chartType) {
@@ -7668,13 +7664,12 @@ function timeChart(selector, dataSource, displayedData, options) {
     var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     var x = time().domain(extent(data, function (d) {
       return d.date;
-    })).range([0, width]).nice(src_month.every(2));
+    })).range([0, width]).nice(tickBy[tickByNumber]);
     var y = linear_linear().domain([0, max(data, function (d) {
       return lodash.get(d, pathToYField);
     })]).range([height, 0]).nice();
     var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
-      var n = x.ticks().length;
-      return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
+      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/m/%y')(date) : timeFormat('%H:%M:%S %d%/m/%y')(date);
     });
     var yAxis = axisLeft(y).tickSize(-width);
     var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
@@ -7683,7 +7678,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
     var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart);
     svg.append('g').attr('class', 'brush').call(brush);
-    var barWidth = width / x.ticks(src_month).length * 0.8;
+    var barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
     var bars = svg.append('g').attr('clip-path', 'url(#clip)').attr('class', 'bars');
     bars.selectAll('mybar').data(data).enter().append('rect').attr('x', function (d) {
       return x(d.date) - barWidth / 2;
@@ -7727,13 +7722,16 @@ function timeChart(selector, dataSource, displayedData, options) {
         if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
         x.domain([4, 8]);
       } else {
-        svg.select('.brush').call(brush.move, null);
+        svg.select('.brush').call(brush.move, null); // if (
+        //   d3
+        //     .scaleTime()
+        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
+        //     .ticks(d3.timeMonth.every(1)).length < 5
+        // ) {
+        //   return
+        // }
 
-        if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
-          return;
-        }
-
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(src_month);
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(tickBy[tickByNumber]);
       }
 
       y.domain([0, max(data.map(function (d) {
@@ -7747,7 +7745,7 @@ function timeChart(selector, dataSource, displayedData, options) {
       }))]).nice();
       xAxisGrid.transition().duration(1000).call(xAxis);
       yAxisGrid.transition().duration(1000).call(yAxis);
-      barWidth = width / x.ticks(src_month).length * 0.8;
+      barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
       bars.selectAll('.bar').transition().duration(1000).attr('x', function (d) {
         return x(d.date) - barWidth / 2;
       }).attr('width', function (d) {
@@ -7762,7 +7760,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     svg.on('dblclick', function () {
       x.domain(extent(data, function (d) {
         return d.date;
-      })).nice(src_month.every(2));
+      })).nice(tickBy[tickByNumber]);
       y.domain([0, max(data.map(function (d) {
         var domain = x.domain();
 
@@ -7774,7 +7772,7 @@ function timeChart(selector, dataSource, displayedData, options) {
       }))]).nice();
       xAxisGrid.transition().call(xAxis);
       yAxisGrid.transition().call(yAxis);
-      barWidth = width / x.ticks(src_month).length * 0.8;
+      barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
       bars.selectAll('.bar').transition().attr('x', function (d) {
         return x(d.date) - barWidth / 2;
       }).attr('width', function (d) {
@@ -7791,13 +7789,12 @@ function timeChart(selector, dataSource, displayedData, options) {
     var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     var x = time().domain(extent(data, function (d) {
       return d.date;
-    })).range([0, width]).nice(src_month.every(2));
+    })).range([0, width]).nice(tickBy[tickByNumber]);
     var y = linear_linear().domain([0, max(data, function (d) {
       return lodash.get(d, pathToYField);
     })]).range([height, 0]).nice();
     var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
-      var n = x.ticks().length;
-      return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
+      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/m/%y')(date) : timeFormat('%H:%M:%S %d%/m/%y')(date);
     });
     var yAxis = axisLeft(y).tickSize(-width);
     var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
@@ -7812,7 +7809,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).y(function (d) {
       return y(lodash.get(d, pathToYField));
     }));
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToDate);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
     var bisectDate = bisector(function (d) {
@@ -7858,13 +7855,16 @@ function timeChart(selector, dataSource, displayedData, options) {
         if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
         x.domain([4, 8]);
       } else {
-        svg.select('.brush').call(brush.move, null);
+        svg.select('.brush').call(brush.move, null); // if (
+        //   d3
+        //     .scaleTime()
+        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
+        //     .ticks(d3.timeMonth.every(1)).length < 5
+        // ) {
+        //   return
+        // }
 
-        if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
-          return;
-        }
-
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(src_month);
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(tickBy[tickByNumber]);
       }
 
       y.domain([0, max(data.map(function (d) {
@@ -7892,7 +7892,7 @@ function timeChart(selector, dataSource, displayedData, options) {
       // mouseout()
       x.domain(extent(data, function (d) {
         return d.date;
-      })).nice(src_month.every(2));
+      })).nice(tickBy[tickByNumber]);
       y.domain([0, max(data.map(function (d) {
         var domain = x.domain();
 
@@ -7919,13 +7919,12 @@ function timeChart(selector, dataSource, displayedData, options) {
     var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     var x = time().domain(extent(data, function (d) {
       return d.date;
-    })).range([0, width]).nice(src_month.every(2));
+    })).range([0, width]).nice(tickBy[tickByNumber]);
     var y = linear_linear().domain([0, max(data, function (d) {
       return lodash.get(d, pathToYField);
     })]).range([height, 0]).nice();
     var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
-      var n = x.ticks().length;
-      return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
+      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/m/%y')(date) : timeFormat('%H:%M:%S %d%/m/%y')(date);
     });
     var yAxis = axisLeft(y).tickSize(-width);
     var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
@@ -7942,7 +7941,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).attr('r', function (d) {
       return 4;
     }).attr('class', 'circle').attr('fill', '#28a745').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToDate);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 
@@ -7977,13 +7976,16 @@ function timeChart(selector, dataSource, displayedData, options) {
         if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
         x.domain([4, 8]);
       } else {
-        svg.select('.brush').call(brush.move, null);
+        svg.select('.brush').call(brush.move, null); // if (
+        //   d3
+        //     .scaleTime()
+        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
+        //     .ticks(d3.timeMonth.every(1)).length < 5
+        // ) {
+        //   return
+        // }
 
-        if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
-          return;
-        }
-
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(src_month);
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(tickBy[tickByNumber]);
       }
 
       y.domain([0, max(data.map(function (d) {
@@ -8009,7 +8011,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     svg.on('dblclick', function () {
       x.domain(extent(data, function (d) {
         return d.date;
-      })).nice(src_month.every(2));
+      })).nice(tickBy[tickByNumber]);
       y.domain([0, max(data.map(function (d) {
         var domain = x.domain();
 
@@ -8055,6 +8057,38 @@ function timeChart(selector, dataSource, displayedData, options) {
       });
       return newVal;
     });
+    dt = {
+      ms: wide[1].date - wide[0].date,
+      s: (wide[1].date - wide[0].date) / 1000,
+      min: (wide[1].date - wide[0].date) / (1000 * 60),
+      h: (wide[1].date - wide[0].date) / (1000 * 60 * 60),
+      d: (wide[1].date - wide[0].date) / (1000 * 60 * 60 * 24),
+      m: (wide[1].date - wide[0].date) / (1000 * 60 * 60 * 24 * 30),
+      y: (wide[1].date - wide[0].date) / (1000 * 60 * 60 * 24 * 365)
+    }; // const tickBy = [
+    //   d3.timeMillisecond,
+    //   d3.timeSecond,
+    //   d3.timeMinute,
+    //   d3.timeHour,
+    //   d3.timeDay,
+    //   d3.timeMonth,
+    //   d3.timeYear,
+    // ]
+    // const tickByNumber =
+    //   dt.s < 1
+    //     ? 0
+    //     : dt.min < 1
+    //     ? 1
+    //     : dt.hour < 1
+    //     ? 2
+    //     : dt.d < 1
+    //     ? 3
+    //     : dt.m < 1
+    //     ? 4
+    //     : dt.y < 1
+    //     ? 5
+    //     : 6
+
     var groups = wide.map(function (d) {
       return d.date;
     });
@@ -8077,11 +8111,10 @@ function timeChart(selector, dataSource, displayedData, options) {
       return acc;
     }));
     var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-    var x = time().domain(extent(groups)).range([0, width]).nice(src_month.every(2));
+    var x = time().domain(extent(groups)).range([0, width]).nice(tickBy[tickByNumber]);
     var y = linear_linear().domain([0, yMax]).range([height, 0]).nice();
     var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
-      var n = x.ticks().length;
-      return n <= timeFormat('%Y')(max(x.ticks())) - timeFormat('%Y')(min(x.ticks())) + 1 ? timeFormat('%Y')(date) : timeFormat('%m/%y')(date);
+      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/m/%y')(date) : timeFormat('%H:%M:%S %d%/m/%y')(date);
     });
     var yAxis = axisLeft(y).tickSize(-width);
     var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
@@ -8090,7 +8123,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
     var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart);
     svg.append('g').attr('class', 'brush').call(brush);
-    var barWidth = width / x.ticks(src_month).length * 0.8;
+    var barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
     var barsLayers = svg.append('g').attr('clip-path', 'url(#clip)').attr('class', 'bars');
     var bars = barsLayers.selectAll('g').data(stackedData).join('g').attr('fill', function (d) {
       return color(d.key);
@@ -8104,7 +8137,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).attr('height', function (d) {
       return y(d[0]) - y(d[1]);
     }).attr('class', 'bar').attr('pointer-events', 'all').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToDate);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 
@@ -8114,7 +8147,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }
 
     function mousemove(e, d) {
-      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.data.date), "</li>\n\t\t\t\t\t\t<li>Subgroup: ").concat(d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;'), "</li>\n\t\t\t\t\t\t<li>Value: ").concat(formatNumber(d[1] - d[0]), "</li>\n\t\t\t\t\t</ul>"));
+      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.data.date), "</li>\n\t\t\t\t\t\t").concat(d.key ? "<li>Subgroup: ".concat(d.key && d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;'), "</li>") : '', "\n\t\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(d[1] - d[0]), "</li>\n\t\t\t\t\t</ul>"));
       var bodyWidth = src_select('body').style('width').slice(0, -2);
       var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
       var tooltipWidth = tooltip.style('width').slice(0, -2);
@@ -8139,13 +8172,16 @@ function timeChart(selector, dataSource, displayedData, options) {
         if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
         x.domain([4, 8]);
       } else {
-        svg.select('.brush').call(brush.move, null);
+        svg.select('.brush').call(brush.move, null); // if (
+        //   d3
+        //     .scaleTime()
+        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
+        //     .ticks(d3.timeMonth.every(1)).length < 5
+        // ) {
+        //   return
+        // }
 
-        if (time().domain([x.invert(extent[0]), x.invert(extent[1])]).ticks(src_month.every(1)).length < 5) {
-          return;
-        }
-
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(src_month);
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(tickBy[tickByNumber]);
       }
 
       y.domain([0, max(wide.map(function (d) {
@@ -8167,7 +8203,7 @@ function timeChart(selector, dataSource, displayedData, options) {
       }))]).nice();
       xAxisGrid.transition().duration(1000).call(xAxis);
       yAxisGrid.transition().duration(1000).call(yAxis);
-      barWidth = width / x.ticks(src_month).length * 0.8;
+      barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
       bars.selectAll('.bar').transition().duration(1000).attr('x', function (d) {
         return x(d.data.date) - barWidth / 2;
       }).attr('width', barWidth).attr('y', function (d) {
@@ -8180,7 +8216,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     svg.on('dblclick', function () {
       x.domain(extent(data, function (d) {
         return d.date;
-      })).nice(src_month.every(2));
+      })).nice(tickBy[tickByNumber]);
       y.domain([0, max(wide.map(function (d) {
         var domain = x.domain();
 
@@ -8200,7 +8236,7 @@ function timeChart(selector, dataSource, displayedData, options) {
       }))]).nice();
       xAxisGrid.transition().call(xAxis);
       yAxisGrid.transition().call(yAxis);
-      barWidth = width / x.ticks(src_month).length * 0.8;
+      barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
       bars.selectAll('.bar').transition().attr('x', function (d) {
         return x(d.data.date) - barWidth / 2;
       }).attr('width', barWidth).attr('y', function (d) {
@@ -47014,7 +47050,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8383__;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(474);
+/******/ 	return __webpack_require__(9744);
 /******/ })()
 ;
 });
