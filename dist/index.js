@@ -11,7 +11,7 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 9744:
+/***/ 872:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -473,7 +473,7 @@ function nest(values, map, reduce, keys) {
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/max.js
-function max(values, valueof) {
+function max_max(values, valueof) {
   let max;
   if (valueof === undefined) {
     for (const value of values) {
@@ -492,6 +492,28 @@ function max(values, valueof) {
     }
   }
   return max;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
+function min_min(values, valueof) {
+  let min;
+  if (valueof === undefined) {
+    for (const value of values) {
+      if (value != null
+          && (min > value || (min === undefined && value >= value))) {
+        min = value;
+      }
+    }
+  } else {
+    let index = -1;
+    for (let value of values) {
+      if ((value = valueof(value, ++index, values)) != null
+          && (min > value || (min === undefined && value >= value))) {
+        min = value;
+      }
+    }
+  }
+  return min;
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/index.js
@@ -3910,7 +3932,7 @@ var MODE_DRAG = {name: "drag"},
     MODE_HANDLE = {name: "handle"},
     MODE_CENTER = {name: "center"};
 
-const {abs, max: brush_max, min} = Math;
+const {abs, max, min} = Math;
 
 function number1(e) {
   return [+e[0], +e[1]];
@@ -4266,8 +4288,8 @@ function brush_brush(dim) {
           w0 = dim === Y ? W : min(pts[0][0], pts[1][0]),
           n0 = dim === X ? N : min(pts[0][1], pts[1][1])
         ], [
-          e0 = dim === Y ? E : brush_max(pts[0][0], pts[1][0]),
-          s0 = dim === X ? S : brush_max(pts[0][1], pts[1][1])
+          e0 = dim === Y ? E : max(pts[0][0], pts[1][0]),
+          s0 = dim === X ? S : max(pts[0][1], pts[1][1])
         ]];
       if (points.length > 1) move();
     } else {
@@ -4337,25 +4359,25 @@ function brush_brush(dim) {
       switch (mode) {
         case MODE_SPACE:
         case MODE_DRAG: {
-          if (signX) dx = brush_max(W - w0, min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
-          if (signY) dy = brush_max(N - n0, min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
+          if (signX) dx = max(W - w0, min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
+          if (signY) dy = max(N - n0, min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
           break;
         }
         case MODE_HANDLE: {
           if (points[1]) {
-            if (signX) w1 = brush_max(W, min(E, points[0][0])), e1 = brush_max(W, min(E, points[1][0])), signX = 1;
-            if (signY) n1 = brush_max(N, min(S, points[0][1])), s1 = brush_max(N, min(S, points[1][1])), signY = 1;
+            if (signX) w1 = max(W, min(E, points[0][0])), e1 = max(W, min(E, points[1][0])), signX = 1;
+            if (signY) n1 = max(N, min(S, points[0][1])), s1 = max(N, min(S, points[1][1])), signY = 1;
           } else {
-            if (signX < 0) dx = brush_max(W - w0, min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
-            else if (signX > 0) dx = brush_max(W - e0, min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
-            if (signY < 0) dy = brush_max(N - n0, min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
-            else if (signY > 0) dy = brush_max(N - s0, min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
+            if (signX < 0) dx = max(W - w0, min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
+            else if (signX > 0) dx = max(W - e0, min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
+            if (signY < 0) dy = max(N - n0, min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
+            else if (signY > 0) dy = max(N - s0, min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
           }
           break;
         }
         case MODE_CENTER: {
-          if (signX) w1 = brush_max(W, min(E, w0 - dx * signX)), e1 = brush_max(W, min(E, e0 + dx * signX));
-          if (signY) n1 = brush_max(N, min(S, n0 - dy * signY)), s1 = brush_max(N, min(S, s0 + dy * signY));
+          if (signX) w1 = max(W, min(E, w0 - dx * signX)), e1 = max(W, min(E, e0 + dx * signX));
+          if (signY) n1 = max(N, min(S, n0 - dy * signY)), s1 = max(N, min(S, s0 + dy * signY));
           break;
         }
       }
@@ -4520,6 +4542,200 @@ function brush_brush(dim) {
 
 ;// CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
 
+
+;// CONCATENATED MODULE: ./node_modules/d3-array/src/range.js
+/* harmony default export */ function range(start, stop, step) {
+  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
+
+  var i = -1,
+      n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
+      range = new Array(n);
+
+  while (++i < n) {
+    range[i] = start + i * step;
+  }
+
+  return range;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-scale/src/init.js
+function initRange(domain, range) {
+  switch (arguments.length) {
+    case 0: break;
+    case 1: this.range(domain); break;
+    default: this.range(range).domain(domain); break;
+  }
+  return this;
+}
+
+function initInterpolator(domain, interpolator) {
+  switch (arguments.length) {
+    case 0: break;
+    case 1: {
+      if (typeof domain === "function") this.interpolator(domain);
+      else this.range(domain);
+      break;
+    }
+    default: {
+      this.domain(domain);
+      if (typeof interpolator === "function") this.interpolator(interpolator);
+      else this.range(interpolator);
+      break;
+    }
+  }
+  return this;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
+
+
+const implicit = Symbol("implicit");
+
+function ordinal() {
+  var index = new Map(),
+      domain = [],
+      range = [],
+      unknown = implicit;
+
+  function scale(d) {
+    var key = d + "", i = index.get(key);
+    if (!i) {
+      if (unknown !== implicit) return unknown;
+      index.set(key, i = domain.push(d));
+    }
+    return range[(i - 1) % range.length];
+  }
+
+  scale.domain = function(_) {
+    if (!arguments.length) return domain.slice();
+    domain = [], index = new Map();
+    for (const value of _) {
+      const key = value + "";
+      if (index.has(key)) continue;
+      index.set(key, domain.push(value));
+    }
+    return scale;
+  };
+
+  scale.range = function(_) {
+    return arguments.length ? (range = Array.from(_), scale) : range.slice();
+  };
+
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  };
+
+  scale.copy = function() {
+    return ordinal(domain, range).unknown(unknown);
+  };
+
+  initRange.apply(scale, arguments);
+
+  return scale;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-scale/src/band.js
+
+
+
+
+function band() {
+  var scale = ordinal().unknown(undefined),
+      domain = scale.domain,
+      ordinalRange = scale.range,
+      r0 = 0,
+      r1 = 1,
+      step,
+      bandwidth,
+      round = false,
+      paddingInner = 0,
+      paddingOuter = 0,
+      align = 0.5;
+
+  delete scale.unknown;
+
+  function rescale() {
+    var n = domain().length,
+        reverse = r1 < r0,
+        start = reverse ? r1 : r0,
+        stop = reverse ? r0 : r1;
+    step = (stop - start) / Math.max(1, n - paddingInner + paddingOuter * 2);
+    if (round) step = Math.floor(step);
+    start += (stop - start - step * (n - paddingInner)) * align;
+    bandwidth = step * (1 - paddingInner);
+    if (round) start = Math.round(start), bandwidth = Math.round(bandwidth);
+    var values = range(n).map(function(i) { return start + step * i; });
+    return ordinalRange(reverse ? values.reverse() : values);
+  }
+
+  scale.domain = function(_) {
+    return arguments.length ? (domain(_), rescale()) : domain();
+  };
+
+  scale.range = function(_) {
+    return arguments.length ? ([r0, r1] = _, r0 = +r0, r1 = +r1, rescale()) : [r0, r1];
+  };
+
+  scale.rangeRound = function(_) {
+    return [r0, r1] = _, r0 = +r0, r1 = +r1, round = true, rescale();
+  };
+
+  scale.bandwidth = function() {
+    return bandwidth;
+  };
+
+  scale.step = function() {
+    return step;
+  };
+
+  scale.round = function(_) {
+    return arguments.length ? (round = !!_, rescale()) : round;
+  };
+
+  scale.padding = function(_) {
+    return arguments.length ? (paddingInner = Math.min(1, paddingOuter = +_), rescale()) : paddingInner;
+  };
+
+  scale.paddingInner = function(_) {
+    return arguments.length ? (paddingInner = Math.min(1, _), rescale()) : paddingInner;
+  };
+
+  scale.paddingOuter = function(_) {
+    return arguments.length ? (paddingOuter = +_, rescale()) : paddingOuter;
+  };
+
+  scale.align = function(_) {
+    return arguments.length ? (align = Math.max(0, Math.min(1, _)), rescale()) : align;
+  };
+
+  scale.copy = function() {
+    return band(domain(), [r0, r1])
+        .round(round)
+        .paddingInner(paddingInner)
+        .paddingOuter(paddingOuter)
+        .align(align);
+  };
+
+  return initRange.apply(rescale(), arguments);
+}
+
+function pointish(scale) {
+  var copy = scale.copy;
+
+  scale.padding = scale.paddingOuter;
+  delete scale.paddingInner;
+  delete scale.paddingOuter;
+
+  scale.copy = function() {
+    return pointish(copy());
+  };
+
+  return scale;
+}
+
+function point() {
+  return pointish(band.apply(null, arguments).paddingInner(1));
+}
 
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/ticks.js
 var e10 = Math.sqrt(50),
@@ -4752,34 +4968,6 @@ function transformer() {
 
 function continuous() {
   return transformer()(continuous_identity, continuous_identity);
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/init.js
-function initRange(domain, range) {
-  switch (arguments.length) {
-    case 0: break;
-    case 1: this.range(domain); break;
-    default: this.range(range).domain(domain); break;
-  }
-  return this;
-}
-
-function initInterpolator(domain, interpolator) {
-  switch (arguments.length) {
-    case 0: break;
-    case 1: {
-      if (typeof domain === "function") this.interpolator(domain);
-      else this.range(domain);
-      break;
-    }
-    default: {
-      this.domain(domain);
-      if (typeof interpolator === "function") this.interpolator(interpolator);
-      else this.range(interpolator);
-      break;
-    }
-  }
-  return this;
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
@@ -5252,54 +5440,6 @@ function linear_linear() {
   initRange.apply(scale, arguments);
 
   return linearish(scale);
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
-
-
-const implicit = Symbol("implicit");
-
-function ordinal() {
-  var index = new Map(),
-      domain = [],
-      range = [],
-      unknown = implicit;
-
-  function scale(d) {
-    var key = d + "", i = index.get(key);
-    if (!i) {
-      if (unknown !== implicit) return unknown;
-      index.set(key, i = domain.push(d));
-    }
-    return range[(i - 1) % range.length];
-  }
-
-  scale.domain = function(_) {
-    if (!arguments.length) return domain.slice();
-    domain = [], index = new Map();
-    for (const value of _) {
-      const key = value + "";
-      if (index.has(key)) continue;
-      index.set(key, domain.push(value));
-    }
-    return scale;
-  };
-
-  scale.range = function(_) {
-    return arguments.length ? (range = Array.from(_), scale) : range.slice();
-  };
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-
-  scale.copy = function() {
-    return ordinal(domain, range).unknown(unknown);
-  };
-
-  initRange.apply(scale, arguments);
-
-  return scale;
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/interval.js
@@ -7608,35 +7748,29 @@ function timeChart(selector, dataSource, displayedData, options) {
   dataSource = lodash.cloneDeep(dataSource);
   var margin = {
     top: 10,
-    right: 30,
-    bottom: 30,
-    left: 70
+    right: 50,
+    bottom: 40,
+    left: 100
   },
       width = src_select(selector).node().getBoundingClientRect().width - margin.left - margin.right,
       height = src_select(selector).node().getBoundingClientRect().height - margin.top - margin.bottom;
   var data = dataSource.values;
   var pathToDate = options.xField;
-  var pathToYField = options.yField; // const yFieldName = formatLabel(pathToYField)
-  // console.log(_.get(data[0], pathToDate))
-  // console.log(moment)
-  // console.log(d3)
-
+  var pathToYField = options.yField;
   data.forEach(function (d) {
-    console.log(lodash.get(d, pathToDate), new Date(moment_default()(lodash.get(d, pathToDate))));
     d.date = new Date(moment_default()(lodash.get(d, pathToDate)));
   });
   var dt = {
-    ms: (data[data.length - 1].date - data[0].date) / data.length,
-    s: (data[data.length - 1].date - data[0].date) / data.length / 1000,
-    min: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60),
-    h: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60 * 60),
-    d: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60 * 60 * 24),
-    m: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60 * 60 * 24 * 30),
-    y: (data[data.length - 1].date - data[0].date) / data.length / (1000 * 60 * 60 * 24 * 365)
+    ms: (data[data.length - 1].date - data[0].date) / (data.length > 2 ? data.length - 2 : data.length),
+    s: (data[data.length - 1].date - data[0].date) / (data.length > 2 ? data.length - 2 : data.length) / 1000,
+    min: (data[data.length - 1].date - data[0].date) / (data.length > 2 ? data.length - 2 : data.length) / (1000 * 60),
+    h: (data[data.length - 1].date - data[0].date) / (data.length > 2 ? data.length - 2 : data.length) / (1000 * 60 * 60),
+    d: (data[data.length - 1].date - data[0].date) / (data.length > 2 ? data.length - 2 : data.length) / (1000 * 60 * 60 * 24),
+    m: (data[data.length - 1].date - data[0].date) / (data.length > 2 ? data.length - 2 : data.length) / (1000 * 60 * 60 * 24 * 30),
+    y: (data[data.length - 1].date - data[0].date) / (data.length > 2 ? data.length - 2 : data.length) / (1000 * 60 * 60 * 24 * 365)
   };
-  var tickBy = [src_millisecond, src_second, src_minute, src_hour, src_day, src_month, src_year];
   var tickByNumber = dt.s < 1 ? 0 : dt.min < 1 ? 1 : dt.hour < 1 ? 2 : dt.d < 1 ? 3 : dt.m < 1 ? 4 : dt.y < 1 ? 5 : 6;
-  console.log(dt, tickByNumber, tickBy[tickByNumber]);
+  var tickBy = [src_millisecond, src_second, src_minute, src_hour, src_day, src_month, src_year];
   src_select(selector).html('');
 
   switch (options.chartType) {
@@ -7662,32 +7796,36 @@ function timeChart(selector, dataSource, displayedData, options) {
 
   function bar() {
     var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-    var x = time().domain(extent(data, function (d) {
+    var x = band().domain(data.map(function (d) {
       return d.date;
-    })).range([0, width]).nice(tickBy[tickByNumber]);
-    var y = linear_linear().domain([0, max(data, function (d) {
+    })).range([0, width]).paddingInner(0.1);
+    var y = linear_linear().domain([0, max_max(data, function (d) {
       return lodash.get(d, pathToYField);
     })]).range([height, 0]).nice();
-    var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
-      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/m/%y')(date) : timeFormat('%H:%M:%S %d%/m/%y')(date);
+    var xAxis = axisBottom(x).tickSize(-height).tickValues(data.map(function (d, i) {
+      return i % (Math.round(data.length / 5) + 1) == 0 ? d.date : null;
+    }).filter(function (d) {
+      return !!d;
+    })).tickFormat(function (date) {
+      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/%m/%y')(date) : timeFormat('%H:%M:%S %d%/%m/%y')(date);
     });
     var yAxis = axisLeft(y).tickSize(-width);
     var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
+    xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)');
     var yAxisGrid = svg.append('g').call(yAxis);
     yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
     var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
     var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart);
     svg.append('g').attr('class', 'brush').call(brush);
-    var barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
     var bars = svg.append('g').attr('clip-path', 'url(#clip)').attr('class', 'bars');
-    bars.selectAll('mybar').data(data).enter().append('rect').attr('x', function (d) {
-      return x(d.date) - barWidth / 2;
-    }).attr('width', barWidth).attr('y', function (d) {
+    bars.selectAll('rect').data(data).enter().append('rect').attr('x', function (d) {
+      return x(d.date);
+    }).attr('width', x.bandwidth()).attr('y', function (d) {
       return y(lodash.get(d, pathToYField));
     }).attr('height', function (d) {
       return height - y(lodash.get(d, pathToYField));
     }).attr('class', 'bar').attr('fill', '#28a745').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').style('font-size', '12').attr('font-family', 'Nunito, Arial, sans-serif').text(pathToDate);
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').style('font-size', '12').attr('font-family', 'Nunito, Arial, sans-serif').text(pathToDate);
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 
@@ -7697,7 +7835,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }
 
     function mousemove(e, d) {
-      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
+      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(tickByNumber == 6 ? timeFormat('%Y')(d.date) : tickByNumber == 5 ? timeFormat('%m/%y')(d.date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(d.date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(d.date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/%m/%y')(d.date) : timeFormat('%H:%M:%S %d%/%m/%y')(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
       var bodyWidth = src_select('body').style('width').slice(0, -2);
       var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
       var tooltipWidth = tooltip.style('width').slice(0, -2);
@@ -7718,38 +7856,54 @@ function timeChart(selector, dataSource, displayedData, options) {
         idleTimeout = null;
       }
 
+      var newData;
+
       if (!extent) {
         if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
         x.domain([4, 8]);
       } else {
-        svg.select('.brush').call(brush.move, null); // if (
-        //   d3
-        //     .scaleTime()
-        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
-        //     .ticks(d3.timeMonth.every(1)).length < 5
-        // ) {
-        //   return
-        // }
+        svg.select('.brush').call(brush.move, null);
+        newData = data.map(function (d, i) {
+          var pos = x(d.date);
 
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(tickBy[tickByNumber]);
+          if (pos > extent[0] && pos < extent[1]) {
+            return d;
+          } else {
+            return null;
+          }
+        }).filter(function (d) {
+          return !!d;
+        });
+        x.domain(newData.map(function (d) {
+          return d.date;
+        }));
       }
 
-      y.domain([0, max(data.map(function (d) {
-        var domain = x.domain();
-
-        if (d.date >= domain[0] && d.date <= domain[1]) {
-          return lodash.get(d, pathToYField);
-        } else {
-          return 0;
-        }
-      }))]).nice();
+      y.domain([0, max_max(newData, function (d) {
+        return lodash.get(d, pathToYField);
+      })]).nice();
+      xAxis.tickValues(newData.map(function (d, i) {
+        return i % (Math.round(newData.length / 5) + 1) == 0 || i == newData.length - 1 ? d.date : null;
+      }).filter(function (d) {
+        return !!d;
+      }));
       xAxisGrid.transition().duration(1000).call(xAxis);
+      xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)');
       yAxisGrid.transition().duration(1000).call(yAxis);
-      barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
-      bars.selectAll('.bar').transition().duration(1000).attr('x', function (d) {
-        return x(d.date) - barWidth / 2;
+      bars.selectAll('rect').style('display', function (d) {
+        var max = max_max(x.domain());
+        var min = min_min(x.domain());
+
+        if (d.date >= min && d.date <= max) {
+          return null;
+        } else {
+          return 'none';
+        }
+      });
+      bars.selectAll('rect').transition().duration(1000).attr('x', function (d) {
+        return x(d.date);
       }).attr('width', function (d) {
-        return barWidth;
+        return x.bandwidth();
       }).attr('y', function (d) {
         return y(lodash.get(d, pathToYField));
       }).attr('height', function (d) {
@@ -7758,25 +7912,24 @@ function timeChart(selector, dataSource, displayedData, options) {
     }
 
     svg.on('dblclick', function () {
-      x.domain(extent(data, function (d) {
+      x.domain(data.map(function (d) {
         return d.date;
-      })).nice(tickBy[tickByNumber]);
-      y.domain([0, max(data.map(function (d) {
-        var domain = x.domain();
-
-        if (d.date >= domain[0] && d.date <= domain[1]) {
-          return lodash.get(d, pathToYField);
-        } else {
-          return 0;
-        }
-      }))]).nice();
+      }));
+      y.domain([0, max_max(data, function (d) {
+        return lodash.get(d, pathToYField);
+      })]).nice();
+      xAxis.tickValues(data.map(function (d, i) {
+        return i % (Math.round(data.length / 5) + 1) == 0 || i == data.length - 1 ? d.date : null;
+      }).filter(function (d) {
+        return !!d;
+      }));
       xAxisGrid.transition().call(xAxis);
+      xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)');
       yAxisGrid.transition().call(yAxis);
-      barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
-      bars.selectAll('.bar').transition().attr('x', function (d) {
-        return x(d.date) - barWidth / 2;
+      bars.selectAll('rect').transition().style('display', null).attr('x', function (d) {
+        return x(d.date);
       }).attr('width', function (d) {
-        return barWidth;
+        return x.bandwidth();
       }).attr('y', function (d) {
         return y(lodash.get(d, pathToYField));
       }).attr('height', function (d) {
@@ -7790,14 +7943,15 @@ function timeChart(selector, dataSource, displayedData, options) {
     var x = time().domain(extent(data, function (d) {
       return d.date;
     })).range([0, width]).nice(tickBy[tickByNumber]);
-    var y = linear_linear().domain([0, max(data, function (d) {
+    var y = linear_linear().domain([0, max_max(data, function (d) {
       return lodash.get(d, pathToYField);
     })]).range([height, 0]).nice();
     var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
-      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/m/%y')(date) : timeFormat('%H:%M:%S %d%/m/%y')(date);
+      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/%m/%y')(date) : timeFormat('%H:%M:%S %d%/%m/%y')(date);
     });
     var yAxis = axisLeft(y).tickSize(-width);
     var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
+    xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)');
     var yAxisGrid = svg.append('g').call(yAxis);
     yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
     var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
@@ -7809,7 +7963,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).y(function (d) {
       return y(lodash.get(d, pathToYField));
     }));
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
     var bisectDate = bisector(function (d) {
@@ -7839,11 +7993,10 @@ function timeChart(selector, dataSource, displayedData, options) {
       var tooltipheight = tooltip.style('height').slice(0, -2);
       var tooltipWidth = tooltip.style('width').slice(0, -2);
       tooltip.style('left', src_select(selector).node().getBoundingClientRect().x + x(d.date) + 10 + 'px').style('top', src_select(selector).node().getBoundingClientRect().y + y(lodash.get(d, pathToYField)) - tooltipheight - 5 + 'px');
-      tooltip.html("<ul>\n\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.date), "</li>\n\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t</ul>"));
+      tooltip.html("<ul>\n\t\t\t\t\t<li>Date: ".concat(tickByNumber == 6 ? timeFormat('%Y')(d.date) : tickByNumber == 5 ? timeFormat('%m/%y')(d.date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(d.date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(d.date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/%m/%y')(d.date) : timeFormat('%H:%M:%S %d%/%m/%y')(d.date), "</li>\n\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t</ul>"));
     }
 
     function updateChart(event) {
-      // mouseout()
       var extent = event.selection;
       var idleTimeout;
 
@@ -7855,19 +8008,11 @@ function timeChart(selector, dataSource, displayedData, options) {
         if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
         x.domain([4, 8]);
       } else {
-        svg.select('.brush').call(brush.move, null); // if (
-        //   d3
-        //     .scaleTime()
-        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
-        //     .ticks(d3.timeMonth.every(1)).length < 5
-        // ) {
-        //   return
-        // }
-
+        svg.select('.brush').call(brush.move, null);
         x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(tickBy[tickByNumber]);
       }
 
-      y.domain([0, max(data.map(function (d) {
+      y.domain([0, max_max(data.map(function (d) {
         var domain = x.domain();
 
         if (d.date >= domain[0] && d.date <= domain[1]) {
@@ -7882,18 +8027,14 @@ function timeChart(selector, dataSource, displayedData, options) {
         return x(d.date);
       }).y(function (d) {
         return y(lodash.get(d, pathToYField));
-      })); // setTimeout(() => {
-      //   mouseover()
-      //   mousemove(event)
-      // }, 1000)
+      }));
     }
 
     svg.on('dblclick', function () {
-      // mouseout()
       x.domain(extent(data, function (d) {
         return d.date;
       })).nice(tickBy[tickByNumber]);
-      y.domain([0, max(data.map(function (d) {
+      y.domain([0, max_max(data.map(function (d) {
         var domain = x.domain();
 
         if (d.date >= domain[0] && d.date <= domain[1]) {
@@ -7908,10 +8049,7 @@ function timeChart(selector, dataSource, displayedData, options) {
         return x(d.date);
       }).y(function (d) {
         return y(lodash.get(d, pathToYField));
-      })); // setTimeout(() => {
-      // 	mouseover()
-      // 	mousemove(event)
-      // }, 1000)
+      }));
     });
   }
 
@@ -7920,14 +8058,15 @@ function timeChart(selector, dataSource, displayedData, options) {
     var x = time().domain(extent(data, function (d) {
       return d.date;
     })).range([0, width]).nice(tickBy[tickByNumber]);
-    var y = linear_linear().domain([0, max(data, function (d) {
+    var y = linear_linear().domain([0, max_max(data, function (d) {
       return lodash.get(d, pathToYField);
     })]).range([height, 0]).nice();
     var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
-      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/m/%y')(date) : timeFormat('%H:%M:%S %d%/m/%y')(date);
+      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/%m/%y')(date) : timeFormat('%H:%M:%S %d%/%m/%y')(date);
     });
     var yAxis = axisLeft(y).tickSize(-width);
     var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
+    xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)');
     var yAxisGrid = svg.append('g').call(yAxis);
     yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
     var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
@@ -7941,7 +8080,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).attr('r', function (d) {
       return 4;
     }).attr('class', 'circle').attr('fill', '#28a745').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 
@@ -7951,7 +8090,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }
 
     function mousemove(e, d) {
-      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
+      tooltip.html("<ul>\n\t\t\t\t\t<li>Date: ".concat(tickByNumber == 6 ? timeFormat('%Y')(d.date) : tickByNumber == 5 ? timeFormat('%m/%y')(d.date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(d.date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(d.date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/%m/%y')(d.date) : timeFormat('%H:%M:%S %d%/%m/%y')(d.date), "</li>\n\t\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(lodash.get(d, pathToYField)), "</li>\n\t\t\t\t\t</ul>"));
       var bodyWidth = src_select('body').style('width').slice(0, -2);
       var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
       var tooltipWidth = tooltip.style('width').slice(0, -2);
@@ -7976,19 +8115,11 @@ function timeChart(selector, dataSource, displayedData, options) {
         if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
         x.domain([4, 8]);
       } else {
-        svg.select('.brush').call(brush.move, null); // if (
-        //   d3
-        //     .scaleTime()
-        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
-        //     .ticks(d3.timeMonth.every(1)).length < 5
-        // ) {
-        //   return
-        // }
-
+        svg.select('.brush').call(brush.move, null);
         x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(tickBy[tickByNumber]);
       }
 
-      y.domain([0, max(data.map(function (d) {
+      y.domain([0, max_max(data.map(function (d) {
         var domain = x.domain();
 
         if (d.date >= domain[0] && d.date <= domain[1]) {
@@ -8012,7 +8143,7 @@ function timeChart(selector, dataSource, displayedData, options) {
       x.domain(extent(data, function (d) {
         return d.date;
       })).nice(tickBy[tickByNumber]);
-      y.domain([0, max(data.map(function (d) {
+      y.domain([0, max_max(data.map(function (d) {
         var domain = x.domain();
 
         if (d.date >= domain[0] && d.date <= domain[1]) {
@@ -8044,8 +8175,7 @@ function timeChart(selector, dataSource, displayedData, options) {
       return d.date;
     })).map(function (d) {
       var newVal = {
-        date: d[0] // queryFields: d[1][0],
-
+        date: d[0]
       };
       d[1].forEach(function (d) {
         Object.assign(newVal, _defineProperty({}, lodash.get(d, pathToSubgroupField), lodash.get(d, pathToYField)));
@@ -8058,37 +8188,15 @@ function timeChart(selector, dataSource, displayedData, options) {
       return newVal;
     });
     dt = {
-      ms: wide[1].date - wide[0].date,
-      s: (wide[1].date - wide[0].date) / 1000,
-      min: (wide[1].date - wide[0].date) / (1000 * 60),
-      h: (wide[1].date - wide[0].date) / (1000 * 60 * 60),
-      d: (wide[1].date - wide[0].date) / (1000 * 60 * 60 * 24),
-      m: (wide[1].date - wide[0].date) / (1000 * 60 * 60 * 24 * 30),
-      y: (wide[1].date - wide[0].date) / (1000 * 60 * 60 * 24 * 365)
-    }; // const tickBy = [
-    //   d3.timeMillisecond,
-    //   d3.timeSecond,
-    //   d3.timeMinute,
-    //   d3.timeHour,
-    //   d3.timeDay,
-    //   d3.timeMonth,
-    //   d3.timeYear,
-    // ]
-    // const tickByNumber =
-    //   dt.s < 1
-    //     ? 0
-    //     : dt.min < 1
-    //     ? 1
-    //     : dt.hour < 1
-    //     ? 2
-    //     : dt.d < 1
-    //     ? 3
-    //     : dt.m < 1
-    //     ? 4
-    //     : dt.y < 1
-    //     ? 5
-    //     : 6
-
+      ms: (wide[wide.length - 1].date - wide[0].date) / (wide.length > 2 ? wide.length - 2 : wide.length),
+      s: (wide[wide.length - 1].date - wide[0].date) / (wide.length > 2 ? wide.length - 2 : wide.length) / 1000,
+      min: (wide[wide.length - 1].date - wide[0].date) / (wide.length > 2 ? wide.length - 2 : wide.length) / (1000 * 60),
+      h: (wide[wide.length - 1].date - wide[0].date) / (wide.length > 2 ? wide.length - 2 : wide.length) / (1000 * 60 * 60),
+      d: (wide[wide.length - 1].date - wide[0].date) / (wide.length > 2 ? wide.length - 2 : wide.length) / (1000 * 60 * 60 * 24),
+      m: (wide[wide.length - 1].date - wide[0].date) / (wide.length > 2 ? wide.length - 2 : wide.length) / (1000 * 60 * 60 * 24 * 30),
+      y: (wide[wide.length - 1].date - wide[0].date) / (wide.length > 2 ? wide.length - 2 : wide.length) / (1000 * 60 * 60 * 24 * 365)
+    };
+    tickByNumber = dt.s < 1 ? 0 : dt.min < 1 ? 1 : dt.hour < 1 ? 2 : dt.d < 1 ? 3 : dt.m < 1 ? 4 : dt.y < 1 ? 5 : 6;
     var groups = wide.map(function (d) {
       return d.date;
     });
@@ -8099,7 +8207,7 @@ function timeChart(selector, dataSource, displayedData, options) {
         a.key = layer.key;
       });
     });
-    var yMax = max(wide.map(function (d) {
+    var yMax = max_max(wide.map(function (d) {
       var acc = 0;
 
       for (var k in d) {
@@ -8111,33 +8219,49 @@ function timeChart(selector, dataSource, displayedData, options) {
       return acc;
     }));
     var svg = src_select(selector).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-    var x = time().domain(extent(groups)).range([0, width]).nice(tickBy[tickByNumber]);
-    var y = linear_linear().domain([0, yMax]).range([height, 0]).nice();
-    var xAxis = axisBottom(x).tickSize(-height).ticks(5).tickFormat(function (date) {
-      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/m/%y')(date) : timeFormat('%H:%M:%S %d%/m/%y')(date);
+    var x = band().domain(wide.map(function (d) {
+      return d.date;
+    })).range([0, width]).paddingInner(0.1);
+    var y = linear_linear().domain([0, max_max(wide.map(function (d) {
+      var acc = 0;
+
+      for (var k in d) {
+        if (_typeof(d[k]) !== 'object') {
+          acc += d[k];
+        }
+      }
+
+      return acc;
+    }))]).range([height, 0]).nice();
+    var xAxis = axisBottom(x).tickSize(-height).tickValues(wide.map(function (d, i) {
+      return i % (Math.round(wide.length / 5) + 1) == 0 ? d.date : null;
+    }).filter(function (d) {
+      return !!d;
+    })).tickFormat(function (date) {
+      return tickByNumber == 6 ? timeFormat('%Y')(date) : tickByNumber == 5 ? timeFormat('%m/%y')(date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/%m/%y')(date) : timeFormat('%H:%M:%S %d%/%m/%y')(date);
     });
     var yAxis = axisLeft(y).tickSize(-width);
     var xAxisGrid = svg.append('g').call(xAxis).attr('transform', 'translate(0,' + height + ')');
+    xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)');
     var yAxisGrid = svg.append('g').call(yAxis);
     yAxisGrid.selectAll('line').attr('class', 'y-axis-grid');
     var clip = svg.append('defs').append('svg:clipPath').attr('id', 'clip').append('svg:rect').attr('width', width).attr('height', height).attr('x', 0).attr('y', 0);
     var brush = brushX().extent([[0, 0], [width, height]]).on('end', updateChart);
     svg.append('g').attr('class', 'brush').call(brush);
-    var barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
     var barsLayers = svg.append('g').attr('clip-path', 'url(#clip)').attr('class', 'bars');
     var bars = barsLayers.selectAll('g').data(stackedData).join('g').attr('fill', function (d) {
       return color(d.key);
     });
-    bars.selectAll('mybar').data(function (d) {
+    bars.selectAll('rect').data(function (d) {
       return d;
     }).enter().append('rect').attr('x', function (d) {
-      return x(d.data.date) - barWidth / 2;
-    }).attr('width', barWidth).attr('y', function (d) {
+      return x(d.data.date);
+    }).attr('width', x.bandwidth()).attr('y', function (d) {
       return y(d[1]);
     }).attr('height', function (d) {
       return y(d[0]) - y(d[1]);
     }).attr('class', 'bar').attr('pointer-events', 'all').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 
@@ -8147,7 +8271,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }
 
     function mousemove(e, d) {
-      tooltip.html("<ul>\n\t\t\t\t\t\t<li>Date: ".concat(timeFormat('%Y-%m')(d.data.date), "</li>\n\t\t\t\t\t\t").concat(d.key ? "<li>Subgroup: ".concat(d.key && d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;'), "</li>") : '', "\n\t\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(d[1] - d[0]), "</li>\n\t\t\t\t\t</ul>"));
+      tooltip.html("<ul>\n\t\t\t\t\t<li>Date: ".concat(tickByNumber == 6 ? timeFormat('%Y')(d.data.date) : tickByNumber == 5 ? timeFormat('%m/%y')(d.data.date) : tickByNumber == 4 ? timeFormat('%d/%m/%y')(d.data.date) : tickByNumber == 3 ? timeFormat('%H %d%/%m/%y')(d.data.date) : tickByNumber == 2 ? timeFormat('%H:%M %d%/%m/%y')(d.data.date) : timeFormat('%H:%M:%S %d%/%m/%y')(d.data.date), "</li>\n\t\t\t\t\t\t").concat(d.key ? "<li>Subgroup: ".concat(d.key && d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;'), "</li>") : '', "\n\t\t\t\t\t\t<li>").concat(pathToYField, ": ").concat(formatNumber(d[1] - d[0]), "</li>\n\t\t\t\t\t</ul>"));
       var bodyWidth = src_select('body').style('width').slice(0, -2);
       var tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10;
       var tooltipWidth = tooltip.style('width').slice(0, -2);
@@ -8168,45 +8292,61 @@ function timeChart(selector, dataSource, displayedData, options) {
         idleTimeout = null;
       }
 
+      var newData;
+
       if (!extent) {
         if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
         x.domain([4, 8]);
       } else {
-        svg.select('.brush').call(brush.move, null); // if (
-        //   d3
-        //     .scaleTime()
-        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
-        //     .ticks(d3.timeMonth.every(1)).length < 5
-        // ) {
-        //   return
-        // }
+        svg.select('.brush').call(brush.move, null);
+        newData = wide.map(function (d, i) {
+          var pos = x(d.date);
 
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(tickBy[tickByNumber]);
+          if (pos > extent[0] && pos < extent[1]) {
+            return d;
+          } else {
+            return null;
+          }
+        }).filter(function (d) {
+          return !!d;
+        });
+        x.domain(newData.map(function (d) {
+          return d.date;
+        }));
       }
 
-      y.domain([0, max(wide.map(function (d) {
-        var domain = x.domain();
+      y.domain([0, max_max(newData.map(function (d) {
+        var acc = 0;
 
-        if (d.date >= domain[0] && d.date <= domain[1]) {
-          var acc = 0;
-
-          for (var k in d) {
-            if (_typeof(d[k]) !== 'object') {
-              acc += d[k];
-            }
+        for (var k in d) {
+          if (_typeof(d[k]) !== 'object') {
+            acc += d[k];
           }
-
-          return acc;
-        } else {
-          return 0;
         }
+
+        return acc;
       }))]).nice();
+      xAxis.tickValues(newData.map(function (d, i) {
+        return i % (Math.round(newData.length / 5) + 1) == 0 || i == newData.length - 1 ? d.date : null;
+      }).filter(function (d) {
+        return !!d;
+      }));
       xAxisGrid.transition().duration(1000).call(xAxis);
+      xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)');
       yAxisGrid.transition().duration(1000).call(yAxis);
-      barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
-      bars.selectAll('.bar').transition().duration(1000).attr('x', function (d) {
-        return x(d.data.date) - barWidth / 2;
-      }).attr('width', barWidth).attr('y', function (d) {
+      bars.selectAll('rect').style('display', function (d) {
+        var max = max_max(x.domain());
+        var min = min_min(x.domain());
+
+        if (d.data.date >= min && d.data.date <= max) {
+          return null;
+        } else {
+          return 'none';
+        }
+      });
+      bars.selectAll('rect').transition().duration(1000).attr('x', function (d) {
+        return x(d.data.date);
+      }).attr('width', x.bandwidth()).attr('y', function (d) {
         return y(d[1]);
       }).attr('height', function (d) {
         return y(d[0]) - y(d[1]);
@@ -8214,42 +8354,37 @@ function timeChart(selector, dataSource, displayedData, options) {
     }
 
     svg.on('dblclick', function () {
-      x.domain(extent(data, function (d) {
+      x.domain(wide.map(function (d) {
         return d.date;
-      })).nice(tickBy[tickByNumber]);
-      y.domain([0, max(wide.map(function (d) {
-        var domain = x.domain();
+      }));
+      y.domain([0, max_max(wide.map(function (d) {
+        var acc = 0;
 
-        if (d.date >= domain[0] && d.date <= domain[1]) {
-          var acc = 0;
-
-          for (var k in d) {
-            if (_typeof(d[k]) !== 'object') {
-              acc += d[k];
-            }
+        for (var k in d) {
+          if (_typeof(d[k]) !== 'object') {
+            acc += d[k];
           }
-
-          return acc;
-        } else {
-          return 0;
         }
+
+        return acc;
       }))]).nice();
+      xAxis.tickValues(wide.map(function (d, i) {
+        return i % (Math.round(wide.length / 5) + 1) == 0 ? d.date : null;
+      }).filter(function (d) {
+        return !!d;
+      }));
       xAxisGrid.transition().call(xAxis);
+      xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)');
       yAxisGrid.transition().call(yAxis);
-      barWidth = width / x.ticks(tickBy[tickByNumber]).length * 0.8;
-      bars.selectAll('.bar').transition().attr('x', function (d) {
-        return x(d.data.date) - barWidth / 2;
-      }).attr('width', barWidth).attr('y', function (d) {
+      bars.selectAll('.bar').transition().style('display', null).attr('x', function (d) {
+        return x(d.data.date);
+      }).attr('width', x.bandwidth()).attr('y', function (d) {
         return y(d[1]);
       }).attr('height', function (d) {
         return y(d[0]) - y(d[1]);
       });
     });
-  } // bar()
-  // line()
-  // scatter()
-  // stackedBar()
-
+  }
 }
 ;// CONCATENATED MODULE: ./src/reactComponents/TimeChartRenderer.js
 
@@ -47050,7 +47185,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8383__;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(9744);
+/******/ 	return __webpack_require__(872);
 /******/ })()
 ;
 });

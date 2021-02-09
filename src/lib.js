@@ -10,7 +10,7 @@ import { values } from 'lodash'
 export function timeChart(selector, dataSource, displayedData, options) {
   dataSource = _.cloneDeep(dataSource)
 
-  const margin = { top: 10, right: 30, bottom: 30, left: 70 },
+  const margin = { top: 10, right: 50, bottom: 40, left: 100 },
     width =
       d3.select(selector).node().getBoundingClientRect().width -
       margin.left -
@@ -24,37 +24,42 @@ export function timeChart(selector, dataSource, displayedData, options) {
 
   const pathToDate = options.xField
   const pathToYField = options.yField
-  // const yFieldName = formatLabel(pathToYField)
-
-  // console.log(_.get(data[0], pathToDate))
-  // console.log(moment)
-  // console.log(d3)
 
   data.forEach((d) => {
-		console.log(_.get(d, pathToDate), new Date(moment(_.get(d, pathToDate))))
     d.date = new Date(moment(_.get(d, pathToDate)))
   })
 
   let dt = {
-    ms: (data[data.length - 1].date - data[0].date) / data.length,
-    s: ((data[data.length - 1].date - data[0].date) / data.length) / 1000,
-    min: ((data[data.length - 1].date - data[0].date) / data.length) / (1000 * 60),
-    h: ((data[data.length - 1].date - data[0].date) / data.length) / (1000 * 60 * 60),
-    d: ((data[data.length - 1].date - data[0].date) / data.length) / (1000 * 60 * 60 * 24),
-    m: ((data[data.length - 1].date - data[0].date) / data.length) / (1000 * 60 * 60 * 24 * 30),
-    y: ((data[data.length - 1].date - data[0].date) / data.length) / (1000 * 60 * 60 * 24 * 365),
+    ms:
+      (data[data.length - 1].date - data[0].date) /
+      (data.length > 2 ? data.length - 2 : data.length),
+    s:
+      (data[data.length - 1].date - data[0].date) /
+      (data.length > 2 ? data.length - 2 : data.length) /
+      1000,
+    min:
+      (data[data.length - 1].date - data[0].date) /
+      (data.length > 2 ? data.length - 2 : data.length) /
+      (1000 * 60),
+    h:
+      (data[data.length - 1].date - data[0].date) /
+      (data.length > 2 ? data.length - 2 : data.length) /
+      (1000 * 60 * 60),
+    d:
+      (data[data.length - 1].date - data[0].date) /
+      (data.length > 2 ? data.length - 2 : data.length) /
+      (1000 * 60 * 60 * 24),
+    m:
+      (data[data.length - 1].date - data[0].date) /
+      (data.length > 2 ? data.length - 2 : data.length) /
+      (1000 * 60 * 60 * 24 * 30),
+    y:
+      (data[data.length - 1].date - data[0].date) /
+      (data.length > 2 ? data.length - 2 : data.length) /
+      (1000 * 60 * 60 * 24 * 365),
   }
-  const tickBy = [
-    d3.timeMillisecond,
-    d3.timeSecond,
-    d3.timeMinute,
-    d3.timeHour,
-    d3.timeDay,
-    d3.timeMonth,
-    d3.timeYear,
-  ]
 
-  const tickByNumber =
+  let tickByNumber =
     dt.s < 1
       ? 0
       : dt.min < 1
@@ -67,9 +72,17 @@ export function timeChart(selector, dataSource, displayedData, options) {
       ? 4
       : dt.y < 1
       ? 5
-			: 6
-			
-	console.log(dt, tickByNumber, tickBy[tickByNumber])
+      : 6
+
+  const tickBy = [
+    d3.timeMillisecond,
+    d3.timeSecond,
+    d3.timeMinute,
+    d3.timeHour,
+    d3.timeDay,
+    d3.timeMonth,
+    d3.timeYear,
+  ]
 
   d3.select(selector).html('')
 
@@ -104,14 +117,15 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     const x = d3
-      .scaleTime()
+      .scaleBand()
       .domain(
-        d3.extent(data, function (d) {
+        data.map(function (d) {
           return d.date
         })
       )
       .range([0, width])
-      .nice(tickBy[tickByNumber])
+      .paddingInner(0.1)
+
     const y = d3
       .scaleLinear()
       .domain([
@@ -122,11 +136,16 @@ export function timeChart(selector, dataSource, displayedData, options) {
       ])
       .range([height, 0])
       .nice()
-
     const xAxis = d3
       .axisBottom(x)
       .tickSize(-height)
-      .ticks(5)
+      .tickValues(
+        data
+          .map((d, i) =>
+            i % (Math.round(data.length / 5) + 1) == 0 ? d.date : null
+          )
+          .filter((d) => !!d)
+      )
       .tickFormat((date) => {
         return tickByNumber == 6
           ? d3.timeFormat('%Y')(date)
@@ -137,8 +156,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
           : tickByNumber == 3
           ? d3.timeFormat('%H %d%/%m/%y')(date)
           : tickByNumber == 2
-          ? d3.timeFormat('%H:%M %d%/m/%y')(date)
-          : d3.timeFormat('%H:%M:%S %d%/m/%y')(date)
+          ? d3.timeFormat('%H:%M %d%/%m/%y')(date)
+          : d3.timeFormat('%H:%M:%S %d%/%m/%y')(date)
       })
     const yAxis = d3.axisLeft(y).tickSize(-width)
 
@@ -146,6 +165,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .append('g')
       .call(xAxis)
       .attr('transform', 'translate(0,' + height + ')')
+    xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
     const yAxisGrid = svg.append('g').call(yAxis)
     yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
 
@@ -168,19 +188,17 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .on('end', updateChart)
     svg.append('g').attr('class', 'brush').call(brush)
 
-    let barWidth = (width / x.ticks(tickBy[tickByNumber]).length) * 0.8
-
     let bars = svg
       .append('g')
       .attr('clip-path', 'url(#clip)')
       .attr('class', 'bars')
     bars
-      .selectAll('mybar')
+      .selectAll('rect')
       .data(data)
       .enter()
       .append('rect')
-      .attr('x', (d) => x(d.date) - barWidth / 2)
-      .attr('width', barWidth)
+      .attr('x', (d) => x(d.date))
+      .attr('width', x.bandwidth())
       .attr('y', (d) => y(_.get(d, pathToYField)))
       .attr('height', (d) => height - y(_.get(d, pathToYField)))
       .attr('class', 'bar')
@@ -193,7 +211,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .append('text')
       .attr(
         'transform',
-        'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')'
+        'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
       )
       .style('text-anchor', 'middle')
       .style('font-size', '12')
@@ -222,7 +240,19 @@ export function timeChart(selector, dataSource, displayedData, options) {
     function mousemove(e, d) {
       tooltip.html(
         `<ul>
-						<li>Date: ${d3.timeFormat('%Y-%m')(d.date)}</li>
+						<li>Date: ${
+              tickByNumber == 6
+                ? d3.timeFormat('%Y')(d.date)
+                : tickByNumber == 5
+                ? d3.timeFormat('%m/%y')(d.date)
+                : tickByNumber == 4
+                ? d3.timeFormat('%d/%m/%y')(d.date)
+                : tickByNumber == 3
+                ? d3.timeFormat('%H %d%/%m/%y')(d.date)
+                : tickByNumber == 2
+                ? d3.timeFormat('%H:%M %d%/%m/%y')(d.date)
+                : d3.timeFormat('%H:%M:%S %d%/%m/%y')(d.date)
+            }</li>
 						<li>${pathToYField}: ${formatNumber(_.get(d, pathToYField))}</li>
 					</ul>`
       )
@@ -252,51 +282,67 @@ export function timeChart(selector, dataSource, displayedData, options) {
         idleTimeout = null
       }
 
+      let newData
+
       if (!extent) {
         if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
         x.domain([4, 8])
       } else {
         svg.select('.brush').call(brush.move, null)
-        // if (
-        //   d3
-        //     .scaleTime()
-        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
-        //     .ticks(d3.timeMonth.every(1)).length < 5
-        // ) {
-        //   return
-        // }
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(
-          tickBy[tickByNumber]
-        )
+
+        newData = data
+          .map((d, i) => {
+            const pos = x(d.date)
+            if (pos > extent[0] && pos < extent[1]) {
+              return d
+            } else {
+              return null
+            }
+          })
+          .filter((d) => !!d)
+        x.domain(newData.map((d) => d.date))
       }
 
       y.domain([
         0,
-        d3.max(
-          data.map((d) => {
-            const domain = x.domain()
-            if (d.date >= domain[0] && d.date <= domain[1]) {
-              return _.get(d, pathToYField)
-            } else {
-              return 0
-            }
-          })
-        ),
+        d3.max(newData, function (d) {
+          return _.get(d, pathToYField)
+        }),
       ]).nice()
+
+      xAxis.tickValues(
+        newData
+          .map((d, i) =>
+            i % (Math.round(newData.length / 5) + 1) == 0 ||
+            i == newData.length - 1
+              ? d.date
+              : null
+          )
+          .filter((d) => !!d)
+      )
       xAxisGrid.transition().duration(1000).call(xAxis)
+      xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
       yAxisGrid.transition().duration(1000).call(yAxis)
 
-      barWidth = (width / x.ticks(tickBy[tickByNumber]).length) * 0.8
+      bars.selectAll('rect').style('display', function (d) {
+        const max = d3.max(x.domain())
+        const min = d3.min(x.domain())
 
+        if (d.date >= min && d.date <= max) {
+          return null
+        } else {
+          return 'none'
+        }
+      })
       bars
-        .selectAll('.bar')
+        .selectAll('rect')
         .transition()
         .duration(1000)
         .attr('x', function (d) {
-          return x(d.date) - barWidth / 2
+          return x(d.date)
         })
         .attr('width', function (d) {
-          return barWidth
+          return x.bandwidth()
         })
         .attr('y', function (d) {
           return y(_.get(d, pathToYField))
@@ -306,37 +352,39 @@ export function timeChart(selector, dataSource, displayedData, options) {
 
     svg.on('dblclick', function () {
       x.domain(
-        d3.extent(data, function (d) {
+        data.map(function (d) {
           return d.date
         })
-      ).nice(tickBy[tickByNumber])
+      )
 
       y.domain([
         0,
-        d3.max(
-          data.map((d) => {
-            const domain = x.domain()
-            if (d.date >= domain[0] && d.date <= domain[1]) {
-              return _.get(d, pathToYField)
-            } else {
-              return 0
-            }
-          })
-        ),
+        d3.max(data, function (d) {
+          return _.get(d, pathToYField)
+        }),
       ]).nice()
+      xAxis.tickValues(
+        data
+          .map((d, i) =>
+            i % (Math.round(data.length / 5) + 1) == 0 || i == data.length - 1
+              ? d.date
+              : null
+          )
+          .filter((d) => !!d)
+      )
       xAxisGrid.transition().call(xAxis)
+      xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
       yAxisGrid.transition().call(yAxis)
 
-      barWidth = (width / x.ticks(tickBy[tickByNumber]).length) * 0.8
-
       bars
-        .selectAll('.bar')
+        .selectAll('rect')
         .transition()
+        .style('display', null)
         .attr('x', function (d) {
-          return x(d.date) - barWidth / 2
+          return x(d.date)
         })
         .attr('width', function (d) {
-          return barWidth
+          return x.bandwidth()
         })
         .attr('y', function (d) {
           return y(_.get(d, pathToYField))
@@ -388,8 +436,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
           : tickByNumber == 3
           ? d3.timeFormat('%H %d%/%m/%y')(date)
           : tickByNumber == 2
-          ? d3.timeFormat('%H:%M %d%/m/%y')(date)
-          : d3.timeFormat('%H:%M:%S %d%/m/%y')(date)
+          ? d3.timeFormat('%H:%M %d%/%m/%y')(date)
+          : d3.timeFormat('%H:%M:%S %d%/%m/%y')(date)
       })
     const yAxis = d3.axisLeft(y).tickSize(-width)
 
@@ -397,6 +445,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .append('g')
       .call(xAxis)
       .attr('transform', 'translate(0,' + height + ')')
+    xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
     const yAxisGrid = svg.append('g').call(yAxis)
     yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
 
@@ -443,7 +492,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .append('text')
       .attr(
         'transform',
-        'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')'
+        'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
       )
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
@@ -516,15 +565,25 @@ export function timeChart(selector, dataSource, displayedData, options) {
         )
       tooltip.html(
         `<ul>
-					<li>Date: ${d3.timeFormat('%Y-%m')(d.date)}</li>
+					<li>Date: ${
+            tickByNumber == 6
+              ? d3.timeFormat('%Y')(d.date)
+              : tickByNumber == 5
+              ? d3.timeFormat('%m/%y')(d.date)
+              : tickByNumber == 4
+              ? d3.timeFormat('%d/%m/%y')(d.date)
+              : tickByNumber == 3
+              ? d3.timeFormat('%H %d%/%m/%y')(d.date)
+              : tickByNumber == 2
+              ? d3.timeFormat('%H:%M %d%/%m/%y')(d.date)
+              : d3.timeFormat('%H:%M:%S %d%/%m/%y')(d.date)
+          }</li>
 					<li>${pathToYField}: ${formatNumber(_.get(d, pathToYField))}</li>
 				</ul>`
       )
     }
 
     function updateChart(event) {
-      // mouseout()
-
       const extent = event.selection
 
       var idleTimeout
@@ -537,14 +596,6 @@ export function timeChart(selector, dataSource, displayedData, options) {
         x.domain([4, 8])
       } else {
         svg.select('.brush').call(brush.move, null)
-        // if (
-        //   d3
-        //     .scaleTime()
-        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
-        //     .ticks(d3.timeMonth.every(1)).length < 5
-        // ) {
-        //   return
-        // }
         x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(
           tickBy[tickByNumber]
         )
@@ -580,14 +631,9 @@ export function timeChart(selector, dataSource, displayedData, options) {
               return y(_.get(d, pathToYField))
             })
         )
-      // setTimeout(() => {
-      //   mouseover()
-      //   mousemove(event)
-      // }, 1000)
     }
 
     svg.on('dblclick', function () {
-      // mouseout()
       x.domain(
         d3.extent(data, function (d) {
           return d.date
@@ -624,11 +670,6 @@ export function timeChart(selector, dataSource, displayedData, options) {
               return y(_.get(d, pathToYField))
             })
         )
-
-      // setTimeout(() => {
-      // 	mouseover()
-      // 	mousemove(event)
-      // }, 1000)
     })
   }
 
@@ -675,8 +716,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
           : tickByNumber == 3
           ? d3.timeFormat('%H %d%/%m/%y')(date)
           : tickByNumber == 2
-          ? d3.timeFormat('%H:%M %d%/m/%y')(date)
-          : d3.timeFormat('%H:%M:%S %d%/m/%y')(date)
+          ? d3.timeFormat('%H:%M %d%/%m/%y')(date)
+          : d3.timeFormat('%H:%M:%S %d%/%m/%y')(date)
       })
     const yAxis = d3.axisLeft(y).tickSize(-width)
 
@@ -684,6 +725,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .append('g')
       .call(xAxis)
       .attr('transform', 'translate(0,' + height + ')')
+    xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
     const yAxisGrid = svg.append('g').call(yAxis)
     yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
 
@@ -734,7 +776,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .append('text')
       .attr(
         'transform',
-        'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')'
+        'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
       )
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
@@ -763,7 +805,19 @@ export function timeChart(selector, dataSource, displayedData, options) {
     function mousemove(e, d) {
       tooltip.html(
         `<ul>
-						<li>Date: ${d3.timeFormat('%Y-%m')(d.date)}</li>
+					<li>Date: ${
+            tickByNumber == 6
+              ? d3.timeFormat('%Y')(d.date)
+              : tickByNumber == 5
+              ? d3.timeFormat('%m/%y')(d.date)
+              : tickByNumber == 4
+              ? d3.timeFormat('%d/%m/%y')(d.date)
+              : tickByNumber == 3
+              ? d3.timeFormat('%H %d%/%m/%y')(d.date)
+              : tickByNumber == 2
+              ? d3.timeFormat('%H:%M %d%/%m/%y')(d.date)
+              : d3.timeFormat('%H:%M:%S %d%/%m/%y')(d.date)
+          }</li>
 						<li>${pathToYField}: ${formatNumber(_.get(d, pathToYField))}</li>
 					</ul>`
       )
@@ -798,14 +852,6 @@ export function timeChart(selector, dataSource, displayedData, options) {
         x.domain([4, 8])
       } else {
         svg.select('.brush').call(brush.move, null)
-        // if (
-        //   d3
-        //     .scaleTime()
-        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
-        //     .ticks(d3.timeMonth.every(1)).length < 5
-        // ) {
-        //   return
-        // }
         x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(
           tickBy[tickByNumber]
         )
@@ -886,7 +932,6 @@ export function timeChart(selector, dataSource, displayedData, options) {
     const wide = Array.from(d3.group(data, (d) => d.date)).map((d) => {
       const newVal = {
         date: d[0],
-        // queryFields: d[1][0],
       }
       d[1].forEach((d) => {
         Object.assign(newVal, {
@@ -903,38 +948,49 @@ export function timeChart(selector, dataSource, displayedData, options) {
     })
 
     dt = {
-      ms: wide[1].date - wide[0].date,
-      s: (wide[1].date - wide[0].date) / 1000,
-      min: (wide[1].date - wide[0].date) / (1000 * 60),
-      h: (wide[1].date - wide[0].date) / (1000 * 60 * 60),
-      d: (wide[1].date - wide[0].date) / (1000 * 60 * 60 * 24),
-      m: (wide[1].date - wide[0].date) / (1000 * 60 * 60 * 24 * 30),
-      y: (wide[1].date - wide[0].date) / (1000 * 60 * 60 * 24 * 365),
+      ms:
+        (wide[wide.length - 1].date - wide[0].date) /
+        (wide.length > 2 ? wide.length - 2 : wide.length),
+      s:
+        (wide[wide.length - 1].date - wide[0].date) /
+        (wide.length > 2 ? wide.length - 2 : wide.length) /
+        1000,
+      min:
+        (wide[wide.length - 1].date - wide[0].date) /
+        (wide.length > 2 ? wide.length - 2 : wide.length) /
+        (1000 * 60),
+      h:
+        (wide[wide.length - 1].date - wide[0].date) /
+        (wide.length > 2 ? wide.length - 2 : wide.length) /
+        (1000 * 60 * 60),
+      d:
+        (wide[wide.length - 1].date - wide[0].date) /
+        (wide.length > 2 ? wide.length - 2 : wide.length) /
+        (1000 * 60 * 60 * 24),
+      m:
+        (wide[wide.length - 1].date - wide[0].date) /
+        (wide.length > 2 ? wide.length - 2 : wide.length) /
+        (1000 * 60 * 60 * 24 * 30),
+      y:
+        (wide[wide.length - 1].date - wide[0].date) /
+        (wide.length > 2 ? wide.length - 2 : wide.length) /
+        (1000 * 60 * 60 * 24 * 365),
     }
-    // const tickBy = [
-    //   d3.timeMillisecond,
-    //   d3.timeSecond,
-    //   d3.timeMinute,
-    //   d3.timeHour,
-    //   d3.timeDay,
-    //   d3.timeMonth,
-    //   d3.timeYear,
-    // ]
 
-    // const tickByNumber =
-    //   dt.s < 1
-    //     ? 0
-    //     : dt.min < 1
-    //     ? 1
-    //     : dt.hour < 1
-    //     ? 2
-    //     : dt.d < 1
-    //     ? 3
-    //     : dt.m < 1
-    //     ? 4
-    //     : dt.y < 1
-    //     ? 5
-    //     : 6
+    tickByNumber =
+      dt.s < 1
+        ? 0
+        : dt.min < 1
+        ? 1
+        : dt.hour < 1
+        ? 2
+        : dt.d < 1
+        ? 3
+        : dt.m < 1
+        ? 4
+        : dt.y < 1
+        ? 5
+        : 6
 
     const groups = wide.map((d) => d.date)
 
@@ -969,16 +1025,44 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     const x = d3
-      .scaleTime()
-      .domain(d3.extent(groups))
+      .scaleBand()
+      .domain(
+        wide.map(function (d) {
+          return d.date
+        })
+      )
       .range([0, width])
-      .nice(tickBy[tickByNumber])
-    const y = d3.scaleLinear().domain([0, yMax]).range([height, 0]).nice()
+      .paddingInner(0.1)
+
+    const y = d3
+      .scaleLinear()
+      .domain([
+        0,
+        d3.max(
+          wide.map((d) => {
+            let acc = 0
+            for (let k in d) {
+              if (typeof d[k] !== 'object') {
+                acc += d[k]
+              }
+            }
+            return acc
+          })
+        ),
+      ])
+      .range([height, 0])
+      .nice()
 
     const xAxis = d3
       .axisBottom(x)
       .tickSize(-height)
-      .ticks(5)
+      .tickValues(
+        wide
+          .map((d, i) =>
+            i % (Math.round(wide.length / 5) + 1) == 0 ? d.date : null
+          )
+          .filter((d) => !!d)
+      )
       .tickFormat((date) => {
         return tickByNumber == 6
           ? d3.timeFormat('%Y')(date)
@@ -989,8 +1073,8 @@ export function timeChart(selector, dataSource, displayedData, options) {
           : tickByNumber == 3
           ? d3.timeFormat('%H %d%/%m/%y')(date)
           : tickByNumber == 2
-          ? d3.timeFormat('%H:%M %d%/m/%y')(date)
-          : d3.timeFormat('%H:%M:%S %d%/m/%y')(date)
+          ? d3.timeFormat('%H:%M %d%/%m/%y')(date)
+          : d3.timeFormat('%H:%M:%S %d%/%m/%y')(date)
       })
     const yAxis = d3.axisLeft(y).tickSize(-width)
 
@@ -998,6 +1082,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .append('g')
       .call(xAxis)
       .attr('transform', 'translate(0,' + height + ')')
+    xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
     const yAxisGrid = svg.append('g').call(yAxis)
     yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
 
@@ -1020,8 +1105,6 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .on('end', updateChart)
     svg.append('g').attr('class', 'brush').call(brush)
 
-    let barWidth = (width / x.ticks(tickBy[tickByNumber]).length) * 0.8
-
     let barsLayers = svg
       .append('g')
       .attr('clip-path', 'url(#clip)')
@@ -1033,12 +1116,12 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .join('g')
       .attr('fill', (d) => color(d.key))
     bars
-      .selectAll('mybar')
+      .selectAll('rect')
       .data((d) => d)
       .enter()
       .append('rect')
-      .attr('x', (d) => x(d.data.date) - barWidth / 2)
-      .attr('width', barWidth)
+      .attr('x', (d) => x(d.data.date))
+      .attr('width', x.bandwidth())
       .attr('y', (d) => y(d[1]))
       .attr('height', (d) => y(d[0]) - y(d[1]))
       .attr('class', 'bar')
@@ -1051,7 +1134,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .append('text')
       .attr(
         'transform',
-        'translate(' + width / 2 + ' ,' + (height + margin.top + 15) + ')'
+        'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
       )
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
@@ -1080,7 +1163,19 @@ export function timeChart(selector, dataSource, displayedData, options) {
     function mousemove(e, d) {
       tooltip.html(
         `<ul>
-						<li>Date: ${d3.timeFormat('%Y-%m')(d.data.date)}</li>
+					<li>Date: ${
+            tickByNumber == 6
+              ? d3.timeFormat('%Y')(d.data.date)
+              : tickByNumber == 5
+              ? d3.timeFormat('%m/%y')(d.data.date)
+              : tickByNumber == 4
+              ? d3.timeFormat('%d/%m/%y')(d.data.date)
+              : tickByNumber == 3
+              ? d3.timeFormat('%H %d%/%m/%y')(d.data.date)
+              : tickByNumber == 2
+              ? d3.timeFormat('%H:%M %d%/%m/%y')(d.data.date)
+              : d3.timeFormat('%H:%M:%S %d%/%m/%y')(d.data.date)
+          }</li>
 						${
               d.key
                 ? `<li>Subgroup: ${
@@ -1117,100 +1212,115 @@ export function timeChart(selector, dataSource, displayedData, options) {
         idleTimeout = null
       }
 
+      let newData
+
       if (!extent) {
         if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
         x.domain([4, 8])
       } else {
         svg.select('.brush').call(brush.move, null)
-        // if (
-        //   d3
-        //     .scaleTime()
-        //     .domain([x.invert(extent[0]), x.invert(extent[1])])
-        //     .ticks(d3.timeMonth.every(1)).length < 5
-        // ) {
-        //   return
-        // }
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(
-          tickBy[tickByNumber]
-        )
+
+        newData = wide
+          .map((d, i) => {
+            const pos = x(d.date)
+            if (pos > extent[0] && pos < extent[1]) {
+              return d
+            } else {
+              return null
+            }
+          })
+          .filter((d) => !!d)
+
+        x.domain(newData.map((d) => d.date))
       }
       y.domain([
         0,
         d3.max(
-          wide.map((d) => {
-            const domain = x.domain()
-            if (d.date >= domain[0] && d.date <= domain[1]) {
-              let acc = 0
-              for (let k in d) {
-                if (typeof d[k] !== 'object') {
-                  acc += d[k]
-                }
+          newData.map((d) => {
+            let acc = 0
+            for (let k in d) {
+              if (typeof d[k] !== 'object') {
+                acc += d[k]
               }
-              return acc
-            } else {
-              return 0
             }
+            return acc
           })
         ),
       ]).nice()
+
+      xAxis.tickValues(
+        newData
+          .map((d, i) =>
+            i % (Math.round(newData.length / 5) + 1) == 0 ||
+            i == newData.length - 1
+              ? d.date
+              : null
+          )
+          .filter((d) => !!d)
+      )
       xAxisGrid.transition().duration(1000).call(xAxis)
+      xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
       yAxisGrid.transition().duration(1000).call(yAxis)
 
-      barWidth = (width / x.ticks(tickBy[tickByNumber]).length) * 0.8
-
+      bars.selectAll('rect').style('display', function (d) {
+        const max = d3.max(x.domain())
+        const min = d3.min(x.domain())
+        if (d.data.date >= min && d.data.date <= max) {
+          return null
+        } else {
+          return 'none'
+        }
+      })
       bars
-        .selectAll('.bar')
+        .selectAll('rect')
         .transition()
         .duration(1000)
-        .attr('x', (d) => x(d.data.date) - barWidth / 2)
-        .attr('width', barWidth)
+        .attr('x', (d) => x(d.data.date))
+        .attr('width', x.bandwidth())
         .attr('y', (d) => y(d[1]))
         .attr('height', (d) => y(d[0]) - y(d[1]))
     }
 
     svg.on('dblclick', function () {
       x.domain(
-        d3.extent(data, function (d) {
+        wide.map(function (d) {
           return d.date
         })
-      ).nice(tickBy[tickByNumber])
+      )
 
       y.domain([
         0,
         d3.max(
           wide.map((d) => {
-            const domain = x.domain()
-            if (d.date >= domain[0] && d.date <= domain[1]) {
-              let acc = 0
-              for (let k in d) {
-                if (typeof d[k] !== 'object') {
-                  acc += d[k]
-                }
+            let acc = 0
+            for (let k in d) {
+              if (typeof d[k] !== 'object') {
+                acc += d[k]
               }
-              return acc
-            } else {
-              return 0
             }
+            return acc
           })
         ),
       ]).nice()
+      xAxis.tickValues(
+        wide
+          .map((d, i) =>
+            i % (Math.round(wide.length / 5) + 1) == 0 ? d.date : null
+          )
+          .filter((d) => !!d)
+      )
       xAxisGrid.transition().call(xAxis)
+      xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
       yAxisGrid.transition().call(yAxis)
-
-      barWidth = (width / x.ticks(tickBy[tickByNumber]).length) * 0.8
 
       bars
         .selectAll('.bar')
         .transition()
-        .attr('x', (d) => x(d.data.date) - barWidth / 2)
-        .attr('width', barWidth)
+        .style('display', null)
+        .attr('x', (d) => x(d.data.date))
+        .attr('width', x.bandwidth())
         .attr('y', (d) => y(d[1]))
         .attr('height', (d) => y(d[0]) - y(d[1]))
     })
   }
-
-  // bar()
-  // line()
-  // scatter()
-  // stackedBar()
 }
