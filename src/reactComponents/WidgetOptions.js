@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 function WidgetOptions({ model, condition, value, setValue, title }) {
+  let optionValue = ''
   useEffect(() => {
     if (model) {
       let list = Object.keys(model).filter(condition)
-      setValue(list[0])
-      // if (!value) setValue(list[0])
+      if (!value) setValue(list[0])
+      if (value !== optionValue) setValue(optionValue)
     }
   }, [JSON.stringify(model)])
 
@@ -16,6 +17,7 @@ function WidgetOptions({ model, condition, value, setValue, title }) {
         className="custom-select"
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        ref={(select) => (optionValue = select?.value)}
       >
         {Object.keys(model).length ? (
           Object.keys(model).map((node, i) =>

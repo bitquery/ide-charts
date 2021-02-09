@@ -43,10 +43,12 @@ function WidgetOptions(_ref) {
       value = _ref.value,
       setValue = _ref.setValue,
       title = _ref.title;
+  var optionValue = '';
   (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
     if (model) {
       var list = Object.keys(model).filter(condition);
-      setValue(list[0]); // if (!value) setValue(list[0])
+      if (!value) setValue(list[0]);
+      if (value !== optionValue) setValue(optionValue);
     }
   }, [JSON.stringify(model)]);
   return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
@@ -56,6 +58,9 @@ function WidgetOptions(_ref) {
     value: value,
     onChange: function onChange(e) {
       return setValue(e.target.value);
+    },
+    ref: function ref(select) {
+      return optionValue = select === null || select === void 0 ? void 0 : select.value;
     }
   }, Object.keys(model).length ? Object.keys(model).map(function (node, i) {
     return condition(node) ? /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("option", {
