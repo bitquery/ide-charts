@@ -5,9 +5,14 @@ function WidgetOptions({ model, condition, value, setValue, title }) {
   const [show, setShow] = useState(true)
   useEffect(() => {
     if (model) {
-      let list = Object.keys(model).filter(condition)
-      if (!value) setValue(list[0])
-      if (value !== optionValue) setValue(optionValue)
+      let list = condition()
+      if (!value) {
+        setValue(list[0])
+      }
+      if (value !== optionValue) {
+      	setValue(optionValue)
+      }
+
       if (list.length == 0) {
         setShow(false)
       } else {
@@ -25,14 +30,12 @@ function WidgetOptions({ model, condition, value, setValue, title }) {
         onChange={(e) => setValue(e.target.value)}
         ref={(select) => (optionValue = select?.value)}
       >
-        {Object.keys(model).length ? (
-          Object.keys(model).map((node, i) =>
-            condition(node) ? (
-              <option key={i} value={node}>
-                {node}
-              </option>
-            ) : null
-          )
+        {condition().length ? (
+          condition().map((node, i) => (
+            <option key={i} value={node}>
+              {node}
+            </option>
+          ))
         ) : value ? (
           <option value={value}>{value}</option>
         ) : null}

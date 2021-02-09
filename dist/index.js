@@ -64,9 +64,15 @@ function WidgetOptions(_ref) {
 
   (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
     if (model) {
-      var list = Object.keys(model).filter(condition);
-      if (!value) setValue(list[0]);
-      if (value !== optionValue) setValue(optionValue);
+      var list = condition();
+
+      if (!value) {
+        setValue(list[0]);
+      }
+
+      if (value !== optionValue) {
+        setValue(optionValue);
+      }
 
       if (list.length == 0) {
         setShow(false);
@@ -89,11 +95,11 @@ function WidgetOptions(_ref) {
     ref: function ref(select) {
       return optionValue = select === null || select === void 0 ? void 0 : select.value;
     }
-  }, Object.keys(model).length ? Object.keys(model).map(function (node, i) {
-    return condition(node) ? /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("option", {
+  }, condition().length ? condition().map(function (node, i) {
+    return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("option", {
       key: i,
       value: node
-    }, node) : null;
+    }, node);
   }) : value ? /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("option", {
     value: value
   }, value) : null));
@@ -122,11 +128,21 @@ function TimeChartEditor(_ref) {
       config = _ref.config,
       setConfig = _ref.setConfig,
       displayedData = _ref.displayedData;
-  var chartTypeModel = {
-    Bar: 'Bar',
-    Line: 'Line',
-    Scatter: 'Scatter',
-    'Stacked Bar': 'Stacked Bar'
+
+  var chartTypeModelFunc = function chartTypeModelFunc() {
+    var hasSubgroup = false;
+
+    for (var key in model) {
+      if (model[key].typeInfo.toString().includes('String') && !model[key].name.value.includes('date') && !model[key].name.value.includes('time')) {
+        hasSubgroup = true;
+      }
+    }
+
+    if (hasSubgroup) {
+      return ['Stacked Bar'];
+    } else {
+      return ['Bar', 'Line', 'Scatter'];
+    }
   };
 
   var _useState = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
@@ -134,67 +150,51 @@ function TimeChartEditor(_ref) {
       chartType = _useState2[0],
       setChartType = _useState2[1];
 
-  var getDateModel = function getDateModel(model) {
+  var xFunc = function xFunc() {
     var keys = Object.keys(model);
-    var dateModel = {};
-    var dateFields = [];
+    var fields = [];
     keys.forEach(function (key) {
       if (model[key].typeInfo.name === 'Date' || model[key].typeInfo.name === 'DateTime') {
         keys.forEach(function (k) {
           if (k.includes(key) && k !== key) {
-            dateFields.push(k);
+            fields.push(k);
           }
         });
       }
     });
-    dateFields.forEach(function (keyVal) {
-      return dateModel[keyVal] = keyVal;
-    });
-    return dateModel;
+    return fields;
   };
-
-  var dateModel = getDateModel(model);
 
   var _useState3 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
       _useState4 = TimeChartEditor_slicedToArray(_useState3, 2),
       xAxis = _useState4[0],
       setXAxis = _useState4[1];
 
-  var yFunc = function yFunc(key) {
-    if (model[key].typeInfo) {
-      return model[key].typeInfo.toString().includes('Int') || model[key].typeInfo.toString().includes('Float');
-    }
+  var yFunc = function yFunc() {
+    var keys = Object.keys(model);
+    var fields = [];
+    keys.forEach(function (key) {
+      if (model[key].typeInfo.toString().includes('Int') || model[key].typeInfo.toString().includes('Float')) {
+        fields.push(key);
+      }
+    });
+    return fields;
   };
 
   var _useState5 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
       _useState6 = TimeChartEditor_slicedToArray(_useState5, 2),
       yAxis = _useState6[0],
-      setYAxis = _useState6[1]; // const hasSubgroups = (model) => {
-  //   let has = false
-  //   const keys = Object.keys(model)
-  //   const dateKey = keys.find((key) => {
-  //     if (model[key].typeInfo) {
-  //       return model[key].typeInfo.name === 'Date'
-  //     }
-  //   })
-  //   keys.forEach((key) => {
-  //     if (!key.includes(dateKey)) {
-  //       if (model[key].typeInfo) {
-  //         if (model[key].typeInfo.toString().includes('String')) {
-  //           has = true
-  //         }
-  //       }
-  //     }
-  //   })
-  //   return has
-  // }
-  // const [showSubgroup, setShowSubgroup] = useState(hasSubgroups(model))
+      setYAxis = _useState6[1];
 
-
-  var subgroupFunc = function subgroupFunc(key) {
-    if (model[key].typeInfo) {
-      return model[key].typeInfo.toString().includes('String') && !model[key].name.value.includes('date') && !model[key].name.value.includes('time');
-    }
+  var subgroupFunc = function subgroupFunc() {
+    var keys = Object.keys(model);
+    var fields = [];
+    keys.forEach(function (key) {
+      if (model[key].typeInfo.toString().includes('String') && !model[key].name.value.includes('date') && !model[key].name.value.includes('time')) {
+        fields.push(key);
+      }
+    });
+    return fields;
   };
 
   var _useState7 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
@@ -222,14 +222,9 @@ function TimeChartEditor(_ref) {
         }
       }
     }
-  }, []); // useEffect(() => {
-  //   setShowSubgroup(hasSubgroups(model))
-  // }, [model])
-
+  }, []);
   useFirstUpdate(function () {
-    // console.log(xAxis, yAxis, config)
-    // setShowSubgroup(hasSubgroups(model))
-    if (model && xAxis && yAxis) {
+    if (model && xAxis && yAxis && chartType) {
       var fieldX = xAxis.replace("".concat(displayedData, "."), '');
       var fieldY = yAxis.replace("".concat(displayedData, "."), '');
       var subgroupField = subgroup && subgroup.replace("".concat(displayedData, "."), '');
@@ -242,13 +237,7 @@ function TimeChartEditor(_ref) {
           field: fieldY
         },
         subgroupField: subgroupField
-      }; // if (showSubgroup) {
-      //   let subgroupField = subgroup.replace(`${displayedData}.`, '')
-      //   Object.assign(cfg, {
-      //     subgroupField,
-      //   })
-      // }
-
+      };
       setConfig(cfg);
     }
   }, [chartType, xAxis, yAxis, subgroup, displayedData]);
@@ -259,19 +248,15 @@ function TimeChartEditor(_ref) {
   }, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
     value: chartType,
     setValue: setChartType,
-    condition: function condition() {
-      return true;
-    },
+    condition: chartTypeModelFunc,
     title: 'Chart Type',
-    model: chartTypeModel
+    model: model
   }), /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
     value: xAxis,
     setValue: setXAxis,
-    condition: function condition() {
-      return true;
-    },
+    condition: xFunc,
     title: 'X Axis',
-    model: dateModel
+    model: model
   }), /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
     value: yAxis,
     setValue: setYAxis,

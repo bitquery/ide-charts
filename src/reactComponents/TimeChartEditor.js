@@ -3,18 +3,28 @@ import { useFirstUpdate } from '../util/useFirstUpdate'
 import WidgetOptions from './WidgetOptions'
 
 function TimeChartEditor({ model, config, setConfig, displayedData }) {
-  const chartTypeModel = {
-    Bar: 'Bar',
-    Line: 'Line',
-    Scatter: 'Scatter',
-    'Stacked Bar': 'Stacked Bar',
+  const chartTypeModelFunc = () => {
+    let hasSubgroup = false
+    for (let key in model) {
+      if (
+        model[key].typeInfo.toString().includes('String') &&
+        !model[key].name.value.includes('date') &&
+        !model[key].name.value.includes('time')
+      ) {
+        hasSubgroup = true
+      }
+    }
+    if (hasSubgroup) {
+      return ['Stacked Bar']
+    } else {
+      return ['Bar', 'Line', 'Scatter']
+		}
   }
   const [chartType, setChartType] = useState('')
 
-  const getDateModel = (model) => {
+  const xFunc = () => {
     const keys = Object.keys(model)
-    const dateModel = {}
-    const dateFields = []
+    const fields = []
     keys.forEach((key) => {
       if (
         model[key].typeInfo.name === 'Date' ||
@@ -22,57 +32,44 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
       ) {
         keys.forEach((k) => {
           if (k.includes(key) && k !== key) {
-            dateFields.push(k)
+            fields.push(k)
           }
         })
       }
     })
 
-    dateFields.forEach((keyVal) => (dateModel[keyVal] = keyVal))
-    return dateModel
+    return fields
   }
-  const dateModel = getDateModel(model)
   const [xAxis, setXAxis] = useState('')
 
-  const yFunc = (key) => {
-    if (model[key].typeInfo) {
-      return (
+  const yFunc = () => {
+    const keys = Object.keys(model)
+    const fields = []
+    keys.forEach((key) => {
+      if (
         model[key].typeInfo.toString().includes('Int') ||
         model[key].typeInfo.toString().includes('Float')
-      )
-    }
+      ) {
+        fields.push(key)
+      }
+		})
+		return fields
   }
   const [yAxis, setYAxis] = useState('')
 
-  // const hasSubgroups = (model) => {
-  //   let has = false
-  //   const keys = Object.keys(model)
-  //   const dateKey = keys.find((key) => {
-  //     if (model[key].typeInfo) {
-  //       return model[key].typeInfo.name === 'Date'
-  //     }
-  //   })
-  //   keys.forEach((key) => {
-  //     if (!key.includes(dateKey)) {
-  //       if (model[key].typeInfo) {
-  //         if (model[key].typeInfo.toString().includes('String')) {
-  //           has = true
-  //         }
-  //       }
-  //     }
-  //   })
-  //   return has
-  // }
-  // const [showSubgroup, setShowSubgroup] = useState(hasSubgroups(model))
-
-  const subgroupFunc = (key) => {
-    if (model[key].typeInfo) {
-      return (
+  const subgroupFunc = () => {
+		const keys = Object.keys(model)
+    const fields = []
+    keys.forEach((key) => {
+      if (
         model[key].typeInfo.toString().includes('String') &&
         !model[key].name.value.includes('date') &&
         !model[key].name.value.includes('time')
-      )
-    }
+      ) {
+        fields.push(key)
+      }
+		})
+		return fields
   }
   const [subgroup, setSubgroup] = useState('')
 
@@ -95,14 +92,8 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
     }
   }, [])
 
-  // useEffect(() => {
-  //   setShowSubgroup(hasSubgroups(model))
-  // }, [model])
-
   useFirstUpdate(() => {
-    // console.log(xAxis, yAxis, config)
-    // setShowSubgroup(hasSubgroups(model))
-    if (model && xAxis && yAxis) {
+    if (model && xAxis && yAxis && chartType) {
       let fieldX = xAxis.replace(`${displayedData}.`, '')
       let fieldY = yAxis.replace(`${displayedData}.`, '')
       let subgroupField = subgroup && subgroup.replace(`${displayedData}.`, '')
@@ -111,15 +102,8 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
         x: { field: fieldX },
         y: { field: fieldY },
         subgroupField,
-      }
-
-      // if (showSubgroup) {
-      //   let subgroupField = subgroup.replace(`${displayedData}.`, '')
-      //   Object.assign(cfg, {
-      //     subgroupField,
-      //   })
-      // }
-
+			}
+			
       setConfig(cfg)
     }
   }, [chartType, xAxis, yAxis, subgroup, displayedData])
@@ -130,16 +114,16 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
         <WidgetOptions
           value={chartType}
           setValue={setChartType}
-          condition={() => true}
+          condition={chartTypeModelFunc}
           title={'Chart Type'}
-          model={chartTypeModel}
+          model={model}
         />
         <WidgetOptions
           value={xAxis}
           setValue={setXAxis}
-          condition={() => true}
+          condition={xFunc}
           title={'X Axis'}
-          model={dateModel}
+          model={model}
         />
         <WidgetOptions
           value={yAxis}
