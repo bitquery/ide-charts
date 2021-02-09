@@ -79,12 +79,18 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
   useEffect(() => {
     if (!xAxis && !yAxis && config) {
       if (Object.keys(config).length) {
-        if ('y' in config && 'x' in config) {
+        if ('x' in config) {
           setXAxis(`${displayedData}.${config.x.field}`)
+        }
+        if ('y' in config) {
           setYAxis(`${displayedData}.${config.y.field}`)
+        }
+        if ('chartType' in config) {
+          setChartType(config.chartType)
+        }
+        if ('subgroupField' in config) {
           showSubgroup &&
             setSubgroup(`${displayedData}.${config.subgroupField}`)
-          setChartType('Bar')
         }
       }
     }

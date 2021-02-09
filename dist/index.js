@@ -178,11 +178,20 @@ function TimeChartEditor(_ref) {
   (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
     if (!xAxis && !yAxis && config) {
       if (Object.keys(config).length) {
-        if ('y' in config && 'x' in config) {
+        if ('x' in config) {
           setXAxis("".concat(displayedData, ".").concat(config.x.field));
+        }
+
+        if ('y' in config) {
           setYAxis("".concat(displayedData, ".").concat(config.y.field));
+        }
+
+        if ('chartType' in config) {
+          setChartType(config.chartType);
+        }
+
+        if ('subgroupField' in config) {
           showSubgroup && setSubgroup("".concat(displayedData, ".").concat(config.subgroupField));
-          setChartType('Bar');
         }
       }
     }
