@@ -35,6 +35,18 @@ var useFirstUpdate = function useFirstUpdate(func, deps) {
   }, deps);
 };
 ;// CONCATENATED MODULE: ./src/reactComponents/WidgetOptions.js
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 function WidgetOptions(_ref) {
@@ -44,15 +56,30 @@ function WidgetOptions(_ref) {
       setValue = _ref.setValue,
       title = _ref.title;
   var optionValue = '';
+
+  var _useState = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(true),
+      _useState2 = _slicedToArray(_useState, 2),
+      show = _useState2[0],
+      setShow = _useState2[1];
+
   (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
     if (model) {
       var list = Object.keys(model).filter(condition);
       if (!value) setValue(list[0]);
       if (value !== optionValue) setValue(optionValue);
+
+      if (list.length == 0) {
+        setShow(false);
+      } else {
+        setShow(true);
+      }
     }
   }, [JSON.stringify(model)]);
   return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
-    className: "widget-option"
+    className: "widget-option",
+    style: {
+      display: show ? null : 'none'
+    }
   }, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("label", null, title), /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("select", {
     className: "custom-select",
     value: value,
@@ -74,17 +101,17 @@ function WidgetOptions(_ref) {
 
 /* harmony default export */ const reactComponents_WidgetOptions = (WidgetOptions);
 ;// CONCATENATED MODULE: ./src/reactComponents/TimeChartEditor.js
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function TimeChartEditor_slicedToArray(arr, i) { return TimeChartEditor_arrayWithHoles(arr) || TimeChartEditor_iterableToArrayLimit(arr, i) || TimeChartEditor_unsupportedIterableToArray(arr, i) || TimeChartEditor_nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function TimeChartEditor_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function TimeChartEditor_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return TimeChartEditor_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return TimeChartEditor_arrayLikeToArray(o, minLen); }
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function TimeChartEditor_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function TimeChartEditor_iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+function TimeChartEditor_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
@@ -103,7 +130,7 @@ function TimeChartEditor(_ref) {
   };
 
   var _useState = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
-      _useState2 = _slicedToArray(_useState, 2),
+      _useState2 = TimeChartEditor_slicedToArray(_useState, 2),
       chartType = _useState2[0],
       setChartType = _useState2[1];
 
@@ -129,7 +156,7 @@ function TimeChartEditor(_ref) {
   var dateModel = getDateModel(model);
 
   var _useState3 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
-      _useState4 = _slicedToArray(_useState3, 2),
+      _useState4 = TimeChartEditor_slicedToArray(_useState3, 2),
       xAxis = _useState4[0],
       setXAxis = _useState4[1];
 
@@ -140,7 +167,7 @@ function TimeChartEditor(_ref) {
   };
 
   var _useState5 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
-      _useState6 = _slicedToArray(_useState5, 2),
+      _useState6 = TimeChartEditor_slicedToArray(_useState5, 2),
       yAxis = _useState6[0],
       setYAxis = _useState6[1]; // const hasSubgroups = (model) => {
   //   let has = false
@@ -171,7 +198,7 @@ function TimeChartEditor(_ref) {
   };
 
   var _useState7 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
-      _useState8 = _slicedToArray(_useState7, 2),
+      _useState8 = TimeChartEditor_slicedToArray(_useState7, 2),
       subgroup = _useState8[0],
       setSubgroup = _useState8[1];
 
