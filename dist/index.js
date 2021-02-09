@@ -7963,7 +7963,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).y(function (d) {
       return y(lodash.get(d, pathToYField));
     }));
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToDate);
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
     var bisectDate = bisector(function (d) {
@@ -8080,7 +8080,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).attr('r', function (d) {
       return 4;
     }).attr('class', 'circle').attr('fill', '#28a745').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToDate);
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 
@@ -8261,7 +8261,7 @@ function timeChart(selector, dataSource, displayedData, options) {
     }).attr('height', function (d) {
       return y(d[0]) - y(d[1]);
     }).attr('class', 'bar').attr('pointer-events', 'all').on('mouseover', mouseover).on('mousemove', mousemove).on('mouseout', mouseout);
-    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text('Time');
+    svg.append('text').attr('transform', 'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToDate);
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - height / 2).attr('dy', '1em').style('text-anchor', 'middle').attr('font-family', 'Nunito, Arial, sans-serif').style('font-size', '12').text(pathToYField);
     var tooltip = src_select('body').append('div').attr('class', 'tooltip').style('display', 'none');
 

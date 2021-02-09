@@ -497,7 +497,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text('Time')
+      .text(pathToDate)
     svg
       .append('text')
       .attr('transform', 'rotate(-90)')
@@ -781,7 +781,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text('Time')
+      .text(pathToDate)
     svg
       .append('text')
       .attr('transform', 'rotate(-90)')
@@ -1139,7 +1139,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
       .style('text-anchor', 'middle')
       .attr('font-family', 'Nunito, Arial, sans-serif')
       .style('font-size', '12')
-      .text('Time')
+      .text(pathToDate)
     svg
       .append('text')
       .attr('transform', 'rotate(-90)')
