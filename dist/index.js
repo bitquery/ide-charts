@@ -137,32 +137,27 @@ function TimeChartEditor(_ref) {
   var _useState5 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
       _useState6 = _slicedToArray(_useState5, 2),
       yAxis = _useState6[0],
-      setYAxis = _useState6[1];
+      setYAxis = _useState6[1]; // const hasSubgroups = (model) => {
+  //   let has = false
+  //   const keys = Object.keys(model)
+  //   const dateKey = keys.find((key) => {
+  //     if (model[key].typeInfo) {
+  //       return model[key].typeInfo.name === 'Date'
+  //     }
+  //   })
+  //   keys.forEach((key) => {
+  //     if (!key.includes(dateKey)) {
+  //       if (model[key].typeInfo) {
+  //         if (model[key].typeInfo.toString().includes('String')) {
+  //           has = true
+  //         }
+  //       }
+  //     }
+  //   })
+  //   return has
+  // }
+  // const [showSubgroup, setShowSubgroup] = useState(hasSubgroups(model))
 
-  var hasSubgroups = function hasSubgroups(model) {
-    var has = false;
-    var keys = Object.keys(model);
-    var dateKey = keys.find(function (key) {
-      if (model[key].typeInfo) {
-        return model[key].typeInfo.name === 'Date';
-      }
-    });
-    keys.forEach(function (key) {
-      if (!key.includes(dateKey)) {
-        if (model[key].typeInfo) {
-          if (model[key].typeInfo.toString().includes('String')) {
-            has = true;
-          }
-        }
-      }
-    });
-    return has;
-  };
-
-  var _useState7 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(hasSubgroups(model)),
-      _useState8 = _slicedToArray(_useState7, 2),
-      showSubgroup = _useState8[0],
-      setShowSubgroup = _useState8[1];
 
   var subgroupFunc = function subgroupFunc(key) {
     if (model[key].typeInfo) {
@@ -170,10 +165,10 @@ function TimeChartEditor(_ref) {
     }
   };
 
-  var _useState9 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
-      _useState10 = _slicedToArray(_useState9, 2),
-      subgroup = _useState10[0],
-      setSubgroup = _useState10[1];
+  var _useState7 = (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useState)(''),
+      _useState8 = _slicedToArray(_useState7, 2),
+      subgroup = _useState8[0],
+      setSubgroup = _useState8[1];
 
   (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
     if (!xAxis && !yAxis && config) {
@@ -191,18 +186,21 @@ function TimeChartEditor(_ref) {
         }
 
         if ('subgroupField' in config) {
-          showSubgroup && setSubgroup("".concat(displayedData, ".").concat(config.subgroupField));
+          setSubgroup("".concat(displayedData, ".").concat(config.subgroupField));
         }
       }
     }
-  }, []);
-  (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
-    setShowSubgroup(hasSubgroups(model));
-  }, [model]);
+  }, []); // useEffect(() => {
+  //   setShowSubgroup(hasSubgroups(model))
+  // }, [model])
+
   useFirstUpdate(function () {
+    // console.log(xAxis, yAxis, config)
+    // setShowSubgroup(hasSubgroups(model))
     if (model && xAxis && yAxis) {
       var fieldX = xAxis.replace("".concat(displayedData, "."), '');
       var fieldY = yAxis.replace("".concat(displayedData, "."), '');
+      var subgroupField = subgroup && subgroup.replace("".concat(displayedData, "."), '');
       var cfg = {
         chartType: chartType,
         x: {
@@ -210,15 +208,14 @@ function TimeChartEditor(_ref) {
         },
         y: {
           field: fieldY
-        }
-      };
-
-      if (showSubgroup) {
-        var subgroupField = subgroup.replace("".concat(displayedData, "."), '');
-        Object.assign(cfg, {
-          subgroupField: subgroupField
-        });
-      }
+        },
+        subgroupField: subgroupField
+      }; // if (showSubgroup) {
+      //   let subgroupField = subgroup.replace(`${displayedData}.`, '')
+      //   Object.assign(cfg, {
+      //     subgroupField,
+      //   })
+      // }
 
       setConfig(cfg);
     }
@@ -249,7 +246,7 @@ function TimeChartEditor(_ref) {
     condition: yFunc,
     title: 'Y Axis',
     model: model
-  }), showSubgroup && /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
+  }), /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement(reactComponents_WidgetOptions, {
     value: subgroup,
     setValue: setSubgroup,
     condition: subgroupFunc,

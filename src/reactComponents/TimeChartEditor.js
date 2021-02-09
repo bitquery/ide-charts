@@ -44,26 +44,26 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
   }
   const [yAxis, setYAxis] = useState('')
 
-  const hasSubgroups = (model) => {
-    let has = false
-    const keys = Object.keys(model)
-    const dateKey = keys.find((key) => {
-      if (model[key].typeInfo) {
-        return model[key].typeInfo.name === 'Date'
-      }
-    })
-    keys.forEach((key) => {
-      if (!key.includes(dateKey)) {
-        if (model[key].typeInfo) {
-          if (model[key].typeInfo.toString().includes('String')) {
-            has = true
-          }
-        }
-      }
-    })
-    return has
-  }
-  const [showSubgroup, setShowSubgroup] = useState(hasSubgroups(model))
+  // const hasSubgroups = (model) => {
+  //   let has = false
+  //   const keys = Object.keys(model)
+  //   const dateKey = keys.find((key) => {
+  //     if (model[key].typeInfo) {
+  //       return model[key].typeInfo.name === 'Date'
+  //     }
+  //   })
+  //   keys.forEach((key) => {
+  //     if (!key.includes(dateKey)) {
+  //       if (model[key].typeInfo) {
+  //         if (model[key].typeInfo.toString().includes('String')) {
+  //           has = true
+  //         }
+  //       }
+  //     }
+  //   })
+  //   return has
+  // }
+  // const [showSubgroup, setShowSubgroup] = useState(hasSubgroups(model))
 
   const subgroupFunc = (key) => {
     if (model[key].typeInfo) {
@@ -89,33 +89,36 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
           setChartType(config.chartType)
         }
         if ('subgroupField' in config) {
-          showSubgroup &&
-            setSubgroup(`${displayedData}.${config.subgroupField}`)
+          setSubgroup(`${displayedData}.${config.subgroupField}`)
         }
       }
     }
   }, [])
 
-  useEffect(() => {
-    setShowSubgroup(hasSubgroups(model))
-  }, [model])
+  // useEffect(() => {
+  //   setShowSubgroup(hasSubgroups(model))
+  // }, [model])
 
   useFirstUpdate(() => {
+    // console.log(xAxis, yAxis, config)
+    // setShowSubgroup(hasSubgroups(model))
     if (model && xAxis && yAxis) {
       let fieldX = xAxis.replace(`${displayedData}.`, '')
       let fieldY = yAxis.replace(`${displayedData}.`, '')
+      let subgroupField = subgroup && subgroup.replace(`${displayedData}.`, '')
       let cfg = {
         chartType: chartType,
         x: { field: fieldX },
         y: { field: fieldY },
+        subgroupField,
       }
 
-      if (showSubgroup) {
-        let subgroupField = subgroup.replace(`${displayedData}.`, '')
-        Object.assign(cfg, {
-          subgroupField,
-        })
-      }
+      // if (showSubgroup) {
+      //   let subgroupField = subgroup.replace(`${displayedData}.`, '')
+      //   Object.assign(cfg, {
+      //     subgroupField,
+      //   })
+      // }
 
       setConfig(cfg)
     }
@@ -145,15 +148,13 @@ function TimeChartEditor({ model, config, setConfig, displayedData }) {
           title={'Y Axis'}
           model={model}
         />
-        {showSubgroup && (
-          <WidgetOptions
-            value={subgroup}
-            setValue={setSubgroup}
-            condition={subgroupFunc}
-            title={'Subgroup'}
-            model={model}
-          />
-        )}
+        <WidgetOptions
+          value={subgroup}
+          setValue={setSubgroup}
+          condition={subgroupFunc}
+          title={'Subgroup'}
+          model={model}
+        />
       </div>
     </div>
   )
