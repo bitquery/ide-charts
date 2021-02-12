@@ -1,7 +1,13 @@
 import React, { useEffect } from 'react'
 import { timeChart } from '../lib'
 
-function TimeChartRenderer({ el, config, dataSource, displayedData }) {
+function TimeChartRenderer({
+  el,
+  config,
+  dataSource,
+  displayedData,
+  children,
+}) {
   useEffect(() => {
     if (dataSource && config && displayedData && dataSource.data) {
       try {
@@ -19,9 +25,10 @@ function TimeChartRenderer({ el, config, dataSource, displayedData }) {
   }, [JSON.stringify(config), JSON.stringify(dataSource), displayedData])
   if (!dataSource) return <div></div>
   return (
-    <div className="widget-display">
+    <>
+      {children}
       <div style={{ width: '100%', overflowY: 'hidden' }} id={el} />
-    </div>
+    </>
   )
 }
 

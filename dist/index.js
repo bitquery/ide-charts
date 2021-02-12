@@ -8417,7 +8417,8 @@ function TimeChartRenderer(_ref) {
   var el = _ref.el,
       config = _ref.config,
       dataSource = _ref.dataSource,
-      displayedData = _ref.displayedData;
+      displayedData = _ref.displayedData,
+      children = _ref.children;
   (0,external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_.useEffect)(function () {
     if (dataSource && config && displayedData && dataSource.data) {
       try {
@@ -8433,9 +8434,7 @@ function TimeChartRenderer(_ref) {
     }
   }, [JSON.stringify(config), JSON.stringify(dataSource), displayedData]);
   if (!dataSource) return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", null);
-  return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
-    className: "widget-display"
-  }, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
+  return /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement((external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default()).Fragment, null, children, /*#__PURE__*/external_root_React_commonjs2_react_commonjs_react_amd_react_umd_react_default().createElement("div", {
     style: {
       width: '100%',
       overflowY: 'hidden'
