@@ -1,5 +1,5 @@
 import TimeChartEditor from './reactComponents/TimeChartEditor'
-import TimeChartRenderer from './reactComponents/TimeChartRenderer'
+import timeChartRenderer from './reactComponents/timeChartRenderer'
 import hasQuantativeAndDate from './util/hasQuantativeAndDate'
 
 class TimeChartPlugin {
@@ -7,7 +7,8 @@ class TimeChartPlugin {
     this.id = 'time.chart'
     this.name = 'Time Chart'
     this.editor = TimeChartEditor
-    this.renderer = TimeChartRenderer
+    this.renderer = timeChartRenderer
+    this.dependencies = ['https://cdn.jsdelivr.net/npm/@bitquery/ide-charts@2.0.0/dist/timeChartRenderer.js']
   }
   supportsModel(model) {
     for (let key in model) {

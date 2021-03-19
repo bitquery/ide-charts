@@ -11,11 +11,12 @@ module.exports = {
   mode: 'production',
 
   entry: {
-    main: './src/index.js',
+    index: './src/index.js',
+    timeChartRenderer: './src/reactComponents/timeChartRenderer.js'
   },
 
   output: {
-    filename: 'index.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     library: 'ide-charts',
     libraryTarget: 'umd',
