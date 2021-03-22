@@ -55,6 +55,7 @@ module.exports = {
       {
         test: /.(js|jsx)$/,
         include: path.resolve(__dirname, 'src'),
+        exclude: path.resolve(__dirname, 'src/reactComponents/timeChartRenderer.js'),
         loader: 'babel-loader',
       },
       {
