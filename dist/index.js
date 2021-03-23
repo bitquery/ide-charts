@@ -320,6 +320,7 @@ var TimeChartPlugin = /*#__PURE__*/function () {
     this.editor = reactComponents_TimeChartEditor;
     this.renderer = timeChartRenderer.default;
     this.dependencies = ['https://cdn.jsdelivr.net/npm/@bitquery/ide-charts@2.0.1/dist/timeChartRenderer.js'];
+    this.rendererName = 'timeChartRenderer';
   }
 
   _createClass(TimeChartPlugin, [{
