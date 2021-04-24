@@ -283,12 +283,14 @@ function hasQuantativeAndDate(model) {
   function has(item) {
     if (item.selectionSet) {
       item.selectionSet.selections.forEach(function (i) {
-        if (i.typeInfo.toString().includes('Int') || i.typeInfo.toString().includes('Float')) {
-          hasQuantative = true;
-        } else if (i.typeInfo.name === 'Date' || i.typeInfo.name === 'DateTime') {
-          hasDate = true;
-        } else {
-          has(i);
+        if (i.typeInfo) {
+          if (i.typeInfo.toString().includes('Int') || i.typeInfo.toString().includes('Float')) {
+            hasQuantative = true;
+          } else if (i.typeInfo.name === 'Date' || i.typeInfo.name === 'DateTime') {
+            hasDate = true;
+          } else {
+            has(i);
+          }
         }
       });
     }
@@ -343,7 +345,7 @@ var timeChartPlugins = [new TimeChartPlugin()];
 
 /***/ }),
 
-/***/ 709:
+/***/ 7709:
 /***/ ((module) => {
 
 function resizeListener(e) {
@@ -46107,7 +46109,7 @@ function formatNumber(num) {
 
 
 
-var elementResizeEvent = __webpack_require__(709)
+var elementResizeEvent = __webpack_require__(7709)
 
 async function timeChartRenderer(dataSource, options, selector) {
   dataSource = lodash.cloneDeep(dataSource)

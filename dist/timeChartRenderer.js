@@ -11,7 +11,7 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 709:
+/***/ 7709:
 /***/ ((module) => {
 
 function resizeListener(e) {
@@ -45777,7 +45777,7 @@ function formatNumber(num) {
 
 
 
-var elementResizeEvent = __webpack_require__(709)
+var elementResizeEvent = __webpack_require__(7709)
 
 async function timeChartRenderer(dataSource, options, selector) {
   dataSource = lodash.cloneDeep(dataSource)
