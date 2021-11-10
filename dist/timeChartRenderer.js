@@ -21,7 +21,7 @@ function resizeListener(e) {
   }
   win.__resizeRAF__ = requestAnimationFrame(function () {
     var trigger = win.__resizeTrigger__
-    var listeners = trigger &&  trigger.__resizeListeners__
+    var listeners = trigger && trigger.__resizeListeners__
     if (listeners) {
       listeners.forEach(function (fn) {
         fn.call(trigger, e)
@@ -30,48 +30,51 @@ function resizeListener(e) {
   })
 }
 
-var exports = function exports(element, fn) {
+var _exports = function exports(element, fn) {
   var window = this
   var document = window.document
   var isIE
 
   var attachEvent = document.attachEvent
-  if (typeof navigator !== 'undefined') {
-    isIE = navigator.userAgent.match(/Trident/) ||
-      navigator.userAgent.match(/Edge/)
+  if (typeof navigator !== "undefined") {
+    isIE =
+      navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/Edge/)
   }
 
   function objectLoad() {
     this.contentDocument.defaultView.__resizeTrigger__ = this.__resizeElement__
-    this.contentDocument.defaultView.addEventListener('resize', resizeListener)
+    this.contentDocument.defaultView.addEventListener("resize", resizeListener)
   }
 
   if (!element.__resizeListeners__) {
     element.__resizeListeners__ = []
     if (attachEvent) {
       element.__resizeTrigger__ = element
-      element.attachEvent('onresize', resizeListener)
+      element.attachEvent("onresize", resizeListener)
     } else {
-      if (getComputedStyle(element).position === 'static') {
-        element.style.position = 'relative'
+      if (getComputedStyle(element).position === "static") {
+        element.style.position = "relative"
       }
-      var obj = (element.__resizeTrigger__ = document.createElement('object'))
+      var obj = (element.__resizeTrigger__ = document.createElement("object"))
       obj.setAttribute(
-        'style',
-        'position: absolute; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none; z-index: -1; opacity: 0;'
+        "style",
+        "position: absolute; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none; z-index: -1; opacity: 0;"
       )
-      obj.setAttribute('class', 'resize-sensor')
+      obj.setAttribute("class", "resize-sensor")
 
       // prevent <object> from stealing keyboard focus
-      obj.setAttribute('tabindex', '-1');
+      obj.setAttribute("tabindex", "-1")
+
+      // prevent screenreaders to see this object
+      obj.setAttribute("title", "")
 
       obj.__resizeElement__ = element
       obj.onload = objectLoad
-      obj.type = 'text/html'
+      obj.type = "text/html"
       if (isIE) {
         element.appendChild(obj)
       }
-      obj.data = 'about:blank'
+      obj.data = "about:blank"
       if (!isIE) {
         element.appendChild(obj)
       }
@@ -80,7 +83,8 @@ var exports = function exports(element, fn) {
   element.__resizeListeners__.push(fn)
 }
 
-module.exports = typeof window === 'undefined' ? exports : exports.bind(window)
+module.exports =
+  typeof window === "undefined" ? _exports : _exports.bind(window)
 
 module.exports.unbind = function (element, fn) {
   var attachEvent = document.attachEvent
@@ -95,13 +99,13 @@ module.exports.unbind = function (element, fn) {
   }
   if (!listeners.length) {
     if (attachEvent) {
-      element.detachEvent('onresize', resizeListener)
+      element.detachEvent("onresize", resizeListener)
     } else if (element.__resizeTrigger__) {
-      var contentDocument = element.__resizeTrigger__.contentDocument;
-      var defaultView = contentDocument && contentDocument.defaultView;
+      var contentDocument = element.__resizeTrigger__.contentDocument
+      var defaultView = contentDocument && contentDocument.defaultView
       if (defaultView) {
-        defaultView.removeEventListener('resize', resizeListener);
-        delete defaultView.__resizeTrigger__;
+        defaultView.removeEventListener("resize", resizeListener)
+        delete defaultView.__resizeTrigger__
       }
       element.__resizeTrigger__ = !element.removeChild(
         element.__resizeTrigger__
@@ -132,14 +136,15 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.20';
+  var VERSION = '4.17.21';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
 
   /** Error message constants. */
   var CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=ponyfill.',
-      FUNC_ERROR_TEXT = 'Expected a function';
+      FUNC_ERROR_TEXT = 'Expected a function',
+      INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`';
 
   /** Used to stand-in for `undefined` hash values. */
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -272,10 +277,11 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   var reRegExpChar = /[\\^$.*+?()[\]{}|]/g,
       reHasRegExpChar = RegExp(reRegExpChar.source);
 
-  /** Used to match leading and trailing whitespace. */
-  var reTrim = /^\s+|\s+$/g,
-      reTrimStart = /^\s+/,
-      reTrimEnd = /\s+$/;
+  /** Used to match leading whitespace. */
+  var reTrimStart = /^\s+/;
+
+  /** Used to match a single whitespace character. */
+  var reWhitespace = /\s/;
 
   /** Used to match wrap detail comments. */
   var reWrapComment = /\{(?:\n\/\* \[wrapped with .+\] \*\/)?\n?/,
@@ -284,6 +290,18 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
   /** Used to match words composed of alphanumeric characters. */
   var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
+
+  /**
+   * Used to validate the `validate` option in `_.template` variable.
+   *
+   * Forbids characters which could potentially change the meaning of the function argument definition:
+   * - "()," (modification of function parameters)
+   * - "=" (default value)
+   * - "[]{}" (destructuring of function parameters)
+   * - "/" (beginning of a comment)
+   * - whitespace
+   */
+  var reForbiddenIdentifierChars = /[()=,{}\[\]\/\s]/;
 
   /** Used to match backslashes in property paths. */
   var reEscapeChar = /\\(\\)?/g;
@@ -1114,6 +1132,19 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   }
 
   /**
+   * The base implementation of `_.trim`.
+   *
+   * @private
+   * @param {string} string The string to trim.
+   * @returns {string} Returns the trimmed string.
+   */
+  function baseTrim(string) {
+    return string
+      ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '')
+      : string;
+  }
+
+  /**
    * The base implementation of `_.unary` without support for storing metadata.
    *
    * @private
@@ -1444,6 +1475,21 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
     return hasUnicode(string)
       ? unicodeToArray(string)
       : asciiToArray(string);
+  }
+
+  /**
+   * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
+   * character of `string`.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @returns {number} Returns the index of the last non-whitespace character.
+   */
+  function trimmedEndIndex(string) {
+    var index = string.length;
+
+    while (index-- && reWhitespace.test(string.charAt(index))) {}
+    return index;
   }
 
   /**
@@ -12614,7 +12660,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
       if (typeof value != 'string') {
         return value === 0 ? value : +value;
       }
-      value = value.replace(reTrim, '');
+      value = baseTrim(value);
       var isBinary = reIsBinary.test(value);
       return (isBinary || reIsOctal.test(value))
         ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
@@ -14986,6 +15032,12 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
       }
+      // Throw an error if a forbidden character was found in `variable`, to prevent
+      // potential command injection attacks.
+      else if (reForbiddenIdentifierChars.test(variable)) {
+        throw new Error(INVALID_TEMPL_VAR_ERROR_TEXT);
+      }
+
       // Cleanup code by stripping empty strings.
       source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
         .replace(reEmptyStringMiddle, '$1')
@@ -15099,7 +15151,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
     function trim(string, chars, guard) {
       string = toString(string);
       if (string && (guard || chars === undefined)) {
-        return string.replace(reTrim, '');
+        return baseTrim(string);
       }
       if (!string || !(chars = baseToString(chars))) {
         return string;
@@ -15134,7 +15186,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
     function trimEnd(string, chars, guard) {
       string = toString(string);
       if (string && (guard || chars === undefined)) {
-        return string.replace(reTrimEnd, '');
+        return string.slice(0, trimmedEndIndex(string) + 1);
       }
       if (!string || !(chars = baseToString(chars))) {
         return string;
@@ -38296,23 +38348,115 @@ webpackContext.id = 6700;
 })));
 
 
-/***/ }),
+/***/ })
 
-/***/ 1792:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			id: moduleId,
+/******/ 			loaded: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/node module decorator */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nmd = (module) => {
+/******/ 			module.paths = [];
+/******/ 			if (!module.children) module.children = [];
+/******/ 			return module;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
 "use strict";
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "default": () => /* binding */ timeChartRenderer
+  "default": () => (/* binding */ timeChartRenderer)
 });
 
 ;// CONCATENATED MODULE: ./node_modules/d3/dist/package.js
 var package_name = "d3";
-var version = "6.5.0";
+var version = "6.7.0";
 var description = "Data-Driven Documents";
 var keywords = (/* unused pure expression or super */ null && (["dom","visualization","svg","animation","canvas"]));
 var homepage = "https://d3js.org";
@@ -38414,10 +38558,10 @@ function ascendingComparator(f) {
 
 ;// CONCATENATED MODULE: ./node_modules/internmap/src/index.js
 class InternMap extends Map {
-  constructor(entries = [], key = keyof) {
+  constructor(entries, key = keyof) {
     super();
     Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    for (const [key, value] of entries) this.set(key, value);
+    if (entries != null) for (const [key, value] of entries) this.set(key, value);
   }
   get(key) {
     return super.get(intern_get(this, key));
@@ -38434,10 +38578,10 @@ class InternMap extends Map {
 }
 
 class InternSet extends Set {
-  constructor(values = [], key = keyof) {
+  constructor(values, key = keyof) {
     super();
     Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    for (const value of values) this.add(value);
+    if (values != null) for (const value of values) this.add(value);
   }
   has(value) {
     return super.has(intern_get(this, value));
@@ -38651,23 +38795,21 @@ var axis_top = 1,
     epsilon = 1e-6;
 
 function translateX(x) {
-  return "translate(" + (x + 0.5) + ",0)";
+  return "translate(" + x + ",0)";
 }
 
 function translateY(y) {
-  return "translate(0," + (y + 0.5) + ")";
+  return "translate(0," + y + ")";
 }
 
 function number(scale) {
   return d => +scale(d);
 }
 
-function center(scale) {
-  var offset = Math.max(0, scale.bandwidth() - 1) / 2; // Adjust for 0.5px offset.
+function center(scale, offset) {
+  offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
   if (scale.round()) offset = Math.round(offset);
-  return function(d) {
-    return +scale(d) + offset;
-  };
+  return d => +scale(d) + offset;
 }
 
 function entering() {
@@ -38681,6 +38823,7 @@ function axis(orient, scale) {
       tickSizeInner = 6,
       tickSizeOuter = 6,
       tickPadding = 3,
+      offset = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5,
       k = orient === axis_top || orient === left ? -1 : 1,
       x = orient === left || orient === right ? "x" : "y",
       transform = orient === axis_top || orient === bottom ? translateX : translateY;
@@ -38690,9 +38833,9 @@ function axis(orient, scale) {
         format = tickFormat == null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : d3_axis_src_identity) : tickFormat,
         spacing = Math.max(tickSizeInner, 0) + tickPadding,
         range = scale.range(),
-        range0 = +range[0] + 0.5,
-        range1 = +range[range.length - 1] + 0.5,
-        position = (scale.bandwidth ? center : number)(scale.copy()),
+        range0 = +range[0] + offset,
+        range1 = +range[range.length - 1] + offset,
+        position = (scale.bandwidth ? center : number)(scale.copy(), offset),
         selection = context.selection ? context.selection() : context,
         path = selection.selectAll(".domain").data([null]),
         tick = selection.selectAll(".tick").data(values, scale).order(),
@@ -38724,23 +38867,23 @@ function axis(orient, scale) {
 
       tickExit = tickExit.transition(context)
           .attr("opacity", epsilon)
-          .attr("transform", function(d) { return isFinite(d = position(d)) ? transform(d) : this.getAttribute("transform"); });
+          .attr("transform", function(d) { return isFinite(d = position(d)) ? transform(d + offset) : this.getAttribute("transform"); });
 
       tickEnter
           .attr("opacity", epsilon)
-          .attr("transform", function(d) { var p = this.parentNode.__axis; return transform(p && isFinite(p = p(d)) ? p : position(d)); });
+          .attr("transform", function(d) { var p = this.parentNode.__axis; return transform((p && isFinite(p = p(d)) ? p : position(d)) + offset); });
     }
 
     tickExit.remove();
 
     path
-        .attr("d", orient === left || orient == right
-            ? (tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H0.5V" + range1 + "H" + k * tickSizeOuter : "M0.5," + range0 + "V" + range1)
-            : (tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V0.5H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + ",0.5H" + range1));
+        .attr("d", orient === left || orient === right
+            ? (tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset + "," + range0 + "V" + range1)
+            : (tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset + "H" + range1));
 
     tick
         .attr("opacity", 1)
-        .attr("transform", function(d) { return transform(position(d)); });
+        .attr("transform", function(d) { return transform(position(d) + offset); });
 
     line
         .attr(x + "2", k * tickSizeInner);
@@ -38793,6 +38936,10 @@ function axis(orient, scale) {
 
   axis.tickPadding = function(_) {
     return arguments.length ? (tickPadding = +_, axis) : tickPadding;
+  };
+
+  axis.offset = function(_) {
+    return arguments.length ? (offset = +_, axis) : offset;
   };
 
   return axis;
@@ -39976,7 +40123,7 @@ function yesdrag(view, noclick) {
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-color/src/define.js
-/* harmony default export */ function define(constructor, factory, prototype) {
+/* harmony default export */ function src_define(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
 }
@@ -40157,7 +40304,7 @@ var named = {
   yellowgreen: 0x9acd32
 };
 
-define(Color, color, {
+src_define(Color, color, {
   copy: function(channels) {
     return Object.assign(new this.constructor, this, channels);
   },
@@ -40229,7 +40376,7 @@ function Rgb(r, g, b, opacity) {
   this.opacity = +opacity;
 }
 
-define(Rgb, color_rgb, extend(Color, {
+src_define(Rgb, color_rgb, extend(Color, {
   brighter: function(k) {
     k = k == null ? brighter : Math.pow(brighter, k);
     return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
@@ -40315,7 +40462,7 @@ function Hsl(h, s, l, opacity) {
   this.opacity = +opacity;
 }
 
-define(Hsl, hsl, extend(Color, {
+src_define(Hsl, hsl, extend(Color, {
   brighter: function(k) {
     k = k == null ? brighter : Math.pow(brighter, k);
     return new Hsl(this.h, this.s, this.l * k, this.opacity);
@@ -42815,16 +42962,18 @@ var e10 = Math.sqrt(50),
   if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
 
   if (step > 0) {
-    start = Math.ceil(start / step);
-    stop = Math.floor(stop / step);
-    ticks = new Array(n = Math.ceil(stop - start + 1));
-    while (++i < n) ticks[i] = (start + i) * step;
+    let r0 = Math.round(start / step), r1 = Math.round(stop / step);
+    if (r0 * step < start) ++r0;
+    if (r1 * step > stop) --r1;
+    ticks = new Array(n = r1 - r0 + 1);
+    while (++i < n) ticks[i] = (r0 + i) * step;
   } else {
     step = -step;
-    start = Math.ceil(start * step);
-    stop = Math.floor(stop * step);
-    ticks = new Array(n = Math.ceil(stop - start + 1));
-    while (++i < n) ticks[i] = (start + i) / step;
+    let r0 = Math.round(start * step), r1 = Math.round(stop * step);
+    if (r0 / step < start) ++r0;
+    if (r1 / step > stop) --r1;
+    ticks = new Array(n = r1 - r0 + 1);
+    while (++i < n) ticks[i] = (r0 + i) / step;
   }
 
   if (reverse) ticks.reverse();
@@ -42989,7 +43138,7 @@ function transformer() {
   }
 
   function scale(x) {
-    return isNaN(x = +x) ? unknown : (output || (output = piecewise(domain.map(transform), range, interpolate)))(transform(clamp(x)));
+    return x == null || isNaN(x = +x) ? unknown : (output || (output = piecewise(domain.map(transform), range, interpolate)))(transform(clamp(x)));
   }
 
   scale.invert = function(y) {
@@ -43502,6 +43651,15 @@ function linear_linear() {
   return linearish(scale);
 }
 
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/duration.js
+const durationSecond = 1000;
+const durationMinute = durationSecond * 60;
+const durationHour = durationMinute * 60;
+const durationDay = durationHour * 24;
+const durationWeek = durationDay * 7;
+const durationMonth = durationDay * 30;
+const durationYear = durationDay * 365;
+
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/interval.js
 var t0 = new Date,
     t1 = new Date;
@@ -43574,57 +43732,98 @@ function newInterval(floori, offseti, count, field) {
   return interval;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/year.js
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/millisecond.js
 
 
-var year = newInterval(function(date) {
-  date.setMonth(0, 1);
-  date.setHours(0, 0, 0, 0);
+var millisecond = newInterval(function() {
+  // noop
 }, function(date, step) {
-  date.setFullYear(date.getFullYear() + step);
+  date.setTime(+date + step);
 }, function(start, end) {
-  return end.getFullYear() - start.getFullYear();
-}, function(date) {
-  return date.getFullYear();
+  return end - start;
 });
 
 // An optimized implementation for this simple case.
-year.every = function(k) {
-  return !isFinite(k = Math.floor(k)) || !(k > 0) ? null : newInterval(function(date) {
-    date.setFullYear(Math.floor(date.getFullYear() / k) * k);
-    date.setMonth(0, 1);
-    date.setHours(0, 0, 0, 0);
+millisecond.every = function(k) {
+  k = Math.floor(k);
+  if (!isFinite(k) || !(k > 0)) return null;
+  if (!(k > 1)) return millisecond;
+  return newInterval(function(date) {
+    date.setTime(Math.floor(date / k) * k);
   }, function(date, step) {
-    date.setFullYear(date.getFullYear() + step * k);
+    date.setTime(+date + step * k);
+  }, function(start, end) {
+    return (end - start) / k;
   });
 };
 
-/* harmony default export */ const src_year = (year);
-var years = year.range;
+/* harmony default export */ const src_millisecond = (millisecond);
+var milliseconds = millisecond.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/month.js
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/second.js
 
 
-var month = newInterval(function(date) {
-  date.setDate(1);
-  date.setHours(0, 0, 0, 0);
+
+var second = newInterval(function(date) {
+  date.setTime(date - date.getMilliseconds());
 }, function(date, step) {
-  date.setMonth(date.getMonth() + step);
+  date.setTime(+date + step * durationSecond);
 }, function(start, end) {
-  return end.getMonth() - start.getMonth() + (end.getFullYear() - start.getFullYear()) * 12;
+  return (end - start) / durationSecond;
 }, function(date) {
-  return date.getMonth();
+  return date.getUTCSeconds();
 });
 
-/* harmony default export */ const src_month = (month);
-var months = month.range;
+/* harmony default export */ const src_second = (second);
+var seconds = second.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/duration.js
-var durationSecond = 1e3;
-var durationMinute = 6e4;
-var durationHour = 36e5;
-var durationDay = 864e5;
-var durationWeek = 6048e5;
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/minute.js
+
+
+
+var minute = newInterval(function(date) {
+  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond);
+}, function(date, step) {
+  date.setTime(+date + step * durationMinute);
+}, function(start, end) {
+  return (end - start) / durationMinute;
+}, function(date) {
+  return date.getMinutes();
+});
+
+/* harmony default export */ const src_minute = (minute);
+var minutes = minute.range;
+
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/hour.js
+
+
+
+var hour = newInterval(function(date) {
+  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond - date.getMinutes() * durationMinute);
+}, function(date, step) {
+  date.setTime(+date + step * durationHour);
+}, function(start, end) {
+  return (end - start) / durationHour;
+}, function(date) {
+  return date.getHours();
+});
+
+/* harmony default export */ const src_hour = (hour);
+var hours = hour.range;
+
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/day.js
+
+
+
+var day = newInterval(
+  date => date.setHours(0, 0, 0, 0),
+  (date, step) => date.setDate(date.getDate() + step),
+  (start, end) => (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * durationMinute) / durationDay,
+  date => date.getDate() - 1
+);
+
+/* harmony default export */ const src_day = (day);
+var days = day.range;
 
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/week.js
 
@@ -43657,98 +43856,101 @@ var thursdays = thursday.range;
 var fridays = friday.range;
 var saturdays = saturday.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/day.js
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/month.js
 
 
-
-var day = newInterval(
-  date => date.setHours(0, 0, 0, 0),
-  (date, step) => date.setDate(date.getDate() + step),
-  (start, end) => (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * durationMinute) / durationDay,
-  date => date.getDate() - 1
-);
-
-/* harmony default export */ const src_day = (day);
-var days = day.range;
-
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/hour.js
-
-
-
-var hour = newInterval(function(date) {
-  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond - date.getMinutes() * durationMinute);
+var month = newInterval(function(date) {
+  date.setDate(1);
+  date.setHours(0, 0, 0, 0);
 }, function(date, step) {
-  date.setTime(+date + step * durationHour);
+  date.setMonth(date.getMonth() + step);
 }, function(start, end) {
-  return (end - start) / durationHour;
+  return end.getMonth() - start.getMonth() + (end.getFullYear() - start.getFullYear()) * 12;
 }, function(date) {
-  return date.getHours();
+  return date.getMonth();
 });
 
-/* harmony default export */ const src_hour = (hour);
-var hours = hour.range;
+/* harmony default export */ const src_month = (month);
+var months = month.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/minute.js
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/year.js
+
+
+var year = newInterval(function(date) {
+  date.setMonth(0, 1);
+  date.setHours(0, 0, 0, 0);
+}, function(date, step) {
+  date.setFullYear(date.getFullYear() + step);
+}, function(start, end) {
+  return end.getFullYear() - start.getFullYear();
+}, function(date) {
+  return date.getFullYear();
+});
+
+// An optimized implementation for this simple case.
+year.every = function(k) {
+  return !isFinite(k = Math.floor(k)) || !(k > 0) ? null : newInterval(function(date) {
+    date.setFullYear(Math.floor(date.getFullYear() / k) * k);
+    date.setMonth(0, 1);
+    date.setHours(0, 0, 0, 0);
+  }, function(date, step) {
+    date.setFullYear(date.getFullYear() + step * k);
+  });
+};
+
+/* harmony default export */ const src_year = (year);
+var years = year.range;
+
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcMinute.js
 
 
 
-var minute = newInterval(function(date) {
-  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond);
+var utcMinute = newInterval(function(date) {
+  date.setUTCSeconds(0, 0);
 }, function(date, step) {
   date.setTime(+date + step * durationMinute);
 }, function(start, end) {
   return (end - start) / durationMinute;
 }, function(date) {
-  return date.getMinutes();
+  return date.getUTCMinutes();
 });
 
-/* harmony default export */ const src_minute = (minute);
-var minutes = minute.range;
+/* harmony default export */ const src_utcMinute = (utcMinute);
+var utcMinutes = utcMinute.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/second.js
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcHour.js
 
 
 
-var second = newInterval(function(date) {
-  date.setTime(date - date.getMilliseconds());
+var utcHour = newInterval(function(date) {
+  date.setUTCMinutes(0, 0, 0);
 }, function(date, step) {
-  date.setTime(+date + step * durationSecond);
+  date.setTime(+date + step * durationHour);
 }, function(start, end) {
-  return (end - start) / durationSecond;
+  return (end - start) / durationHour;
 }, function(date) {
-  return date.getUTCSeconds();
+  return date.getUTCHours();
 });
 
-/* harmony default export */ const src_second = (second);
-var seconds = second.range;
+/* harmony default export */ const src_utcHour = (utcHour);
+var utcHours = utcHour.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/millisecond.js
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcDay.js
 
 
-var millisecond = newInterval(function() {
-  // noop
+
+var utcDay = newInterval(function(date) {
+  date.setUTCHours(0, 0, 0, 0);
 }, function(date, step) {
-  date.setTime(+date + step);
+  date.setUTCDate(date.getUTCDate() + step);
 }, function(start, end) {
-  return end - start;
+  return (end - start) / durationDay;
+}, function(date) {
+  return date.getUTCDate() - 1;
 });
 
-// An optimized implementation for this simple case.
-millisecond.every = function(k) {
-  k = Math.floor(k);
-  if (!isFinite(k) || !(k > 0)) return null;
-  if (!(k > 1)) return millisecond;
-  return newInterval(function(date) {
-    date.setTime(Math.floor(date / k) * k);
-  }, function(date, step) {
-    date.setTime(+date + step * k);
-  }, function(start, end) {
-    return (end - start) / k;
-  });
-};
-
-/* harmony default export */ const src_millisecond = (millisecond);
-var milliseconds = millisecond.range;
+/* harmony default export */ const src_utcDay = (utcDay);
+var utcDays = utcDay.range;
 
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcWeek.js
 
@@ -43781,22 +43983,22 @@ var utcThursdays = utcThursday.range;
 var utcFridays = utcFriday.range;
 var utcSaturdays = utcSaturday.range;
 
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcDay.js
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcMonth.js
 
 
-
-var utcDay = newInterval(function(date) {
+var utcMonth = newInterval(function(date) {
+  date.setUTCDate(1);
   date.setUTCHours(0, 0, 0, 0);
 }, function(date, step) {
-  date.setUTCDate(date.getUTCDate() + step);
+  date.setUTCMonth(date.getUTCMonth() + step);
 }, function(start, end) {
-  return (end - start) / durationDay;
+  return end.getUTCMonth() - start.getUTCMonth() + (end.getUTCFullYear() - start.getUTCFullYear()) * 12;
 }, function(date) {
-  return date.getUTCDate() - 1;
+  return date.getUTCMonth();
 });
 
-/* harmony default export */ const src_utcDay = (utcDay);
-var utcDays = utcDay.range;
+/* harmony default export */ const src_utcMonth = (utcMonth);
+var utcMonths = utcMonth.range;
 
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcYear.js
 
@@ -43825,6 +44027,72 @@ utcYear.every = function(k) {
 
 /* harmony default export */ const src_utcYear = (utcYear);
 var utcYears = utcYear.range;
+
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/ticks.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function ticker(year, month, week, day, hour, minute) {
+
+  const tickIntervals = [
+    [src_second,  1,      durationSecond],
+    [src_second,  5,  5 * durationSecond],
+    [src_second, 15, 15 * durationSecond],
+    [src_second, 30, 30 * durationSecond],
+    [minute,  1,      durationMinute],
+    [minute,  5,  5 * durationMinute],
+    [minute, 15, 15 * durationMinute],
+    [minute, 30, 30 * durationMinute],
+    [  hour,  1,      durationHour  ],
+    [  hour,  3,  3 * durationHour  ],
+    [  hour,  6,  6 * durationHour  ],
+    [  hour, 12, 12 * durationHour  ],
+    [   day,  1,      durationDay   ],
+    [   day,  2,  2 * durationDay   ],
+    [  week,  1,      durationWeek  ],
+    [ month,  1,      durationMonth ],
+    [ month,  3,  3 * durationMonth ],
+    [  year,  1,      durationYear  ]
+  ];
+
+  function ticks(start, stop, count) {
+    const reverse = stop < start;
+    if (reverse) [start, stop] = [stop, start];
+    const interval = count && typeof count.range === "function" ? count : tickInterval(start, stop, count);
+    const ticks = interval ? interval.range(start, +stop + 1) : []; // inclusive stop
+    return reverse ? ticks.reverse() : ticks;
+  }
+
+  function tickInterval(start, stop, count) {
+    const target = Math.abs(stop - start) / count;
+    const i = bisector(([,, step]) => step).right(tickIntervals, target);
+    if (i === tickIntervals.length) return year.every(tickStep(start / durationYear, stop / durationYear, count));
+    if (i === 0) return src_millisecond.every(Math.max(tickStep(start, stop, count), 1));
+    const [t, step] = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i];
+    return t.every(step);
+  }
+
+  return [ticks, tickInterval];
+}
+
+const [utcTicks, utcTickInterval] = ticker(src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute);
+const [timeTicks, timeTickInterval] = ticker(src_year, src_month, sunday, src_day, src_hour, src_minute);
+
+
 
 ;// CONCATENATED MODULE: ./node_modules/d3-time-format/src/locale.js
 
@@ -44570,15 +44838,6 @@ function nice(domain, interval) {
 
 
 
-
-var time_durationSecond = 1000,
-    time_durationMinute = time_durationSecond * 60,
-    time_durationHour = time_durationMinute * 60,
-    time_durationDay = time_durationHour * 24,
-    time_durationWeek = time_durationDay * 7,
-    durationMonth = time_durationDay * 30,
-    durationYear = time_durationDay * 365;
-
 function time_date(t) {
   return new Date(t);
 }
@@ -44587,7 +44846,7 @@ function time_number(t) {
   return t instanceof Date ? +t : +new Date(+t);
 }
 
-function calendar(year, month, week, day, hour, minute, second, millisecond, format) {
+function calendar(ticks, tickInterval, year, month, week, day, hour, minute, second, format) {
   var scale = continuous(),
       invert = scale.invert,
       domain = scale.domain;
@@ -44601,27 +44860,6 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
       formatMonth = format("%B"),
       formatYear = format("%Y");
 
-  var tickIntervals = [
-    [second,  1,      time_durationSecond],
-    [second,  5,  5 * time_durationSecond],
-    [second, 15, 15 * time_durationSecond],
-    [second, 30, 30 * time_durationSecond],
-    [minute,  1,      time_durationMinute],
-    [minute,  5,  5 * time_durationMinute],
-    [minute, 15, 15 * time_durationMinute],
-    [minute, 30, 30 * time_durationMinute],
-    [  hour,  1,      time_durationHour  ],
-    [  hour,  3,  3 * time_durationHour  ],
-    [  hour,  6,  6 * time_durationHour  ],
-    [  hour, 12, 12 * time_durationHour  ],
-    [   day,  1,      time_durationDay   ],
-    [   day,  2,  2 * time_durationDay   ],
-    [  week,  1,      time_durationWeek  ],
-    [ month,  1,      durationMonth ],
-    [ month,  3,  3 * durationMonth ],
-    [  year,  1,      durationYear  ]
-  ];
-
   function tickFormat(date) {
     return (second(date) < date ? formatMillisecond
         : minute(date) < date ? formatSecond
@@ -44630,33 +44868,6 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
         : month(date) < date ? (week(date) < date ? formatDay : formatWeek)
         : year(date) < date ? formatMonth
         : formatYear)(date);
-  }
-
-  function tickInterval(interval, start, stop) {
-    if (interval == null) interval = 10;
-
-    // If a desired tick count is specified, pick a reasonable tick interval
-    // based on the extent of the domain and a rough estimate of tick size.
-    // Otherwise, assume interval is already a time interval and use it.
-    if (typeof interval === "number") {
-      var target = Math.abs(stop - start) / interval,
-          i = bisector(function(i) { return i[2]; }).right(tickIntervals, target),
-          step;
-      if (i === tickIntervals.length) {
-        step = tickStep(start / durationYear, stop / durationYear, interval);
-        interval = year;
-      } else if (i) {
-        i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i];
-        step = i[1];
-        interval = i[0];
-      } else {
-        step = Math.max(tickStep(start, stop, interval), 1);
-        interval = millisecond;
-      }
-      return interval.every(step);
-    }
-
-    return interval;
   }
 
   scale.invert = function(y) {
@@ -44668,15 +44879,8 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
   };
 
   scale.ticks = function(interval) {
-    var d = domain(),
-        t0 = d[0],
-        t1 = d[d.length - 1],
-        r = t1 < t0,
-        t;
-    if (r) t = t0, t0 = t1, t1 = t;
-    t = tickInterval(interval, t0, t1);
-    t = t ? t.range(t0, t1 + 1) : []; // inclusive stop
-    return r ? t.reverse() : t;
+    var d = domain();
+    return ticks(d[0], d[d.length - 1], interval == null ? 10 : interval);
   };
 
   scale.tickFormat = function(count, specifier) {
@@ -44685,20 +44889,19 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
 
   scale.nice = function(interval) {
     var d = domain();
-    return (interval = tickInterval(interval, d[0], d[d.length - 1]))
-        ? domain(nice(d, interval))
-        : scale;
+    if (!interval || typeof interval.range !== "function") interval = tickInterval(d[0], d[d.length - 1], interval == null ? 10 : interval);
+    return interval ? domain(nice(d, interval)) : scale;
   };
 
   scale.copy = function() {
-    return copy(scale, calendar(year, month, week, day, hour, minute, second, millisecond, format));
+    return copy(scale, calendar(ticks, tickInterval, year, month, week, day, hour, minute, second, format));
   };
 
   return scale;
 }
 
 function time() {
-  return initRange.apply(calendar(src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, src_millisecond, timeFormat).domain([new Date(2000, 0, 1), new Date(2000, 0, 2)]), arguments);
+  return initRange.apply(calendar(timeTicks, timeTickInterval, src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, timeFormat).domain([new Date(2000, 0, 1), new Date(2000, 0, 2)]), arguments);
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-scale/src/index.js
@@ -45185,7 +45388,10 @@ function stackSeries(key) {
 
 
 
+
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/index.js
+
+
 
 
 
@@ -47105,104 +47311,9 @@ async function timeChartRenderer(dataSource, options, selector) {
 
 window.timeChartRenderer = timeChartRenderer
 
+})();
 
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			id: moduleId,
-/******/ 			loaded: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => module['default'] :
-/******/ 				() => module;
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/global */
-/******/ 	(() => {
-/******/ 		__webpack_require__.g = (function() {
-/******/ 			if (typeof globalThis === 'object') return globalThis;
-/******/ 			try {
-/******/ 				return this || new Function('return this')();
-/******/ 			} catch (e) {
-/******/ 				if (typeof window === 'object') return window;
-/******/ 			}
-/******/ 		})();
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/node module decorator */
-/******/ 	(() => {
-/******/ 		__webpack_require__.nmd = (module) => {
-/******/ 			module.paths = [];
-/******/ 			if (!module.children) module.children = [];
-/******/ 			return module;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-/******/ 	// module exports must be returned from runtime so entry inlining is disabled
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(1792);
+/******/ 	return __webpack_exports__;
 /******/ })()
 ;
 });

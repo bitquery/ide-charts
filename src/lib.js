@@ -27,6 +27,7 @@ export function timeChart(selector, dataSource, displayedData, options) {
 
   data.forEach((d) => {
     d.date = new Date(moment(_.get(d, pathToDate)))
+    _.set(d, pathToYField, Number(_.get(d, pathToYField)))
   })
 
   let dt = {
