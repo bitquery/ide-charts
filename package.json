@@ -1,6 +1,6 @@
 {
   "name": "@bitquery/ide-charts",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "widgets library for ide",
   "main": "dist/index.js",
   "scripts": {
