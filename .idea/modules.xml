@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ide-charts.iml" filepath="$PROJECT_DIR$/.idea/ide-charts.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../ide-graph/.idea/ide-graph.iml" filepath="$PROJECT_DIR$/../ide-graph/.idea/ide-graph.iml" />
     </modules>
   </component>
 </project>

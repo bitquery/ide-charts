@@ -29,6 +29,7 @@ export default async function timeChartRenderer(dataSource, options, selector) {
 
     data.forEach((d) => {
       d.date = new Date(moment(_.get(d, pathToDate)))
+      _.set(d, pathToYField, Number(_.get(d, pathToYField)))
     })
 
     var dt = {

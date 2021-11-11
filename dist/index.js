@@ -45916,6 +45916,7 @@ async function timeChartRenderer(dataSource, options, selector) {
 
     data.forEach((d) => {
       d.date = new Date(moment_default()(lodash.get(d, pathToDate)))
+      lodash.set(d, pathToYField, Number(lodash.get(d, pathToYField)))
     })
 
     var dt = {
